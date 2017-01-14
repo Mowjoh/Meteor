@@ -1,0 +1,478 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Meteor"
+        xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="Meteor.MainWindow"
+        mc:Ignorable="d"
+        Title="Meteor" Height="750" Width="1024" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Foreground="#FF4B4A4A" Icon="F:\Development\Projects\Meteor Assets\meteor_icon.ico">
+    <Window.Resources>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+        <Style x:Key="TopButtons" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="columnstyle" TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Padding" Value="15,0"/>
+
+        </Style>
+        <Style x:Key="scrollstyle" TargetType="{x:Type ScrollViewer}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Resources>
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FF2E2E2E" Offset="0.12"/>
+            <GradientStop Color="#FF0B6C0B" Offset="0.927"/>
+        </LinearGradientBrush>
+    </Window.Background>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="75*"/>
+            <ColumnDefinition Width="14*"/>
+            <ColumnDefinition Width="420*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="540*"/>
+            <RowDefinition Height="115*"/>
+            <RowDefinition Height="66*"/>
+        </Grid.RowDefinitions>
+        <ListBox x:Name="Section_List" HorizontalAlignment="Left" Height="506" VerticalAlignment="Top" Width="157" Background="{x:Null}" BorderBrush="{x:Null}" Grid.ColumnSpan="2" SelectionChanged="section_change">
+            <ListBoxItem Content="Skins" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White" Margin="0,30,0,10"/>
+            <Separator/>
+            <ListBoxItem Content="Stages" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White" Margin="0,10,0,20"/>
+            <Separator/>
+            <ListBoxItem Content="Interface" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White" Margin="0,10,0,20"/>
+            <Separator/>
+            <ListBoxItem Content="FileBank" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White" Margin="0,10,0,20"/>
+            <Separator/>
+            <ListBoxItem Content="Workspace" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White" Margin="0,10,0,20"/>
+            <Separator/>
+            <ListBoxItem Content="Configuration" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White" Margin="0,10,0,20"/>
+            <Separator Margin="0"/>
+            <ListBoxItem Content="About" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White" Margin="0,10,0,0"/>
+        </ListBox>
+        <TextBlock x:Name="Console" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Height="115" Width="1018" Grid.ColumnSpan="3" Background="#7F000000" Foreground="White"/>
+        <Separator HorizontalAlignment="Left" Height="27" Margin="-78,251,0,0" VerticalAlignment="Top" Width="484" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="3">
+            <Separator.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-90"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Separator.RenderTransform>
+        </Separator>
+        <StatusBar x:Name="Status_Bar" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="66" Grid.Row="2" VerticalAlignment="Top" Width="1018" Background="#4C000000">
+            <Label x:Name="label" Content="Status :" Background="{x:Null}" Foreground="White" FontSize="15"/>
+            <Label x:Name="label_Copy" Content="app_status" Background="{x:Null}" Foreground="White" FontSize="15"/>
+            <ProgressBar Height="10" Width="300" MinHeight="20"/>
+            <Label x:Name="label_Copy1" Content="Operation :" Background="{x:Null}" Foreground="White" FontSize="15" Margin="30,0,0,0"/>
+            <Label x:Name="label_Copy2" Content="operation_status" Background="{x:Null}" Foreground="White" FontSize="15"/>
+            <ProgressBar Height="10" Width="300" MinHeight="20"/>
+        </StatusBar>
+        <TabControl x:Name="TabControl_Sections" Grid.Column="2" HorizontalAlignment="Left" Height="540" VerticalAlignment="Top" Width="840" Foreground="White" BorderBrush="{x:Null}" Background="{x:Null}">
+            <TabItem x:Name="Skins" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Margin="-2,-2,-2,0" Visibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="9*"/>
+                        <RowDefinition Height="247*"/>
+                        <RowDefinition Height="256*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150*"/>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="192*"/>
+                        <ColumnDefinition Width="29*"/>
+                        <ColumnDefinition Width="202*"/>
+                        <ColumnDefinition Width="231*"/>
+                    </Grid.ColumnDefinitions>
+                    <ListBox x:Name="CharacterListBox" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2" Margin="0,37,0,30" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden" SelectionChanged="character_selected"/>
+                    <ListBox x:Name="Skinslistbox" Grid.Column="2" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Grid.RowSpan="2" Margin="0,37,0,56" Grid.Row="1" SelectionChanged="skin_selected"/>
+                    <Separator HorizontalAlignment="Left" Margin="-76,231,0,245" Width="484" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="5" Grid.RowSpan="2" Grid.Row="1">
+                        <Separator.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform Angle="-90"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Separator.RenderTransform>
+                    </Separator>
+                    <Separator HorizontalAlignment="Left" Height="27" Margin="144,230,0,0" VerticalAlignment="Top" Width="484" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="6" Grid.RowSpan="2" Grid.Row="1">
+                        <Separator.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform Angle="-90"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Separator.RenderTransform>
+                    </Separator>
+                    <GroupBox x:Name="skins_skin_info_box" Grid.Column="4" Header="Skin Information" Foreground="White" Grid.ColumnSpan="2" Margin="0,0,10,0" Grid.RowSpan="2">
+                        <Grid Margin="0,0,-2,0">
+                            <Label x:Name="skins_skin_name_label" Content="Skin Name" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <TextBox x:Name="skins_skin_name" HorizontalAlignment="Left" Height="23" Margin="169,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="242" KeyDown="skin_name_save" ToolTip="The Skin's name. Press Enter to save the changes"/>
+                            <Label x:Name="skins_skin_slot_label" Content="Slot" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <TextBox x:Name="skins_slot" HorizontalAlignment="Left" Height="23" Margin="169,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="242" IsReadOnly="True" ToolTip="The slot the skin will be put in"/>
+                            <Label x:Name="skins_skin_author_label" Content="Author" HorizontalAlignment="Left" Margin="10,73,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <TextBox x:Name="skins_author" HorizontalAlignment="Left" Height="23" Margin="169,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="242" KeyDown="skin_author_save" ToolTip="The Skin's Author. Press Enter to validate the change"/>
+                            <Label x:Name="skins_skin_nameplate_label" Content="Nameplate" HorizontalAlignment="Left" Margin="10,104,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <ComboBox x:Name="skins_skin_nameplate" HorizontalAlignment="Left" VerticalAlignment="Top" Width="242" Margin="169,108,0,0" IsEnabled="False" ToolTip="Select the nameplate you want for that slot">
+                                <System:String>Voice</System:String>
+                            </ComboBox>
+                            <Label x:Name="skins_skin_voicebank_label" Content="Voicebank" HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <ComboBox x:Name="skins_skin_voicebank" HorizontalAlignment="Left" Margin="169,139,0,0" VerticalAlignment="Top" Width="242" IsEnabled="False" ToolTip="Select the voicebank you want for that slot"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="skins_skin_files_box" Grid.Column="4" Header="Skin Files" HorizontalAlignment="Left" Height="256" Grid.Row="2" VerticalAlignment="Top" Width="423" Foreground="White" Grid.ColumnSpan="2">
+                        <Grid Margin="0,0,-2,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="210*"/>
+                                <ColumnDefinition Width="211*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label x:Name="skin_skin_files_model_label" Content="Model" HorizontalAlignment="Left" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <Label x:Name="skin_skin_files_chr_label" Content="Chr" HorizontalAlignment="Left" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Grid.Column="1" Margin="157,0,0,0"/>
+                            <Separator HorizontalAlignment="Left" Height="27" Margin="93,101,0,0" VerticalAlignment="Top" Width="236" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="2">
+                                <Separator.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="-90"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </Separator.RenderTransform>
+                            </Separator>
+                        </Grid>
+                    </GroupBox>
+                    <Button x:Name="add_skin_button" Content="Add Skin Slot" Grid.Column="2" HorizontalAlignment="Left" Margin="10,226,0,0" Grid.Row="2" VerticalAlignment="Top" Width="172" Click="add_skin" ToolTip="Press this button to add a new skin slot !"/>
+                    <Label x:Name="character_header" Content="Characters" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" FontStyle="Italic" FontSize="16" Grid.Row="1"/>
+                    <Label x:Name="skin_header" Content="Skins" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Grid.Column="2" FontStyle="Italic" FontSize="16" Grid.Row="1"/>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="Stages" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Margin="-2,-2,-2,0" Visibility="Collapsed">
+                <Grid>
+                    <Label x:Name="label4" Content="This section is under construction, come back later!" HorizontalAlignment="Left" Margin="47,233,0,0" VerticalAlignment="Top" Foreground="White" FontSize="22" FontFamily="Super Mario 256"/>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="Interface" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Margin="-2,-2,-2,0" Visibility="Collapsed">
+                <Grid>
+                    <Label x:Name="label6" Content="This section is under construction, come back later!" HorizontalAlignment="Left" Margin="47,233,0,0" VerticalAlignment="Top" Foreground="White" FontSize="22" FontFamily="Super Mario 256"/>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="FileBank" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Margin="-2,-2,-2,0" Visibility="Collapsed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="127*"/>
+                        <ColumnDefinition Width="707*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="filebank_action_label" Content="Category" HorizontalAlignment="Left" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" FontStyle="Italic" FontSize="16"/>
+                    <ListBox x:Name="filebank_action_list" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,46,42,0">
+                        <ListBoxItem Content="Skins"/>
+                        <ListBoxItem Content="Stages"/>
+                        <ListBoxItem Content="Nameplates"/>
+                        <ListBoxItem Content="VoiceBanks"/>
+                        <ListBoxItem Content="CSS Icons"/>
+                    </ListBox>
+                    <Label x:Name="filebank_character_label" Content="Choose a Character" HorizontalAlignment="Left" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" FontStyle="Italic" FontSize="16" Grid.Column="1" Margin="10,0,0,0"/>
+                    <ComboBox x:Name="filebank_character_select" Grid.Column="1" HorizontalAlignment="Left" Margin="187,7,0,0" VerticalAlignment="Top" Width="163"/>
+                    <Separator x:Name="Content_Separator" HorizontalAlignment="Left" Height="27" Margin="-136,244,0,0" VerticalAlignment="Top" Width="484" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="2">
+                        <Separator.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform Angle="-90"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Separator.RenderTransform>
+                    </Separator>
+                    <TabControl x:Name="filebank_content_area" HorizontalAlignment="Left" Height="466" VerticalAlignment="Top" Width="697" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Margin="118,46,0,0" Grid.ColumnSpan="2">
+                        <TabItem x:Name="filebank_skin_tab" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Visibility="Collapsed">
+                            <Grid>
+                                <DataGrid x:Name="dataGrid" Background="{x:Null}" BorderBrush="#7F000000" Foreground="White" HorizontalGridLinesBrush="#7F000000" VerticalGridLinesBrush="#7F000000" AlternatingRowBackground="#4C000000" RowHeaderStyle="{DynamicResource FocusVisual}" ColumnHeaderStyle="{DynamicResource columnstyle}" ColumnWidth="Auto"  >
+
+                                    <DataGrid.Columns>
+                                        <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Skin Name"/>
+                                        <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Skin Models"/>
+                                        <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Skin Chr"/>
+                                        <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Author"/>
+                                    </DataGrid.Columns>
+
+                                </DataGrid>
+                            </Grid>
+                        </TabItem>
+                        <TabItem x:Name="filebank_stage_tab" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Margin="-2,-2,-2,0" Visibility="Collapsed">
+                            <Grid/>
+                        </TabItem>
+                        <TabItem x:Name="filebank_nameplate_tab" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Margin="-2,-2,-2,0" Visibility="Collapsed">
+                            <Grid/>
+                        </TabItem>
+                        <TabItem x:Name="filebank_voicebank_tab" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Margin="-2,-2,-2,0" Visibility="Collapsed">
+                            <Grid/>
+                        </TabItem>
+                        <TabItem x:Name="filebank_css_icons_tab" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Margin="-2,-2,-2,0" Visibility="Collapsed">
+                            <Grid/>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="Workspace" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,-4,-2" Visibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="37*"/>
+                        <RowDefinition Height="147*"/>
+                        <RowDefinition Height="159*"/>
+                        <RowDefinition Height="169*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="126*"/>
+                        <ColumnDefinition Width="146*"/>
+                        <ColumnDefinition Width="145*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="character_header1" Content="Workspaces" HorizontalAlignment="Left" Margin="83,10,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" FontStyle="Italic" FontSize="24" Height="42" Width="133" Grid.Column="1" Grid.RowSpan="2"/>
+                    <GroupBox x:Name="workspace_1" HorizontalAlignment="Left" Height="134" Margin="10,17,0,0" Grid.Row="1" VerticalAlignment="Top" Width="232" Foreground="White" Header="Default Workspace" Grid.RowSpan="2">
+                        <Grid>
+                            <Label x:Name="label2" Content="Contains:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy" Content="Status:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy1" Content="0 Skins" HorizontalAlignment="Left" Margin="163,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy2" Content="Active" HorizontalAlignment="Left" Margin="168,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Button x:Name="button1" Content="Activate" HorizontalAlignment="Left" Margin="70,93,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="workspace_2" HorizontalAlignment="Left" Height="134" Margin="43,17,0,0" Grid.Row="1" VerticalAlignment="Top" Width="232" Foreground="White" Header="MSL Import" Grid.Column="1" Grid.RowSpan="2">
+                        <Grid>
+                            <Label x:Name="label3" Content="Contains:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy3" Content="Status:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy4" Content="150 Skins" HorizontalAlignment="Left" Margin="150,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy5" Content="Inactive" HorizontalAlignment="Left" Margin="159,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Button x:Name="button3" Content="Activate" HorizontalAlignment="Left" Margin="70,93,0,0" VerticalAlignment="Top" Width="75"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="workspace_3" HorizontalAlignment="Left" Height="134" Margin="34,17,0,0" Grid.Row="1" VerticalAlignment="Top" Width="232" Foreground="White" Header="S4E Import" Grid.Column="2" Grid.RowSpan="2">
+                        <Grid>
+                            <Label x:Name="label5" Content="Contains:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy6" Content="Status:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy7" Content="150 Skins" HorizontalAlignment="Left" Margin="150,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy8" Content="Inactive" HorizontalAlignment="Left" Margin="159,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Button x:Name="button4" Content="Activate" HorizontalAlignment="Left" Margin="70,93,0,0" VerticalAlignment="Top" Width="75"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="workspace_4" HorizontalAlignment="Left" Height="134" Margin="10,11,0,0" Grid.Row="2" VerticalAlignment="Top" Width="232" Foreground="White" Header="Christmas Theme">
+                        <Grid>
+                            <Label x:Name="label9" Content="Contains:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy9" Content="Status:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy10" Content="50 Skins" HorizontalAlignment="Left" Margin="157,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy11" Content="Inactive" HorizontalAlignment="Left" Margin="159,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Button x:Name="button5" Content="Activate" HorizontalAlignment="Left" Margin="70,93,0,0" VerticalAlignment="Top" Width="75"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="workspace_5" HorizontalAlignment="Left" Height="134" Margin="43,11,0,0" Grid.Row="2" VerticalAlignment="Top" Width="232" Foreground="White" Header="Halloween Theme" Grid.Column="1">
+                        <Grid>
+                            <Label x:Name="label10" Content="Contains:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy12" Content="Status:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy13" Content="34 Skins" HorizontalAlignment="Left" Margin="157,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy14" Content="Inactive" HorizontalAlignment="Left" Margin="159,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Button x:Name="button6" Content="Activate" HorizontalAlignment="Left" Margin="70,93,0,0" VerticalAlignment="Top" Width="75"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="workspace_6" HorizontalAlignment="Left" Height="134" Margin="34,11,0,0" Grid.Row="2" VerticalAlignment="Top" Width="232" Foreground="White" Header="Mowjoh Theme" Grid.Column="2">
+                        <Grid>
+                            <Label x:Name="label11" Content="Contains:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy15" Content="Status:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy16" Content="9000 Skins" HorizontalAlignment="Left" Margin="144,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy17" Content="Inactive" HorizontalAlignment="Left" Margin="159,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Button x:Name="button7" Content="Activate" HorizontalAlignment="Left" Margin="70,93,0,0" VerticalAlignment="Top" Width="75"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="workspace_7" HorizontalAlignment="Left" Height="134" Margin="10,0,0,0" Grid.Row="3" VerticalAlignment="Top" Width="232" Foreground="White" Header="Empty">
+                        <Grid>
+                            <Label x:Name="label12" Content="Contains:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy18" Content="Status:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy19" Content="0 Skins" HorizontalAlignment="Left" Margin="163,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy20" Content="Inactive" HorizontalAlignment="Left" Margin="159,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Button x:Name="button8" Content="Activate" HorizontalAlignment="Left" Margin="70,93,0,0" VerticalAlignment="Top" Width="75"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="workspace_8" HorizontalAlignment="Left" Height="134" Margin="43,0,0,0" Grid.Row="3" VerticalAlignment="Top" Width="232" Foreground="White" Header="Empty" Grid.Column="1">
+                        <Grid>
+                            <Label x:Name="label13" Content="Contains:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy21" Content="Status:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy22" Content="0 Skins" HorizontalAlignment="Left" Margin="163,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy23" Content="Inactive" HorizontalAlignment="Left" Margin="159,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Button x:Name="button9" Content="Activate" HorizontalAlignment="Left" Margin="70,93,0,0" VerticalAlignment="Top" Width="75"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="workspace_9" HorizontalAlignment="Left" Height="134" Margin="34,0,0,0" Grid.Row="3" VerticalAlignment="Top" Width="232" Foreground="White" Header="Empty" Grid.Column="2">
+                        <Grid>
+                            <Label x:Name="label14" Content="Contains:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy24" Content="Status:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy25" Content="0 Skins" HorizontalAlignment="Left" Margin="159,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label2_Copy26" Content="Inactive" HorizontalAlignment="Left" Margin="159,41,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Button x:Name="button10" Content="Activate" HorizontalAlignment="Left" Margin="70,93,0,0" VerticalAlignment="Top" Width="75"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="Configuration" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Visibility="Collapsed">
+                <Grid x:Name="config_grid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox x:Name="region_select" Header="Region Select" HorizontalAlignment="Left" Height="68" Margin="0,10,0,0" VerticalAlignment="Top" Width="824" Foreground="White">
+                        <Grid x:Name="Region_grid">
+                            <Label x:Name="label_region" Content="Region" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <ComboBox x:Name="combo_region" HorizontalAlignment="Left" Margin="62,12,0,0" VerticalAlignment="Top" Width="228">
+                                <ComboBoxItem Content="Europe" Width="171"/>
+                                <ComboBoxItem Content="United States" Width="171"/>
+                                <ComboBoxItem Content="Japan" Width="171"/>
+                            </ComboBox>
+                            <Label x:Name="label_language" Content="Language" HorizontalAlignment="Left" Margin="475,10,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <ComboBox x:Name="combo_language" HorizontalAlignment="Left" Margin="574,12,0,0" VerticalAlignment="Top" Width="228">
+                                <ComboBoxItem Content="English" Width="171"/>
+                                <ComboBoxItem Content="French" Width="171"/>
+                                <ComboBoxItem Content="Spanish" Width="171"/>
+                                <ComboBoxItem Content="German" Width="171"/>
+                                <ComboBoxItem Content="Italian" Width="171" Margin="27.5,0"/>
+                                <ComboBoxItem Content="Dutch" Width="171" Margin="27.5,0"/>
+                                <ComboBoxItem Content="Portugese" Width="171" Margin="27.5,0"/>
+                                <ComboBoxItem Content="Japanese" Width="171" Margin="27.5,0"/>
+                            </ComboBox>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="app_settings" Header="Application Settings" HorizontalAlignment="Left" Height="346" Margin="0,156,0,0" VerticalAlignment="Top" Width="348" Foreground="White">
+                        <Grid x:Name="app_settings_grid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label x:Name="config_sortby_label" Content="Sort Characters by" HorizontalAlignment="Left" Margin="10,13,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <ComboBox x:Name="config_sortby" HorizontalAlignment="Left" Margin="153,17,0,0" VerticalAlignment="Top" Width="173" IsSynchronizedWithCurrentItem="True">
+                                <ComboBoxItem Content="Alphabetical Order"/>
+                                <ComboBoxItem Content="Game Order"/>
+                            </ComboBox>
+                            <Label x:Name="config_ui_rebuild_label" Content="Rebuild ui_character_db before each export" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <CheckBox x:Name="config_ui_rebuild" Content="" HorizontalAlignment="Left" Margin="306,78,0,0" VerticalAlignment="Top" Checked="config_ui_rebuild_Checked" Unchecked="config_ui_rebuild_Checked"/>
+                            <Label x:Name="config_S4E_label" Content="Launch S4E after each export" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <CheckBox x:Name="config_S4E" Content="" HorizontalAlignment="Left" Margin="306,109,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.6,3.8" Checked="config_S4E_Checked" Unchecked="config_S4E_Checked"/>
+                            <Label x:Name="config_username_label" Content="Username" HorizontalAlignment="Left" Margin="10,44,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <TextBox x:Name="config_username" HorizontalAlignment="Left" Height="23" Margin="153,44,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173" KeyDown="config_username_KeyDown"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="Advanced_settings" Header="Advanced Settings" HorizontalAlignment="Left" Height="125" Margin="353,156,0,0" VerticalAlignment="Top" Width="236" Foreground="White">
+                        <Grid Margin="0,0,-2,0">
+                            <Label x:Name="label_region1_Copy2" Content="Show Dev Logs" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <CheckBox x:Name="config_devlogs" Content="" HorizontalAlignment="Left" Margin="196,21,0,0" VerticalAlignment="Top" Checked="config_devlogs_Checked" Unchecked="config_devlogs_Checked"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="gamebanana_settings" Header="GameBanana Connectivity" HorizontalAlignment="Left" Height="216" Margin="353,286,0,0" VerticalAlignment="Top" Width="236" Foreground="White">
+                        <Grid>
+                            <Label x:Name="config_gb_uid" Content="User ID" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <TextBox x:Name="config_gbuser" HorizontalAlignment="Left" Height="23" Margin="94,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" KeyDown="gb_uid_save"/>
+                            <Button x:Name="button" Content="Profile Page" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="204"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="workspace_select" Header="Region Select" HorizontalAlignment="Left" Height="68" Margin="0,83,0,0" VerticalAlignment="Top" Width="824" Foreground="White">
+                        <Grid x:Name="Region_grid1">
+                            <Label x:Name="label_region1" Content="Sm4sh Explorer workspace location" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+                            <TextBox x:Name="config_s4e_path" HorizontalAlignment="Left" Height="23" Margin="246,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="408" KeyDown="config_s4e_path_KeyDown"/>
+                            <Button x:Name="config_s4e_path_save" Content="Pick Folder" HorizontalAlignment="Left" Margin="676,11,0,0" VerticalAlignment="Top" Width="126" Click="config_s4e_path_save_Click"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="About" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Visibility="Collapsed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="13*"/>
+                        <ColumnDefinition Width="821*"/>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox x:Name="groupBox3" Header="Application Information" HorizontalAlignment="Left" Height="492" Margin="10,10,0,0" VerticalAlignment="Top" Width="285" Foreground="White" Grid.ColumnSpan="2">
+                        <Grid>
+                            <Label x:Name="label7" Content="Maker : Mowjoh" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label1_Copy3" Content="Application version : None" HorizontalAlignment="Left" Margin="10,75,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label1_Copy4" Content="Updater version : None" HorizontalAlignment="Left" Margin="10,106,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label1_Copy5" Content="Special Thanks" HorizontalAlignment="Left" Margin="10,203,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="10,234,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="226" Width="253"><Run Text="- Kerouz"/><LineBreak/><Run Text="- Segtendo"/><LineBreak/><Run Text="- The Smash 4 Modding server"/><LineBreak/><Run/><LineBreak/><Run/><LineBreak/><Run Text="I wanna thank you all for using Meteor, "/><LineBreak/><Run Text="You're the ones that made this a reality !"/></TextBlock>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="groupBox_Copy1" Header="Fun Facts&#xA;" HorizontalAlignment="Left" Height="492" Margin="526,10,0,0" VerticalAlignment="Top" Width="285" Foreground="White" Grid.Column="1">
+                        <Grid>
+                            <Label x:Name="label8" Content="- I like Shy Guys" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy13" Content="- My spirit animal is a platypus" HorizontalAlignment="Left" Margin="10,31,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy14" Content="- Meteor is a cool name" HorizontalAlignment="Left" Margin="10,62,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy15" Content="- I drink too much coffee" HorizontalAlignment="Left" Margin="10,93,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy16" Content="- I thought 2016 was OK" HorizontalAlignment="Left" Margin="10,124,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy17" Content="- This app is 100% made in France" HorizontalAlignment="Left" Margin="10,155,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy18" Content="- I'm Mowjoh !" HorizontalAlignment="Left" Margin="10,186,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy19" Content="- My cat's name is Rosalina" HorizontalAlignment="Left" Margin="10,217,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy20" Content="- I have one amiibo and used it once" HorizontalAlignment="Left" Margin="10,248,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy21" Content="- I play Sm4sh with a Wii U Pro Controller" HorizontalAlignment="Left" Margin="10,279,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy22" Content="- I was named after a French king" HorizontalAlignment="Left" Margin="10,310,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy23" Content="- I want a turtle" HorizontalAlignment="Left" Margin="13,341,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy24" Content="- And I wanna name it Segtendo" HorizontalAlignment="Left" Margin="10,372,0,0" VerticalAlignment="Top" Foreground="White"/>
+                            <Label x:Name="label5_Copy25" Content="- Segtendo will be a great turtle" HorizontalAlignment="Left" Margin="10,403,0,0" VerticalAlignment="Top" Foreground="White"/>
+                        </Grid>
+                    </GroupBox>
+                    <Button x:Name="button2" Content="Say Thanks !" Margin="313,10,338,477" Grid.Column="1" Click="thanks_button"/>
+                    <Button x:Name="button2_Copy" Content="Need help? Here's the Wiki" Margin="313,477,338,10" Grid.Column="1"/>
+                </Grid>
+            </TabItem>
+            <Button x:Name="button11" Content="Button" Height="100" Width="75"/>
+        </TabControl>
+    </Grid>
+</Window>
