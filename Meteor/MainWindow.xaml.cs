@@ -29,11 +29,13 @@ namespace Meteor
         int workspace;
 
         //Selected
-        String selected_char_name;
+        String selected_char_name ="";
         int selected_char_id = -1;
 
         int selected_skin_id = -1;
         int selected_slot = -1;
+
+        int selected_workspace = -1;
         #endregion
 
         #region Constructor
@@ -58,10 +60,10 @@ namespace Meteor
             retreive_config();
             Console.Text = "";
             Write_Console("Welcome to Meteor !", 0);
-            
+
             #endregion
-
-
+            
+            
         }
         #endregion
 
@@ -77,6 +79,10 @@ namespace Meteor
                 lbi.Content = s;
                 CharacterListBox.Items.Add(lbi);
             }
+
+            reload_workspaces_list();
+
+
         }
         private void retreive_config()
         {
@@ -115,6 +121,10 @@ namespace Meteor
             {
                 case "Skins":
                     TabControl_Sections.SelectedItem = TabControl_Sections.Items[0];
+                    if(selected_char_name != "")
+                    {
+                        reload_skins(selected_char_name);
+                    }
                     break;
                 case "Stages":
                     TabControl_Sections.SelectedItem = TabControl_Sections.Items[1];
@@ -124,9 +134,11 @@ namespace Meteor
                     break;
                 case "FileBank":
                     TabControl_Sections.SelectedItem = TabControl_Sections.Items[3];
+                    load_skin_bank();
                     break;
                 case "Workspace":
                     TabControl_Sections.SelectedItem = TabControl_Sections.Items[4];
+                    load_workspace_stats();
                     break;
                 case "Configuration":
                     TabControl_Sections.SelectedItem = TabControl_Sections.Items[5];
@@ -137,26 +149,20 @@ namespace Meteor
             }
         }
 
+
         #region Skin Section
         private void character_selected(object sender, SelectionChangedEventArgs e)
         {
-            Skinslistbox.Items.Clear();
+            
             ListBoxItem li = (ListBoxItem)CharacterListBox.SelectedItem;
-            if (li != null && Skinslistbox.Items.Count == 0)
+            if (li != null)
             {
                 selected_char_name = li.Content.ToString();
                 Write_Console("Selected char name " + selected_char_name, 3);
                 selected_char_id = db.get_character_id(selected_char_name);
                 Write_Console("Selected char id " + selected_char_id, 3);
 
-                ArrayList skins = db.get_character_skins(selected_char_name);
-
-                foreach (String s in skins)
-                {
-                    ListBoxItem lbi = new ListBoxItem();
-                    lbi.Content = s;
-                    Skinslistbox.Items.Add(lbi);
-                }
+                reload_skins(selected_char_name);
             }
 
 
@@ -170,17 +176,51 @@ namespace Meteor
             Write_Console("Selected skin id " + selected_skin_id, 3);
             ListBoxItem li = (ListBoxItem)CharacterListBox.SelectedItem;
 
+            int gb_uid = db.get_skin_gb_uid(selected_skin_id);
+
             if (selected_slot > 0)
             {
-                String[] infos = db.get_skin_info(selected_slot, li.Content.ToString());
+                //Loading info
+                String[] infos = db.get_skin_info(selected_skin_id);
                 skins_skin_name.Text = infos[0];
                 skins_author.Text = infos[1];
                 skins_slot.Text = selected_slot.ToString();
+
+                //Checking locked skin
+                if (db.skin_locked(selected_slot, selected_char_id))
+                {
+                    skins_author.IsReadOnly = true;
+                    skins_skin_name.IsReadOnly = true;
+                    convert_button.Visibility = Visibility.Visible;
+                    author_button.Visibility = Visibility.Hidden;
+
+                }
+                else
+                {
+                    convert_button.Visibility = Visibility.Hidden;
+                    if (gb_uid > 0)
+                    {
+                        skins_skin_name.IsReadOnly = true;
+                        skins_author.IsReadOnly = true;
+                        author_button.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        skins_skin_name.IsReadOnly = false;
+                        skins_author.IsReadOnly = false;
+                        author_button.Visibility = Visibility.Hidden;
+                    }
+                }
+                
+               
+                
             }
         }
 
         private void add_skin(object sender, RoutedEventArgs e)
         {
+            db.add_skin("Custom Skin", "", "", "", this.selected_char_id, Skinslistbox.Items.Count + 1);
+            reload_skins(selected_char_name);
         }
 
         private void skin_name_save(object sender, KeyEventArgs e)
@@ -209,9 +249,238 @@ namespace Meteor
 
             }
         }
+
+        private void mod_link(object sender, RoutedEventArgs e)
+        {
+            int gb_id = db.get_skin_gb_id(selected_skin_id);
+            System.Diagnostics.Process.Start("http://gamebanana.com/skins/"+gb_id);
+        }
+
+        private void mod_author(object sender, RoutedEventArgs e)
+        {
+            int gb_uid = db.get_skin_gb_uid(selected_skin_id);
+            System.Diagnostics.Process.Start("http://gamebanana.com/members/" + gb_uid);
+        }
+
+        private void reload_skins(String selected_char_name)
+        {
+            ArrayList skins = db.get_character_skins(selected_char_name, db.get_property("workspace"));
+            Skinslistbox.Items.Clear();
+            foreach (String s in skins)
+            {
+                ListBoxItem lbi = new ListBoxItem();
+                lbi.Content = s;
+                ContextMenu cm = new ContextMenu();
+                MenuItem m1 = new MenuItem(); m1.Header = "Remove skin from workspace";m1.Click += (s1, e) => { delete_skin(); };
+                cm.Items.Add(m1);
+                lbi.ContextMenu = cm;
+                
+                Skinslistbox.Items.Add(lbi);
+            }
+        }
+
+        private void delete_skin()
+        {
+            if (!db.skin_locked(selected_slot, selected_char_id))
+            {
+                db.remove_skin(selected_slot, selected_char_id, db.get_property("workspace"));
+                reload_skins(selected_char_name);
+                Write_Console("Skin removed from the workspace", 0);
+            }else
+            {
+                Write_Console("Sorry, you cannot remove default skins!", 1);
+            }
+            
+        }
+        #endregion
+
+        #region Workspace Section
+        private void add_workspace(object sender, RoutedEventArgs e)
+        {
+            if(workspace_listbox.Items.Count < 9)
+            {
+                long id = db.add_workspace("New Workspace", workspace_listbox.Items.Count+1);
+                db.add_default_skins(id);
+                reload_workspaces_list();
+
+                Write_Console("Added a new workspace", 0);
+            }else
+            {
+                Write_Console("You cannot have more than 9 workspaces", 1);
+            }
+            
+        }
+
+        private void set_workspace_name(object sender, RoutedEventArgs e)
+        {
+            String name = workspace_name_textbox.Text;
+            int slot = workspace_listbox.SelectedIndex +1;
+            db.set_workspace_name(name, slot);
+
+            ListBoxItem lbi = new ListBoxItem();
+            lbi = (ListBoxItem)workspace_listbox.SelectedItem;
+            lbi.Content = name;
+
+            reload_workspaces_list();
+
+            Write_Console("Changed workspace name to " + name, 0);
+        }
+
+        private void set_active_workspace(object sender, RoutedEventArgs e)
+        {
+            
+            db.set_property_value(db.get_workspace_id(workspace_listbox.SelectedIndex + 1).ToString(),"workspace");
+            workspace_set_active.Visibility = Visibility.Hidden;
+            Write_Console("Changed selected workspace", 0);
+
+            
+        }
+
+        private void workspace_selected(object sender, SelectionChangedEventArgs e)
+        {
+            ListBoxItem li = (ListBoxItem)workspace_listbox.SelectedItem;
+            if(li != null)
+            {
+                workspace_name_textbox.Text = li.Content.ToString();
+            }
+
+            if (db.workspace_default(workspace_listbox.SelectedIndex + 1))
+            {
+                workspace_save_name.IsEnabled = false;
+                workspace_clear.IsEnabled = false;
+                workspace_name_textbox.IsEnabled = false;
+                workspace_set_active.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                workspace_save_name.IsEnabled = true;
+                workspace_clear.IsEnabled = true;
+                workspace_name_textbox.IsEnabled = true;
+
+                if (db.get_property("workspace") == db.get_workspace_id(workspace_listbox.SelectedIndex + 1).ToString())
+                {
+                    workspace_set_active.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    workspace_set_active.Visibility = Visibility.Visible;
+                }
+
+            }
+
+           
+
+            load_workspace_stats();
+
+        }
+
+        private void reload_workspaces_list()
+        {
+            workspace_listbox.Items.Clear();
+            ArrayList workspaces = db.get_workspaces();
+            foreach (String s in workspaces)
+            {
+                ListBoxItem lbi = new ListBoxItem();
+                lbi.Content = s;
+                workspace_listbox.Items.Add(lbi);
+            }
+
+        }
+
+        private void load_workspace_stats()
+        {
+            int[] stats = db.get_workspace_stats(workspace_listbox.SelectedIndex + 1);
+            skin_count_text.Content = stats[0].ToString();
+        }
+
+        private void add_default_skins()
+        {
+            db.add_default_skins(workspace_listbox.SelectedIndex+1);
+        }
+
+        private void workspace_clear_Click(object sender, RoutedEventArgs e)
+        {
+            int slot = workspace_listbox.SelectedIndex + 1;
+            int id = db.get_workspace_id(slot);
+
+            db.clear_workspace(id);
+
+            db.add_default_skins(Convert.ToInt64(id));
+
+            load_workspace_stats();
+
+            Write_Console("Workspace cleared", 0);
+
+        }
         #endregion
 
         #region Configuration
+
+        private void combo_region_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int region = combo_region.SelectedIndex;
+            db.set_property_value(region.ToString(), "region");
+            switch (region)
+            {
+                case 0:
+                    Write_Console("Region changed to Europe", 0);
+                    break;
+                case 1:
+                    Write_Console("Region changed to United States", 0);
+                    break;
+                case 2:
+                    Write_Console("Region changed to Japan", 0);
+                    break;
+            }
+            
+        }
+
+        private void combo_language_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int language = combo_language.SelectedIndex;
+            db.set_property_value(language.ToString(), "language");
+            switch (language)
+            {
+                case 0:
+                    Write_Console("Language changed to English", 0);
+                    break;
+                case 1:
+                    Write_Console("Language changed to French", 0);
+                    break;
+                case 2:
+                    Write_Console("Language changed to Spanish", 0);
+                    break;
+                case 3:
+                    Write_Console("Language changed to German", 0);
+                    break;
+                case 4:
+                    Write_Console("Language changed to Italian", 0);
+                    break;
+                case 5:
+                    Write_Console("Language changed to Dutch", 0);
+                    break;
+                case 6:
+                    Write_Console("Language changed to Portugese", 0);
+                    break;
+                case 7:
+                    Write_Console("Language changed to Japanese", 0);
+                    break;
+            }
+        }
+
+        private void config_sortby_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int order = config_sortby.SelectedIndex;
+            db.set_property_value(order.ToString(), "sort_order"); 
+            if(order == 0)
+            {
+                Write_Console("Sort Order changed to Alphabetical", 0);
+            }else
+            {
+                Write_Console("Sort Order changed to Game Order", 0);
+            }
+            
+        }
 
         private void gb_uid_save(object sender, KeyEventArgs e)
         {
@@ -297,12 +566,28 @@ namespace Meteor
         }
         #endregion
 
+        #region Filebank
+        public void load_skin_bank()
+        {
+            filebank_skins_datagrid.ItemsSource = db.get_custom_skins().Tables[0].DefaultView;
+        }
+        #endregion
+
         #region About Section
         //Answer to the thanks button
         private void thanks_button(object sender, RoutedEventArgs e)
         {
             Write_Console("You're Welcome !", 0);
         }
+
+        private void goto_wiki(object sender,RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/Mowjoh/Meteor/wiki");
+
+        }
+
+     
+
         #endregion
         #endregion
 
@@ -341,6 +626,15 @@ namespace Meteor
             }
 
         }
+
+
+
+
+
+
+
+
+
 
 
 
