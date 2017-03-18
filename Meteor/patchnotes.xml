@@ -1,0 +1,18 @@
+<package version="0.7.0.4">
+  <patchnote version="0.7.0.4">
+    <patch>Control blocks</patch>
+  </patchnote>
+  <patchnote version="0.7.0.3">
+    <patch>workspace bufixes</patch>
+  </patchnote>
+  <patchnote version="0.7.0.2">
+    <patch>Added workspace skin sync</patch>
+  </patchnote>
+  <patchnote version="0.7.0.1">
+    <patch>Added active workspace label</patch>
+    <patch>Changed workspace behavior / hidden default workspace</patch>
+  </patchnote>
+  <patchnote version="0.7.0.0">
+    <patch>Basically almost complete Meteor (first release)</patch>
+  </patchnote>
+</package>

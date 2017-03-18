@@ -1,0 +1,5 @@
+<package version="0.5.0.0">
+  <patchnote version="0.5.0.0">
+    <patch>Meteor's installer version is live!</patch>
+  </patchnote>
+</package>
