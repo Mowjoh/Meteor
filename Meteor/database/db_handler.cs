@@ -37,7 +37,7 @@ namespace Meteor.database
             switch (mode)
             {
                 case 1:
-                    sql = "select name from characters";
+                    sql = "select name from characters order by id";
                     break;
                 case 0:
                     sql = "select name from characters order by name asc";
@@ -878,7 +878,7 @@ namespace Meteor.database
 
         internal void delete_skin(int skin_id)
         {
-            String sql = "delete from skins where id = @skin_id";
+            String sql = "delete from skins where id = @id";
             SQLiteCommand command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("id", skin_id);
             command.ExecuteNonQuery();

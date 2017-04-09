@@ -429,7 +429,7 @@ namespace Meteor
                 case "FileBank":
                     TabControl_Sections.SelectedItem = TabControl_Sections.Items[3];
                     Write_Console("Section changed to Filebank", 3);
-
+                    filebank_reload_skins();
                     break;
                 case "Workspace":
                     TabControl_Sections.SelectedItem = TabControl_Sections.Items[4];

@@ -1,4 +1,7 @@
-<package version="0.7.3.0">
+<package version="0.7.4.0">
+  <patchnote version="0.7.4.0">
+    <patch>Corrected Tooltips</patch>
+  </patchnote>
   <patchnote version="0.7.3.0">
     <patch>Resized interface for 1366*768 screens</patch>
   </patchnote>

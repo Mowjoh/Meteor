@@ -93,7 +93,7 @@
             <RowDefinition Height="115*"/>
             <RowDefinition Height="66*"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="Section_List" HorizontalAlignment="Left" Height="393" VerticalAlignment="Top" Width="157" Background="{x:Null}" BorderBrush="{x:Null}" Grid.ColumnSpan="2" SelectionChanged="section_change" ToolTip="Select a section" Margin="0,10,0,0">
+        <ListBox x:Name="Section_List" HorizontalAlignment="Left" Height="393" VerticalAlignment="Top" Width="157" Background="{x:Null}" BorderBrush="{x:Null}" Grid.ColumnSpan="2" SelectionChanged="section_change" Margin="0,10,0,0">
             <ListBoxItem Content="Skins" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White"/>
             <Separator/>
             <ListBoxItem Content="Stages" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White" Margin="0,10"/>
@@ -197,7 +197,7 @@
                                 </Separator.RenderTransform>
                             </Separator>
                             <ListBox x:Name="skin_modelbox" HorizontalAlignment="Left" Height="121" Margin="10,31,0,0" VerticalAlignment="Top" Width="186" Foreground="White" BorderBrush="{x:Null}" Background="{x:Null}" AllowDrop="True" DragEnter="skin_modelbox_DragEnter" Drop="skin_modelbox_Drop" Grid.ColumnSpan="3" ToolTip="Drop your cXX or [name]/cXX here !"/>
-                            <ListBox x:Name="skin_cspbox" HorizontalAlignment="Left" Height="121" Margin="11,31,0,0" VerticalAlignment="Top" Width="186" Foreground="White" BorderBrush="{x:Null}" Background="{x:Null}" Grid.Column="3" DragEnter="skin_cspbox_DragEnter" Drop="skin_cspbox_Drop" AllowDrop="True" ToolTip="Drop your csps there"/>
+                            <ListBox x:Name="skin_cspbox" HorizontalAlignment="Left" Height="121" Margin="11,31,0,0" VerticalAlignment="Top" Width="186" Foreground="White" BorderBrush="{x:Null}" Background="{x:Null}" Grid.Column="3" DragEnter="skin_cspbox_DragEnter" Drop="skin_cspbox_Drop" AllowDrop="True" ToolTip="Drop your csps or a folder containing them here"/>
                         </Grid>
                     </GroupBox>
                     <Button x:Name="add_skin_button" Content="Add Skin Slot" HorizontalAlignment="Left" Margin="190,450,0,-8" VerticalAlignment="Top" Width="172" Click="add_skin" ToolTip="Press this button to add a new skin slot !"/>
@@ -316,14 +316,14 @@
                     <GroupBox x:Name="workspace_information" Grid.Column="1" Header="Information" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White" Height="130" Width="291">
                         <Grid>
                             <Label x:Name="label1_Copy" Content="Workspace name :" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
-                            <TextBox x:Name="workspace_name_textbox" HorizontalAlignment="Left" Height="23" Margin="10,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="259" Text="Default Workspace"/>
-                            <Button x:Name="workspace_set_active" Content="Set Active Workspace" HorizontalAlignment="Left" Margin="10,81,0,0" VerticalAlignment="Top" Width="259" Click="set_active_workspace"/>
+                            <TextBox x:Name="workspace_name_textbox" HorizontalAlignment="Left" Height="23" Margin="10,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="259" Text="Default Workspace" ToolTip="Change the workspace name here. Press Enter to save the changes"/>
+                            <Button x:Name="workspace_set_active" Content="Set Active Workspace" HorizontalAlignment="Left" Margin="10,81,0,0" VerticalAlignment="Top" Width="259" Click="set_active_workspace" ToolTip="This sets the selected workspace as active. The content tabs will show it's content. This also redirects S4E towards this folder."/>
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="workspace_s4e" Grid.Column="1" Header="Sm4shExplorer" HorizontalAlignment="Left" Margin="10,145,0,0" VerticalAlignment="Top" Foreground="White" Height="126" Grid.RowSpan="2" Width="291">
                         <Grid>
-                            <Button x:Name="workspace_build" Content="Build Workspace" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="259" Click="build_workspace" IsEnabled="False"/>
-                            <Button x:Name="launch_s4e_button" Content="Launch Sm4sh Explorer" HorizontalAlignment="Left" Margin="10,74,0,0" VerticalAlignment="Top" Width="259" Click="launch_s4e" IsEnabled="False"/>
+                            <Button x:Name="workspace_build" Content="Build Workspace" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="259" Click="build_workspace" IsEnabled="False" ToolTip="This builds the modpack for S4E. It puts the content from the filebank into the workspace at the right place"/>
+                            <Button x:Name="launch_s4e_button" Content="Launch Sm4sh Explorer" HorizontalAlignment="Left" Margin="10,74,0,0" VerticalAlignment="Top" Width="259" Click="launch_s4e" IsEnabled="False" ToolTip="This button launches S4E"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="workspace_actions" Grid.Column="1" Header="Actions" HorizontalAlignment="Left" Margin="10,21,0,0" VerticalAlignment="Top" Foreground="White" Height="111" Width="291" Grid.Row="1">
@@ -331,8 +331,8 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="workspace_clear" Content="Clear Workspace" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="259" Click="workspace_clear_Click"/>
-                            <Button x:Name="delete_workspace" Content="Delete Workspace" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="259" Click="workspace_delete"/>
+                            <Button x:Name="workspace_clear" Content="Clear Workspace" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="259" Click="workspace_clear_Click" ToolTip="This will remove all the content from the workspace and reset it to a default state. It won't delete the mods that it contains"/>
+                            <Button x:Name="delete_workspace" Content="Delete Workspace" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="259" Click="workspace_delete" ToolTip="This will delete the workspace. Everything you put in there will be deleted as well."/>
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="workspace_content" Grid.Column="2" Header="Content" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White" Height="480" Width="291" Grid.RowSpan="2">
@@ -420,18 +420,18 @@
                             <Button x:Name="button" Content="Profile Page" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="204"/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox x:Name="workspace_select" Header="Region Select" HorizontalAlignment="Left" Height="68" Margin="0,83,0,0" VerticalAlignment="Top" Width="824" Foreground="White">
+                    <GroupBox x:Name="workspace_select" Header="Sm4sh Explorer Executable Location" HorizontalAlignment="Left" Height="68" Margin="0,83,0,0" VerticalAlignment="Top" Width="824" Foreground="White">
                         <Grid x:Name="Region_grid1">
                             <Label x:Name="label_region1" Content="Sm4sh Explorer executable location" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
-                            <TextBox x:Name="config_s4e_path" HorizontalAlignment="Left" Height="23" Margin="246,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="408" KeyDown="config_s4e_path_KeyDown" ToolTip="Select the workspace folder inside your Sm4shExplorer installation. Press enter when you paste the path"/>
-                            <Button x:Name="config_s4e_path_save" Content="Pick File" HorizontalAlignment="Left" Margin="676,11,0,0" VerticalAlignment="Top" Width="126" Click="config_s4e_path_save_Click" ToolTip="Press this button to pick Sm4shExplorer's workspace folder"/>
+                            <TextBox x:Name="config_s4e_path" HorizontalAlignment="Left" Height="23" Margin="246,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="408" KeyDown="config_s4e_path_KeyDown" ToolTip="Select the workspace folder inside your Sm4shExplorer installation. Press enter to save when you paste the path"/>
+                            <Button x:Name="config_s4e_path_save" Content="Pick File" HorizontalAlignment="Left" Margin="676,11,0,0" VerticalAlignment="Top" Width="126" Click="config_s4e_path_save_Click" ToolTip="Press this button to pick Sm4shExplorer's .exe file"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="ui_character_db" Header="ui character db.bin" HorizontalAlignment="Left" Height="125" Margin="594,156,0,0" VerticalAlignment="Top" Width="230" Foreground="White">
                         <Grid Margin="0,0,-2,0">
                             <Label x:Name="ui_char_status" Content="Status : not present" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"/>
-                            <Button x:Name="button1" Content="Pick File" HorizontalAlignment="Left" Margin="10,73,0,0" VerticalAlignment="Top" Width="144" Click="pick_ui"/>
-                            <Button x:Name="button1_Copy5" Content="Search S4E's workspace" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="144" Click="search_ui"/>
+                            <Button x:Name="button1" Content="Pick File" HorizontalAlignment="Left" Margin="10,73,0,0" VerticalAlignment="Top" Width="144" Click="pick_ui" ToolTip="Pick the file ui_character_db yourself"/>
+                            <Button x:Name="button1_Copy5" Content="Search S4E's workspace" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="144" Click="search_ui" ToolTip="Let Meteor search for the file in the specified S4E folder"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
