@@ -1,4 +1,13 @@
-<package version="0.7.1.0">
+<package version="0.7.3.0">
+  <patchnote version="0.7.3.0">
+    <patch>Resized interface for 1366*768 screens</patch>
+  </patchnote>
+  <patchnote version="0.7.2.0">
+    <patch>Better Dev Logs</patch>
+  </patchnote>
+  <patchnote version="0.7.1.1">
+    <patch>bug hotfix</patch>
+  </patchnote>
   <patchnote version="0.7.1.0">
     <patch>Safe SQL queries</patch>
   </patchnote>

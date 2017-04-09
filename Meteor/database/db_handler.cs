@@ -648,6 +648,7 @@ namespace Meteor.database
             String sql = "insert into skins (name,author,models,csps,character_id,locked,gb_uid) values(@name,@author,@models,@csps,@character_id,0,0)";
             SQLiteCommand command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("author", author);
             command.Parameters.AddWithValue("models", models);
             command.Parameters.AddWithValue("csps", csps);
             command.Parameters.AddWithValue("character_id", character_id);
