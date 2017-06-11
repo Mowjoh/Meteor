@@ -61,11 +61,29 @@ namespace Meteor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;package version=&quot;0.5.0.0&quot;&gt;
-        ///  &lt;patchnote version=&quot;0.5.0.0&quot;&gt;
-        ///    &lt;patch&gt;Meteor&apos;s installer version is live!&lt;/patch&gt;
+        ///   Looks up a localized string similar to update skins set name = &apos;Pink&apos; where id = 416.
+        /// </summary>
+        internal static string command {
+            get {
+                return ResourceManager.GetString("command", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;package version=&quot;0.8.0.4&quot;&gt;
+        ///  &lt;patchnote version=&quot;0.8.0.4&quot;&gt;
+        ///    &lt;patch&gt;Filebank has an All Characters option&lt;/patch&gt;
+        ///    &lt;patch&gt;All Characters is selected upon launch&lt;/patch&gt;
+        ///    &lt;patch&gt;Pressing del will serve as the same function as the delete permanently button&lt;/patch&gt;
         ///  &lt;/patchnote&gt;
-        ///&lt;/package&gt;.
+        ///  &lt;patchnote version=&quot;0.8.0.3&quot;&gt;
+        ///    &lt;patch&gt;Minor interface fix&lt;/patch&gt;
+        ///  &lt;/patchnote&gt;
+        ///  &lt;patchnote version=&quot;0.8.0.2&quot;&gt;
+        ///    &lt;patch&gt;Safer Downloads&lt;/patch&gt;
+        ///    &lt;patch&gt;Download Fix Issue&lt;/patch&gt;
+        ///  &lt;/patchnote&gt;
+        ///  &lt;pat [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string patchnotes {
             get {
@@ -75,7 +93,8 @@ namespace Meteor.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;package&gt;
-        ///  &lt;file version=&quot;0_6_4_3&quot;&gt;Meteor Skin Library.exe&lt;/file&gt;
+        ///  &lt;file version=&quot;0_8_0_5&quot;&gt;Meteor.exe&lt;/file&gt;
+        ///  &lt;file version=&quot;0_8_0_5&quot;&gt;command.txt&lt;/file&gt;
         ///&lt;/package&gt;.
         /// </summary>
         internal static string updatefiles {

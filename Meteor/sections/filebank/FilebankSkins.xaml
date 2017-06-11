@@ -1,0 +1,88 @@
+﻿<Page x:Name="FilebankSkinsPage" x:Class="Meteor.sections.filebank.FilebankSkins"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Meteor.sections.filebank"
+      mc:Ignorable="d"
+      Title="FilebankSkins" MinWidth="650" MinHeight="450">
+
+    <Grid x:Name="FilebankSkinsGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="349*"/>
+            <ColumnDefinition Width="301*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="51"/>
+            <RowDefinition Height="226*"/>
+            <RowDefinition Height="253*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="CharacterSelectGrid" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="173"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label x:Name="CharacterLabel" Content="Choose a Character"
+                HorizontalAlignment="Left" VerticalAlignment="Center" Background="{x:Null}"
+                Foreground="White" FontStyle="Italic" FontSize="16" Margin="10,0,0,0" VerticalContentAlignment="Center" />
+            <ComboBox x:Name="CharacterListBox" HorizontalAlignment="Left"
+                Margin="20,0,0,0" VerticalAlignment="Center" Width="200"
+                ToolTip="Filter the mods by character"
+                SelectionChanged="CharacterSelected" VerticalContentAlignment="Center" Grid.Column="1" Height="30" />
+        </Grid>
+        <GroupBox x:Name="SkinsGroupBox" Header="Skins"
+            Margin="5,10,5,5" KeyDown="FilebankDeleteKey" Grid.Row="1" Grid.RowSpan="2" Foreground="White">
+            <Grid x:Name="SkinsGrid">
+                <ListBox x:Name="SkinsListBox" Background="{x:Null}"
+                    BorderBrush="{x:Null}" Foreground="White"
+                    SelectionChanged="SkinSelected" ToolTip="Select a skin !" />
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="AttributesGroupBox" Header="Attributes" Margin="5" Grid.Row="1" Grid.Column="1" Foreground="White">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="91*" />
+                    <ColumnDefinition Width="233*" />
+                </Grid.ColumnDefinitions>
+                <Label x:Name="AuthorLabel" Content="Author" HorizontalAlignment="Left"
+                    Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="47" />
+                <Label x:Name="ModelsLabel" Content="Models" HorizontalAlignment="Left"
+                    Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="49" />
+                <Label x:Name="CspsLabel" Content="Csps" HorizontalAlignment="Left"
+                    Margin="10,72,0,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="35" />
+                <Label x:Name="SkinIdLabel" Content="Skin ID" HorizontalAlignment="Left"
+                    Margin="10,103,0,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="47" />
+                <Label x:Name="AuthorValueLabel" Content=""
+                    Margin="10,10,10,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Grid.Column="1" Height="26" />
+                <Label x:Name="ModelsValueLabel" Content=""
+                    Margin="10,41,10,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Grid.Column="1" Height="26" />
+                <Label x:Name="CspsValueLabel" Content=""
+                    Margin="10,72,10,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Grid.Column="1" Height="26" />
+                <Label x:Name="SkinIdValueLabel" Content=""
+                    Margin="10,103,10,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Grid.Column="1" Height="26" />
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="ActionGroupBox" Header="Actions"
+            Margin="5" Grid.Row="2" Grid.Column="1" Foreground="White">
+            <Grid>
+                <Button x:Name="filebank_insert_skin" Content="Insert into current workspace" Margin="10,10,10,0" VerticalAlignment="Top" Click="InsertSkin"
+                    ToolTip="Insert this skin in the active workspace" />
+                <Button x:Name="filebank_delete_skin" Content="Delete skin permanently" Margin="10,124,10,0" VerticalAlignment="Top" Click="DeleteSkin"
+                    ToolTip="Delete this skin from Meteor" />
+                <Button x:Name="filebank_preview_skin" Content="Preview in Forge" Margin="10,95,10,0" VerticalAlignment="Top" Click="PreviewForge"
+                    ToolTip="Open the model in Forge, see how it looks!" />
+                <Button x:Name="filebank_pack_skin" Content="Add Skin to Packer" Margin="10,40,10,0" VerticalAlignment="Top" Click="pack_skin"
+                    ToolTip="Insert this skin in the active workspace" />
+            </Grid>
+        </GroupBox>
+
+    </Grid>
+</Page>

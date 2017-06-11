@@ -1,49 +1,46 @@
-﻿using Meteor.content;
-using Meteor.database;
-using System;
+﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+using Meteor.database;
 
 namespace Meteor.content
 {
-    class builder
+    public class builder
     {
-        #region Class Variables
+        //Setup variables
+        private int workspace_id;
+        private int region;
+        private int language;
 
-        int workspace_id;
-        int region;
-        int language;
+        //Region variables
+        private readonly string region_code;
+        private readonly string language_code;
+        private readonly string datafolder;
 
-        String region_code;
-        String language_code;
-        String datafolder;
+        //Handlers
+        private readonly db_handler db;
+        private readonly uichar_handler uichar;
 
-        db_handler db;
-        uichar_handler uichar;
+        //Paths
+        public string app_path = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName;
+        public string workspace_path;
 
-        public String app_path = new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName;
+        //Skin variables
+        private ArrayList skins = new ArrayList();
+        public long skin_bytes = 0;
 
-        public String workspace_path;
-
-
-        ArrayList skins = new ArrayList();
-        #endregion
-
-        #region Constructors
-        public builder(int workspace, int region, int language,db_handler db,uichar_handler uichar)
+        //Constructor
+        public builder(int workspace, int region, int language, db_handler db, uichar_handler uichar)
         {
-            this.workspace_id = workspace;
+            workspace_id = workspace;
             this.region = region;
             this.language = language;
             this.db = db;
 
             this.uichar = uichar;
 
-            this.workspace_path = app_path + "/workspaces/workspace_" + workspace_id;
+            workspace_path = app_path + "/workspaces/workspace_" + workspace_id;
 
             switch (region)
             {
@@ -86,232 +83,446 @@ namespace Meteor.content
                     break;
             }
             datafolder = "data(" + region_code + "_" + language_code + ")";
-
         }
-        #endregion
 
-        #region Get Content
-        public void get_skins()
+
+        //Builder code
+        public void build()
         {
-            skins = db.get_character_builder_skins_id(workspace_id);
+            build_skins();
+            
+            build_nameplates();
+            build_ui_char();
         }
-        #endregion
 
-        #region Build content
-
-        #region Skins
-        public void build_skins()
+        private void build_skins()
         {
+            skin_bytes = 0;
             get_skins();
-            foreach(int[] skin in skins)
+            foreach (int[] skin in skins)
             {
-                Skin current = new Skin(skin[1], skin[0], skin[2],this.workspace_id,db);
-                String modelpath = current.model_path;
-                String csppath = current.csp_path;
-                String[] models = db.get_skin_models(skin[0]);
-                String[] csps = db.get_skin_csps(skin[0]);
-                foreach(String model in models)
-                {
-                    if(model != "")
-                    {
-                        String source = modelpath + "/" + model;
-                        String modelslotstring = (skin[1] - 1).ToString().Length == 1 ? "0" + (skin[1] - 1).ToString() : (skin[1] - 1).ToString();
-                        String model_destination_name = model.Split('/')[1] == "cXX" ? model.Split('/')[0] + "/c" + modelslotstring : model.Split('/')[0] + "/l" + modelslotstring;
+                var current = new Skin(skin[1], skin[0], skin[2], workspace_id, db);
+                var modelpath = current.model_path;
+                var csppath = current.csp_path;
+                var models = db.get_skin_models(skin[0]);
+                var csps = db.get_skin_csps(skin[0]);
 
-                        String destination = app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/data/fighter/" + db.get_skin_modelfolder(skin[0]) + "/model/" + model_destination_name;
+                foreach (var model in models)
+                    if (model != "")
+                    {
+                        var source = modelpath + "/" + model;
+                        var modelslotstring = (skin[1] - 1).ToString().Length == 1
+                            ? "0" + (skin[1] - 1)
+                            : (skin[1] - 1).ToString();
+                        var model_destination_name = model.Split('/')[1] == "cXX"
+                            ? model.Split('/')[0] + "/c" + modelslotstring
+                            : model.Split('/')[0] + "/l" + modelslotstring;
+
+                        var destination = app_path + "/workspaces/workspace_" + workspace_id +
+                                          "/content/patch/data/fighter/" + db.get_skin_modelfolder(skin[0]) +
+                                          "/model/" + model_destination_name;
                         copy_folder(source, destination);
 
                         Console.Write("");
                     }
-                    
-                }
 
-                foreach(String csp in csps)
-                {
-                    if(csp != "")
+                foreach (var csp in csps)
+                    if (csp != "")
                     {
-                        String[] files = Directory.GetFiles(csppath, csp + "*", SearchOption.AllDirectories);
-                        String filepath = files[0];
-                        String filename = System.IO.Path.GetFileName(filepath);
-                        String source = csppath + "/" + filename;
-                        String cspslotstring = skin[1].ToString().Length == 1 ? "0" + skin[1].ToString() : skin[1].ToString();
-                        String data = db.get_character_dlc(skin[2]) ? datafolder : "data";
-                        String destination = "";
+                        var files = Directory.GetFiles(csppath, csp + "*", SearchOption.AllDirectories);
+                        var filepath = files[0];
+                        var filename = Path.GetFileName(filepath);
+                        var source = csppath + "/" + filename;
+                        var cspslotstring = skin[1].ToString().Length == 1 ? "0" + skin[1] : skin[1].ToString();
+                        var data = db.get_character_dlc(skin[2]) ? region == 1 ? "data" : datafolder : "data";
+                        var destination = "";
                         if (db.get_character_dlc(skin[2]))
                         {
-                            destination = app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" + data + "/ui/replace/append/chr/" + csp + "/" + filename.Substring(0, filename.Length - 6) + cspslotstring + ".nut";
-                            if (!Directory.Exists(app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" + data + "/ui/replace/append/chr/" + csp + "/"))
-                            {
-                                Directory.CreateDirectory(app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" + data + "/ui/replace/append/chr/" + csp + "/");
-                            }
+                            destination = app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" +
+                                          data + "/ui/replace/append/chr/" + csp + "/" +
+                                          filename.Substring(0, filename.Length - 6) + cspslotstring + ".nut";
+                            if (!Directory.Exists(app_path + "/workspaces/workspace_" + workspace_id +
+                                                  "/content/patch/" + data + "/ui/replace/append/chr/" + csp + "/"))
+                                Directory.CreateDirectory(app_path + "/workspaces/workspace_" + workspace_id +
+                                                          "/content/patch/" + data + "/ui/replace/append/chr/" + csp +
+                                                          "/");
                         }
                         else
                         {
-                            destination = app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" + data + "/ui/replace/chr/" + csp + "/" + filename.Substring(0, filename.Length - 6) + cspslotstring + ".nut";
-                            if (!Directory.Exists(app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" + data + "/ui/replace/chr/" + csp + "/"))
-                            {
-                                Directory.CreateDirectory(app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" + data + "/ui/replace/chr/" + csp + "/");
-                            }
+                            destination = app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" +
+                                          data + "/ui/replace/chr/" + csp + "/" +
+                                          filename.Substring(0, filename.Length - 6) + cspslotstring + ".nut";
+                            if (!Directory.Exists(app_path + "/workspaces/workspace_" + workspace_id +
+                                                  "/content/patch/" + data + "/ui/replace/chr/" + csp + "/"))
+                                Directory.CreateDirectory(app_path + "/workspaces/workspace_" + workspace_id +
+                                                          "/content/patch/" + data + "/ui/replace/chr/" + csp + "/");
                         }
 
                         File.Copy(source, destination, true);
+                        if (csp == "chr_13")
+                        {
+                            skin_bytes += new FileInfo(source).Length;
+                        }
+
                     }
-                    
-
-                    
-
-
-                }
-
             }
         }
 
-
-        #endregion
-
-        #region Config
-        public void build_ui_char()
+        private void build_ui_char()
         {
-            //If setting to rebuild
-            if (db.get_property("reload_ui") == "1")
+            //Reload ui_character_db
+            var characters = db.get_characters(0);
+            foreach (string character in characters)
             {
-                //Reload ui_character_db
-                ArrayList characters = db.get_characters(0);
-                foreach(String character in characters)
+                var id = db.get_character_id(character);
+                var ui_id = db.get_character_uichar_position(id);
+                var count = db.get_character_skin_count(id, workspace_id);
+                if (count >= 8)
                 {
-                    int id = db.get_character_id(character);
-                    int ui_id = db.get_character_uichar_position(id);
-                    int count = db.get_character_skins(character, workspace_id.ToString()).Count;
-
                     uichar.setFile(ui_id, 7, count);
                 }
+
             }
 
-            if(db.get_property("ui_char") == "1")
+
+            if (db.get_property("ui_char") == "1")
             {
                 //Copy over file
-                if (!Directory.Exists(app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" + datafolder + "/param/ui/"))
+                if (!Directory.Exists(app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" +
+                                      datafolder + "/param/ui/"))
+                    Directory.CreateDirectory(app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" +
+                                              datafolder + "/param/ui/");
+
+                try
                 {
-                    Directory.CreateDirectory(app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" + datafolder + "/param/ui/");
+                    var path = app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" + datafolder +
+                    "/param/ui/ui_character_db.bin";
+                    File.Copy(uichar.filepath, path, true);
                 }
-                File.Copy(uichar.filepath, app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" + datafolder + "/param/ui/ui_character_db.bin", true);
+                catch (Exception e)
+                {
+                    var mess = e.Message;
+                    var stack = e.StackTrace;
+                    var x = "";
+                }
+
             }
-            
-            
-        }
-        #endregion
-
-        #region Actions
-        public void build()
-        {
-            build_skins();
-            build_ui_char();
         }
 
-        public void copy_folder(String source, String destination)
+        private void build_nameplates()
         {
-            if (!Directory.Exists(destination))
+            int[] chara_track = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            int last_id = -1;
+            reset_nameplates();
+            foreach(int[] nameplate in db.get_custom_nameplates())
             {
-                Directory.CreateDirectory(destination);
-            }
+                int id = nameplate[0];
+                int char_id = nameplate[1];
+                int slot = nameplate[2];
+                int nameplate_slot = 0;
+                int ui_char_id = db.get_character_uichar_position(char_id);
+                String characterfolder = db.get_character_cspfolder(char_id);
+                int basecount = db.get_character_nameplate_count(char_id);
+                nameplate_slot = basecount + chara_track[char_id];
 
-            foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
-                Directory.CreateDirectory(dirPath.Replace(source, destination));
+                nameplate current_nameplate = new nameplate(id, char_id, workspace_id, db);
 
-            //Copy all the files & Replaces any files with the same name
-            foreach (string newPath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
-                File.Copy(newPath, newPath.Replace(source, destination), true);
-        }
-        #endregion
+                if(last_id != id)
+                {
+                    last_id = id;
+                    chara_track[char_id]++;
+                    nameplate_slot = basecount + chara_track[char_id];
 
-        #endregion
+                    String slot_text = nameplate_slot < 10 ? "0" + nameplate_slot.ToString() : nameplate_slot.ToString();
+                    String filename = new FileInfo(current_nameplate.full_path).Name;
 
-        public void s4e_workspace_clean(int mode)
-        {
-            if (mode == 0)
-            {
-                clean_workspace();
+                    var data = db.get_character_dlc(char_id) ? region == 1 ? "data" : datafolder : "data";
+
+                    var destination = "";
+                    if (db.get_character_dlc(char_id))
+                    {
+                        destination = app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" +
+                                      data + "/ui/replace/append/chr/chrn_11/" +
+                                      filename.Substring(0, filename.Length - 6) + slot_text + ".nut";
+                        if (!Directory.Exists(app_path + "/workspaces/workspace_" + workspace_id +
+                                              "/content/patch/" + data + "/ui/replace/append/chr/chrn_11/"))
+                            Directory.CreateDirectory(app_path + "/workspaces/workspace_" + workspace_id +
+                                                      "/content/patch/" + data + "/ui/replace/append/chr/chrn_11/");
+                    }
+                    else
+                    {
+                        destination = app_path + "/workspaces/workspace_" + workspace_id + "/content/patch/" +
+                                      data + "/ui/replace/chr/chrn_11/" +
+                                      filename.Substring(0, filename.Length - 6) + slot_text + ".nut";
+                        if (!Directory.Exists(app_path + "/workspaces/workspace_" + workspace_id +
+                                              "/content/patch/" + data + "/ui/replace/chr/chrn_11/"))
+                            Directory.CreateDirectory(app_path + "/workspaces/workspace_" + workspace_id +
+                                                      "/content/patch/" + data + "/ui/replace/chr/chrn_11/");
+                    }
+
+                    File.Copy(current_nameplate.full_path, destination,true);
+                }
+
+                int ui_char_slot = slot + 36;
+                if(slot != 0 && slot < 17)
+                {
+                    uichar.setFile(ui_char_id, ui_char_slot, nameplate_slot);
+                }
+                
+                
+
             }
         }
 
         public void clean_workspace()
         {
-            String workspace_modelpath = workspace_path + "/content/patch/data/fighter/";
-            String workspace_csppath = workspace_path + "/content/patch/data/ui/replace/chr/";
-            String workspace_dlc_csppath = workspace_path + "/content/patch/"+datafolder+"/ui/replace/append/chr/";
+            var workspace_modelpath = workspace_path + "/content/patch/data/fighter/";
+            var workspace_csppath = workspace_path + "/content/patch/data/ui/replace/chr/";
+            var workspace_dlc_csppath = workspace_path + "/content/patch/" + datafolder + "/ui/replace/append/chr/";
 
             //Cleaning fighter folders
             if (Directory.Exists(workspace_modelpath))
             {
-                String[] fighters = Directory.GetDirectories(workspace_modelpath);
-                foreach (String fighter in fighters)
+                var fighters = Directory.GetDirectories(workspace_modelpath);
+                foreach (var fighter in fighters)
                 {
-                    String fullpath = fighter + "/model/";
+                    var fullpath = fighter + "/model/";
                     if (Directory.Exists(fullpath))
                     {
-                        Directory.Delete(fullpath, true);
+                        try
+                        {
+                            Directory.Delete(fullpath, true);
+                        }
+                        catch
+                        {
+                            CheckFolderDeletion(fullpath);
+                        }
+
+
                         Directory.CreateDirectory(fullpath);
                     }
                 }
             }
-            
+
 
             if (Directory.Exists(workspace_csppath))
             {
                 //Cleaning csp folders
-                String[] cspfolders = Directory.GetDirectories(workspace_csppath);
+                var cspfolders = Directory.GetDirectories(workspace_csppath);
 
-                foreach (String cspfolder in cspfolders)
+                foreach (var cspfolder in cspfolders)
                 {
-                    String fullpath = cspfolder;
-                    String foldername = System.IO.Path.GetFileName(fullpath);
-                    if (foldername != "chrn_11" && foldername != "chr_10")
-                    {
+                    var fullpath = cspfolder;
+                    var foldername = Path.GetFileName(fullpath);
+                    if (foldername != "chr_10")
                         if (Directory.Exists(fullpath))
                         {
-                            Directory.Delete(fullpath, true);
+                            try
+                            {
+                                Directory.Delete(fullpath, true);
+                            }
+                            catch
+                            {
+                                CheckFolderDeletion(fullpath);
+                            }
+
                             Directory.CreateDirectory(fullpath);
                         }
-
-                    }
                 }
             }
-            
+
 
             if (Directory.Exists(workspace_dlc_csppath))
             {
                 //Cleaning csp folders
-                String[] dlccspfolders = Directory.GetDirectories(workspace_dlc_csppath);
-                foreach (String cspfolder in dlccspfolders)
+                var dlccspfolders = Directory.GetDirectories(workspace_dlc_csppath);
+                foreach (var cspfolder in dlccspfolders)
                 {
-                    String fullpath = cspfolder;
-                    String foldername = System.IO.Path.GetFileName(fullpath);
-                    if (foldername != "chrn_11" | foldername != "chr_10")
-                    {
+                    var fullpath = cspfolder;
+                    var foldername = Path.GetFileName(fullpath);
+                    if ((foldername != "chr_10"))
                         if (Directory.Exists(fullpath))
                         {
-                            Directory.Delete(fullpath, true);
+                            try
+                            {
+                                Directory.Delete(fullpath, true);
+                            }
+                            catch
+                            {
+                                CheckFolderDeletion(fullpath);
+                            }
                             Directory.CreateDirectory(fullpath);
                         }
-
-                    }
                 }
             }
-            
-
         }
 
-        public void s4e_export_workspace()
+        private void get_skins()
         {
-            String s4e_path = db.get_property("s4e_path") + "/content/patch/";
-            copy_folder(app_path + "/workspaces/workspace_" + workspace_id, s4e_path);
+            skins = db.get_character_builder_skins_id(workspace_id);
         }
 
+        
+        //Config functions
         public void set_workspace_id(int new_workspace_id)
         {
-            this.workspace_path = app_path + "/workspaces/workspace_" + new_workspace_id;
-            this.workspace_id = new_workspace_id;
+            workspace_path = app_path + "/workspaces/workspace_" + new_workspace_id;
+            workspace_id = new_workspace_id;
         }
 
+        //File management
+        private void copy_folder(string source, string destination)
+        {
+            if (!Directory.Exists(destination))
+                Directory.CreateDirectory(destination);
+
+            foreach (var dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
+                Directory.CreateDirectory(dirPath.Replace(source, destination));
+
+            //Copy all the files & Replaces any files with the same name
+            foreach (var newPath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
+                File.Copy(newPath, newPath.Replace(source, destination), true);
+        }
+
+        private void CheckFolderDeletion(String path)
+        {
+            if (Directory.Exists(path))
+            {
+                setAttributesNormal(new DirectoryInfo(path));
+                try
+                {
+                    Directory.Delete(path, true);
+                }
+                catch
+                {
+                }
+
+            }
+            else
+            {
+
+            }
+        }
+
+        private void setAttributesNormal(DirectoryInfo dir)
+        {
+            foreach (var subDir in dir.GetDirectories())
+            {
+                setAttributesNormal(subDir);
+                subDir.Attributes = FileAttributes.Normal;
+            }
+            foreach (var file in dir.GetFiles())
+            {
+                file.Attributes = FileAttributes.Normal;
+            }
+        }
+
+        //Nameplates ui_char
+        private void reset_nameplates()
+        {
+            int base_count = 36;
+            for (int char_id =1; char_id < 56; char_id++)
+            {
+                int ui_char_id = db.get_character_uichar_position(char_id);
+                switch (char_id)
+                {
+                    default:
+                        for(int i= 1;i < 17; i++)
+                        {
+                            int count = base_count + i;
+                            if(i < 9)
+                            {
+                                uichar.setFile(ui_char_id, count, 1);
+                            }
+                            else
+                            {
+                                uichar.setFile(ui_char_id, count, 0);
+                            }
+                        }
+                        break;
+                    case 7:
+                        uichar.setFile(ui_char_id, 37, 1);
+                        uichar.setFile(ui_char_id, 38, 2);
+                        uichar.setFile(ui_char_id, 39, 3);
+                        uichar.setFile(ui_char_id, 40, 4);
+                        uichar.setFile(ui_char_id, 41, 5);
+                        uichar.setFile(ui_char_id, 42, 6);
+                        uichar.setFile(ui_char_id, 43, 7);
+                        uichar.setFile(ui_char_id, 44, 8);
+                        break;
+                    case 12:
+                        for (int i = 1; i < 17; i++)
+                        {
+                            int count = base_count + i;
+                            uichar.setFile(ui_char_id, count, 1);
+                        }
+                        break;
+                    case 39:
+                        for (int i = 1; i < 17; i++)
+                        {
+                            int count = base_count + i;
+                            if (i < 9)
+                            {
+                                if (i % 2 != 0)
+                                {
+                                    uichar.setFile(ui_char_id, count, 1);
+                                }
+                                else
+                                {
+                                    uichar.setFile(ui_char_id, count, 2);
+                                }
+                            }
+                            else
+                            {
+                                uichar.setFile(ui_char_id, count, 0);
+                            }
+                        }
+                        break;
+                    case 40:
+                        for (int i = 1; i < 17; i++)
+                        {
+                            int count = base_count + i;
+                            if (i < 9)
+                            {
+                                
+                                if(i < 5)
+                                {
+                                    uichar.setFile(ui_char_id, count, 1);
+                                }
+                                else
+                                {
+                                    uichar.setFile(ui_char_id, count, 5);
+                                }
+                            }
+                            else
+                            {
+                                uichar.setFile(ui_char_id, count, 0);
+                            }
+                        }
+                        break;
+                    case 41:
+                        for (int i = 1; i < 17; i++)
+                        {
+                            int count = base_count + i;
+                            if (i < 9)
+                            {
+                                if (i % 2 != 0)
+                                {
+                                    uichar.setFile(ui_char_id, count, 1);
+                                }
+                                else
+                                {
+                                    uichar.setFile(ui_char_id, count, 2);
+                                }
+                            }
+                            else
+                            {
+                                uichar.setFile(ui_char_id, count, 0);
+                            }
+                        }
+                        break;
+                }
+            }
+        }
     }
 }

@@ -1,19 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml;
 using System.IO;
 using System.Net;
@@ -24,7 +12,7 @@ namespace Meteor_Updater
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow 
     {
 
         #region Variables
@@ -34,7 +22,8 @@ namespace Meteor_Updater
         String last_version;
         ArrayList failed_files = new ArrayList();
         ArrayList success_files = new ArrayList();
-        public String app_path = new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName;
+        private String app_path = new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory.FullName;
+        ArrayList messages = new ArrayList();
 
         private readonly BackgroundWorker worker = new BackgroundWorker();
         
@@ -48,7 +37,7 @@ namespace Meteor_Updater
             write("wolcoom to the updooter");
 
             //Getting last version info
-            this.last_version = get_lastest_ver();
+            last_version = get_lastest_ver();
 
             //Write patch info
             write_patch();
@@ -68,7 +57,7 @@ namespace Meteor_Updater
             console.Text += s + "\n";
         }
         //Writes the patch contents
-        public void write_patch()
+        private void write_patch()
         {
             //Getting remote info
             String remote_path = "http://mowjoh.com/meteor/Application Files/patchnotes.xml";
@@ -83,7 +72,6 @@ namespace Meteor_Updater
             write("This will update to version " + version + "\n");
 
 
-            int i = 1;
 
             foreach (XmlElement patch in patches)
             {
@@ -144,6 +132,11 @@ namespace Meteor_Updater
             }else
             {
                 status_text.Content = "Update failed, please retry";
+                console.Text = "";
+                foreach(String s in messages)
+                {
+                    write(s);
+                }
             }
 
             
@@ -257,11 +250,13 @@ namespace Meteor_Updater
                         try
                         {
                             webClient.DownloadFile(new Uri(downloadpath), app_path + "/" + filepath);
-                            this.success_files.Add(filepath);
+                            success_files.Add(filepath);
                         }
-                        catch
+                        catch(Exception e)
                         {
-                            this.failed_files.Add(filepath);
+                            messages.Add(e.Message);
+                            messages.Add(e.StackTrace);
+                            failed_files.Add(filepath);
                         }
 
                     }
@@ -274,7 +269,7 @@ namespace Meteor_Updater
         //Saves the new manifest
         private void replace_manifest()
         {
-            String remote_path = "http://mowjoh.com/meteor/Application Files/Meteor_" + this.last_version + "/Meteor.exe.manifest";
+            String remote_path = "http://mowjoh.com/meteor/Application Files/Meteor_" + last_version + "/Meteor.exe.manifest";
             XmlDocument files_xml = new XmlDocument();
             files_xml.Load(remote_path);
             files_xml.Save(app_path + "/Meteor.exe.manifest");
@@ -289,10 +284,10 @@ namespace Meteor_Updater
             {
                 ProcessStartInfo pro = new ProcessStartInfo();
                 pro.FileName = app_path + "/Meteor.exe";
-                Process x = Process.Start(pro);
+                Process.Start(pro);
                 Application.Current.Shutdown();
             }
-            catch (Exception e2)
+            catch
             {
                 write("The updater couldn't launch Meteor Skin Library");
             }

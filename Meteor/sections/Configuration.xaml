@@ -1,0 +1,180 @@
+﻿<Page x:Class="Meteor.sections.Configuration"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Meteor.sections"
+      mc:Ignorable="d"
+      Title="Configuration" MinWidth="800" MinHeight="450" ClipToBounds="True">
+
+    <Grid MinWidth="800" MinHeight="450" ClipToBounds="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="312*"/>
+            <ColumnDefinition Width="263*"/>
+            <ColumnDefinition Width="225*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="68*"/>
+            <RowDefinition Height="84*"/>
+            <RowDefinition Height="133*"/>
+            <RowDefinition Height="165*"/>
+        </Grid.RowDefinitions>
+        <GroupBox x:Name="RegionSettings" Header="Region Select"
+            Margin="10,5" Foreground="White" Grid.ColumnSpan="3">
+            <Grid x:Name="Region_grid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="69*"/>
+                    <ColumnDefinition Width="367*"/>
+                    <ColumnDefinition Width="106*"/>
+                    <ColumnDefinition Width="276*"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="label_region" Content="Region" Margin="10,7,10,10" Background="{x:Null}" Foreground="White" Height="26" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                <ComboBox x:Name="combo_region" Margin="10,10,129,11"
+                    VerticalAlignment="Center" ToolTip="Select your Wii U's region"
+                    SelectionChanged="RegionChanged" VerticalContentAlignment="Center" Grid.Column="1" Height="22">
+                    <ComboBoxItem Content="Europe" Width="171" />
+                    <ComboBoxItem Content="United States" Width="171" />
+                    <ComboBoxItem Content="Japan" Width="171" />
+                </ComboBox>
+                <Label x:Name="label_language" Content="Language"
+                    Margin="0,5,10,12" VerticalAlignment="Center" Background="{x:Null}" Foreground="White" Grid.Column="2" Height="26" VerticalContentAlignment="Center" HorizontalAlignment="Right" Width="86" />
+                <ComboBox x:Name="combo_language" Margin="10,10,10,11"
+                    VerticalAlignment="Center"
+                    ToolTip="Select the language the game is displayed in"
+                    SelectionChanged="LaunguageChanged" Grid.Column="3" Height="22" VerticalContentAlignment="Center">
+                    <ComboBoxItem Content="English" Width="171" />
+                    <ComboBoxItem Content="French" Width="171" />
+                    <ComboBoxItem Content="Spanish" Width="171" />
+                    <ComboBoxItem Content="German" Width="171" />
+                    <ComboBoxItem Content="Italian" Width="171" Margin="27.5,0" />
+                    <ComboBoxItem Content="Dutch" Width="171" Margin="27.5,0" />
+                    <ComboBoxItem Content="Portugese" Width="171" Margin="27.5,0" />
+                    <ComboBoxItem Content="Japanese" Width="171" Margin="27.5,0" />
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="S4ESettings" Header="Sm4sh Explorer Executable Location" Margin="5" Foreground="White" Grid.Row="1" Grid.ColumnSpan="3">
+            <Grid x:Name="S4ESettingsContentGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="225"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="169"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="PathLabel" Content="Sm4sh Explorer executable location" Margin="10,9,10,11" VerticalAlignment="Center"
+                    Background="{x:Null}" Foreground="White" VerticalContentAlignment="Center" Height="33" />
+                <TextBox x:Name="S4EPathTextbox" Height="23"
+                    Margin="10,13,10,17" TextWrapping="Wrap" VerticalAlignment="Center"
+                    KeyDown="S4EPathKeyDown"
+                    ToolTip="Select the workspace folder inside your Sm4shExplorer installation. Press enter to save when you paste the path" Grid.Column="1" VerticalContentAlignment="Center" />
+                <Button x:Name="S4EPathSaveButton" Content="Pick File"
+                    Margin="10,14,10,17" VerticalAlignment="Center"
+                    Click="S4EPathSave"
+                    ToolTip="Press this button to pick Sm4shExplorer's .exe file" Grid.Column="2" VerticalContentAlignment="Center" Height="22" RenderTransformOrigin="0.526,1.13" />
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="AppSettings" Header="Application Settings" Margin="5,5,10,5" Foreground="White" Grid.Row="2" Grid.RowSpan="2">
+            <Grid x:Name="AppSettingsControlGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="25"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20*"/>
+                    <RowDefinition Height="57*"/>
+                </Grid.RowDefinitions>
+                <Label x:Name="SortbyLabel" Content="Sort Characters by" HorizontalAlignment="Left"
+                    Margin="10,10,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" />
+                <ComboBox x:Name="SortbyComboBox" Margin="153,10,5,0"
+                    VerticalAlignment="Top" IsSynchronizedWithCurrentItem="True"
+                    ToolTip="Choose this to change the character order"
+                    SelectionChanged="SortbyChanged" Grid.ColumnSpan="2">
+                    <ComboBoxItem x:Name="AlphabeticalComboBoxItem" Content="Alphabetical Order" />
+                    <ComboBoxItem x:Name="GameOrderComboBoxItem" Content="Game Order" />
+                </ComboBox>
+                <Label x:Name="UsernameLabel" Content="Username" HorizontalAlignment="Left"
+                    Margin="10,36,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" RenderTransformOrigin="0.528,0.365" />
+                <TextBox x:Name="UsernameTextBox" Height="23"
+                    Margin="153,37,5,0" TextWrapping="Wrap" VerticalAlignment="Top"
+                    KeyDown="SaveUsername"
+                    ToolTip="This is the username displayed when you pack your mods" Grid.ColumnSpan="2" />
+                <Label x:Name="AutoLaunchS4ELabel" Content="Launch S4E after each export" Margin="10,5,10,193"
+                    Background="{x:Null}" Foreground="White" Grid.Row="1" />
+                <CheckBox x:Name="AutoLaunchS4ECheckBox" Content="" Margin="5,10,0,0"
+                    VerticalAlignment="Top" RenderTransformOrigin="0.6,3.8"
+                    Checked="S4EAutoLaunchChanged" Unchecked="S4EAutoLaunchChanged"
+                    ToolTip="Enabling this will auto launch S4E after you export" Grid.Row="1" Grid.Column="1" />
+                <Button x:Name="RegistryFixButton" Content="Make Meteor grab downloads" Margin="10,0,10,10" Click="FixRegistryClick" Grid.Row="1" Grid.ColumnSpan="2" Height="20" VerticalAlignment="Bottom"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="AdvanceSettings" Header="Advanced Settings" Margin="5,5,10,5" Foreground="White" Grid.Row="2" Grid.Column="1">
+            <Grid x:Name="AdvancedSettingsControlGrid" Margin="0,0,-2,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="25"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="DevLogsLabel" Content="Show Dev Logs" HorizontalAlignment="Left"
+                    Margin="10,10,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Height="26" Width="91" />
+                <CheckBox x:Name="DevLogsCheckBox" Content="" HorizontalAlignment="Left" Margin="5,15,0,0"
+                    VerticalAlignment="Top" Checked="ChangeDevlocks"
+                    Unchecked="ChangeDevlocks"
+                    ToolTip="This shows detailed operation logs. Not necessary for you" Grid.Column="1" Height="15" Width="20" />
+                <Label x:Name="PasteBinLabel" Content="Activate Pastebin" HorizontalAlignment="Left"
+                    Margin="10,41,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Width="121" Height="26" />
+                <CheckBox x:Name="PasteBinCheckBox" Content="" HorizontalAlignment="Left" Margin="5,46,0,0"
+                    VerticalAlignment="Top" Checked="ChangePastebin"
+                    ToolTip="This shows detailed operation logs. Not necessary for you" Unchecked="ChangePastebin" Height="15" Width="20" RenderTransformOrigin="1.05,0.289" Grid.Column="1" />
+                <Button x:Name="TestPasteButton" Content="Test Pastebin" Margin="10,0,10,10" Click="TestPaste" Grid.ColumnSpan="2" Height="20" VerticalAlignment="Bottom"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="GamebananaSettings" Header="GameBanana Connectivity" Margin="5" Foreground="White" Grid.Row="3" Grid.Column="1">
+            <Grid x:Name="GamebananaSettingsControlGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="7*"/>
+                    <ColumnDefinition Width="12*"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="GbuidLabel" Content="User ID" HorizontalAlignment="Left"
+                    Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White" />
+                <TextBox x:Name="GbuidTextBox" Height="23" Margin="10,10,10,0"
+                    TextWrapping="Wrap" VerticalAlignment="Top" KeyDown="GbuidSave"
+                    ToolTip="Enter your gamebanana id for compatibility!" Grid.Column="1" />
+                <Button x:Name="button" Content="Profile Page"
+                    Margin="10,0,10,10" Height="20" VerticalAlignment="Bottom" Grid.ColumnSpan="2" />
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="UicharSettings" Header="ui character db.bin" Margin="5" Foreground="White" Grid.Row="2" Grid.Column="2">
+            <Grid x:Name="UicharSettingsControlGrid" Margin="0,0,-2,0">
+                <Label x:Name="UicharStatusLabel" Content="Status : not present"
+                    Margin="10,10,10,0" VerticalAlignment="Top" Foreground="White" HorizontalAlignment="Left" />
+                <Button x:Name="UicharPickFileButton" Content="Pick File" Margin="10,0,10,10" Click="PickUi"
+                    ToolTip="Pick the file ui_character_db yourself" Height="20" VerticalAlignment="Bottom" />
+                <Button x:Name="UicharAutoSearchButton" Content="Search S4E's workspace"
+                    Margin="10,0,10,35" Click="AutomaticSearchUi"
+                    ToolTip="Let Meteor search for the file in the specified S4E folder" Height="20" VerticalAlignment="Bottom" />
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="ColorSettings" Header="App Color Change" Margin="5" Foreground="White" Grid.Row="3" Grid.Column="2">
+            <Grid x:Name="ColorSettingsControlGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="75*"/>
+                    <ColumnDefinition Width="142*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="RedValueTextBox" Height="23" Margin="10,13,10,0"
+                    TextWrapping="Wrap" VerticalAlignment="Top"
+                    ToolTip="Enter your gamebanana id for compatibility!" Grid.Column="1" />
+                <TextBox x:Name="BlueValueTextBox" Height="23" Margin="10,41,10,0"
+                    TextWrapping="Wrap" VerticalAlignment="Top"
+                    ToolTip="Enter your gamebanana id for compatibility!" Grid.Column="1" />
+                <TextBox x:Name="GreenValueTextBox" Height="23" Margin="10,69,10,0"
+                    TextWrapping="Wrap" VerticalAlignment="Top"
+                    ToolTip="Enter your gamebanana id for compatibility!" Grid.Column="1" />
+                <Label x:Name="RedLabel" Content="Red" HorizontalAlignment="Left" Margin="10,10,0,0"
+                    VerticalAlignment="Top" Foreground="White" RenderTransformOrigin="0.567,-0.538" />
+                <Label x:Name="GreenLabel" Content="Green" HorizontalAlignment="Left" Margin="10,41,0,0"
+                    VerticalAlignment="Top" Foreground="White" />
+                <Label x:Name="BlueLabel" Content="Blue" HorizontalAlignment="Left" Margin="10,67,0,0"
+                    VerticalAlignment="Top" Foreground="White" />
+                <Button x:Name="SaveColorButton" Content="save" Margin="0,0,10,5" Click="SaveColor" Grid.Column="1" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="113" />
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Page>

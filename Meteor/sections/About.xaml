@@ -1,0 +1,50 @@
+﻿<Page x:Class="Meteor.sections.About"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Meteor.sections"
+      mc:Ignorable="d"
+      Title="About" MinWidth="799.8" MinHeight="450" ClipToBounds="True">
+
+    <Grid x:Name="AboutGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="184*"/>
+            <RowDefinition Height="41*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <GroupBox x:Name="AppInfoGroupBox" Header="Application Information" Margin="10,0,10,10" Foreground="White"
+        >
+            <Grid x:Name="AppInfoGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="95*"/>
+                    <ColumnDefinition Width="89*"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="MakerLabel" Content="Maker : Mowjoh"
+                    Margin="10,10,10,0" VerticalAlignment="Top" Foreground="White" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" />
+                <Label x:Name="AppVersionLabel" Content="Application version : 0.5" Margin="10,52,10,0" VerticalAlignment="Top"
+                    Foreground="White" HorizontalContentAlignment="Center" />
+                <Label x:Name="UpdaterVersionLabel" Content="Updater version : 0.0"
+                    Margin="10,52,10,0" VerticalAlignment="Top" Foreground="White" Grid.Column="1" HorizontalContentAlignment="Center" />
+                <TextBlock x:Name="AppInfoTextBox" Margin="10,83,10,10"
+                    TextWrapping="Wrap" Grid.ColumnSpan="2"><Run Text="- Kerouz"/><LineBreak/><Run Text="- Segtendo"/><LineBreak/><Run Text="- The Smash 4 Modding server"/><LineBreak/><Run/><LineBreak/><Run/><LineBreak/><Run Text="Thanks for using Meteor, I mean, maybe you're just interested in what it does, but anyway. "/><LineBreak/><Run Text="I gotta tell you I made it simple. Like, really simple. That's for you pal. I think you'll enjoy using it, since I've spent so much time designing this. "/><LineBreak/><Run Text="Well, at least I've tried convincing you that this is a good software, but maybe you're disappointed. I don't really know."/><LineBreak/><Run Text="I'd say use it, and you'll see !"/></TextBlock>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="FunFactsGroupBox" Header="Fun Facts&#xA;"
+            Margin="10,0,10,10" Foreground="White" Grid.Column="1"
+        >
+            <Grid x:Name="FunFactsGrid">
+                <TextBlock x:Name="FunFactsTextBlock"
+                    TextWrapping="Wrap"><Run Text="- This was not always fun to make" /><LineBreak /><Run /><LineBreak /><Run Text="- I love soldering things" /><LineBreak /><Run /><LineBreak /><Run Text="- I want this thing finished " /><LineBreak /><Run /><LineBreak /><Run Text="- That way I can continue adding mods" /><LineBreak /><Run /><LineBreak /><Run Text="- And other things too" /><LineBreak /><Run /><LineBreak /><Run Text="- I want to sleep until the switch is out" /><LineBreak /><Run /><LineBreak /><Run Text="- That won't happen unfortunately." /><LineBreak /><Run /><LineBreak /><Run Text="- Segtendo the turtle is a bad idea." /><LineBreak /><LineBreak /><Run Text="- I'll get a red panda instead" /><LineBreak /><Run /><LineBreak /><Run Text="- I'm gonna name it DSX8" /><LineBreak /><Run /><LineBreak /><Run Text="- This way DSX8 will always be cute" /><LineBreak /><LineBreak /><Run Text="- Segtendo warnings have returned" /><LineBreak /><Run /><LineBreak /><Run Text="- Did I tell you already? I'm Mowjoh!" /><LineBreak /></TextBlock>
+            </Grid>
+        </GroupBox>
+        <Button x:Name="ThanksButton" Content="Say Thanks !" Margin="0"
+            Click="thanks_button" ToolTip="Say thanks to Meteor" Height="25" Grid.Column="1" Grid.Row="1" Width="170" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <Button x:Name="WikiButton" Content="Need help? Here's the Wiki" Margin="0"
+            ToolTip="This will open your browser to Meteor's wiki" Click="goto_wiki" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="170" Height="25" />
+
+    </Grid>
+</Page>

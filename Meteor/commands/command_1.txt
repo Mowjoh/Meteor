@@ -1,0 +1,1 @@
+﻿create table packer(id int,content_type int,content_id int);

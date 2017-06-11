@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Meteor_Updater"
         mc:Ignorable="d"
         Title="Meteor Updater" Height="471" Width="368" MinWidth="370" MaxWidth="370" MinHeight="320" MaxHeight="500
         ">
@@ -14,10 +13,10 @@
         </LinearGradientBrush>
     </Window.Background>
     <Grid>
-        <Label x:Name="title" Content="Meteor Updater" HorizontalAlignment="Left" Margin="129,10,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+        <Label Content="Meteor Updater" HorizontalAlignment="Left" Margin="129,10,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
         <ProgressBar x:Name="progressbar" HorizontalAlignment="Left" Height="10" Margin="10,41,0,0" VerticalAlignment="Top" Width="342"/>
         <TextBlock x:Name="console" HorizontalAlignment="Left" Margin="10,87,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="318" Width="342" Foreground="White" Background="#7F000000"/>
-        <Label x:Name="label" Content="Status :" HorizontalAlignment="Left" Margin="10,56,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <Label  Content="Status :" HorizontalAlignment="Left" Margin="10,56,0,0" VerticalAlignment="Top" Foreground="White"/>
         <Label x:Name="status_text" Content="Working" HorizontalAlignment="Left" Margin="63,56,0,0" VerticalAlignment="Top" Width="280" Foreground="White"/>
         <Button x:Name="launch_button" Content="Launch Meteor" HorizontalAlignment="Left" Margin="129,410,0,0" VerticalAlignment="Top" Width="100" Background="White" BorderBrush="Black" Foreground="Black" IsEnabled="False" Click="launch_meteor"/>
 

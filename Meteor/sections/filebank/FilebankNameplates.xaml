@@ -1,0 +1,88 @@
+﻿<Page x:Name="NameplatePage" x:Class="Meteor.sections.filebank.FilebankNameplates"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Meteor.sections.filebank"
+      mc:Ignorable="d"
+      Title="FilebankNameplates" MinWidth="650" MinHeight="450">
+
+    <Grid x:Name="NameplateGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="63*"/>
+            <RowDefinition Height="157*"/>
+            <RowDefinition Height="105*"/>
+            <RowDefinition Height="125*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="CharacterSelectGrid" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="175"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label x:Name="CharacterHeaderLabel" Content="Choose a Character"
+                HorizontalAlignment="Center" VerticalAlignment="Center" Background="{x:Null}"
+                Foreground="White" FontStyle="Italic" FontSize="16" VerticalContentAlignment="Center" Margin="0,16" HorizontalContentAlignment="Center" />
+            <ComboBox x:Name="CharacterComboBox" HorizontalAlignment="Left"
+                Margin="10,20,0,20" VerticalAlignment="Center" Width="200"
+                ToolTip="Filter the mods by character"
+                SelectionChanged="CharacterChanged" Height="22" VerticalContentAlignment="Center" Grid.Column="1" />
+        </Grid>
+        <GroupBox x:Name="NameplateGroupBox" Header="Nameplates"
+            Margin="5"  Grid.Row="1" Foreground="White" Grid.RowSpan="3">
+            <Grid x:Name="NameplateListGrid">
+                <ListBox x:Name="NameplateListBox" Background="{x:Null}"
+                    BorderBrush="{x:Null}" Foreground="White"
+                    SelectionChanged="NameplateSelected" ToolTip="Select a skin !" />
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="AttributesGroupBox" Header="Attributes" Margin="5" Grid.Row="1" Grid.Column="1" Foreground="White">
+            <Grid x:Name="AttributesGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label x:Name="IdLabel" Content="Nameplate ID" HorizontalAlignment="Left"
+                    Margin="7,10,0,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="94" />
+                <Label x:Name="IdValueLabel" Content=""
+                    Margin="10,10,10,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Grid.Column="1" Height="26" />
+                <Label x:Name="NameLabel" Content="Name" HorizontalAlignment="Left"
+                    Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="47" />
+                <TextBox x:Name="NameValueTextBox" Grid.Column="1" Height="23" Margin="10,45,10,0" TextWrapping="Wrap" VerticalAlignment="Top" KeyDown="SaveName"/>
+                <Label x:Name="AuthorLabel" Content="Author" HorizontalAlignment="Left"
+                    Margin="10,77,0,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="47" />
+                <TextBox x:Name="AuthorValueTextBox" Grid.Column="1" Height="23" Margin="10,80,10,0" TextWrapping="Wrap" VerticalAlignment="Top" KeyDown="SaveAuthor"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="ActionsGroupBox" Header="Actions"
+            Margin="5" Grid.Row="2" Grid.Column="1" Foreground="White">
+            <Grid x:Name="ActionsGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Button x:Name="DeleteButton" Content="Delete nameplate permanently" Margin="10,0" VerticalAlignment="Center" Click="DeleteNameplate"
+                    ToolTip="Delete this skin from Meteor" Grid.Row="1" Height="22" />
+                <Button x:Name="PackButton" Content="Add Nameplate to Packer" Margin="10,0" VerticalAlignment="Center" Click="PackNameplate"
+                    ToolTip="Insert this skin in the active workspace" Height="22" />
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="DropBox" Header="Drop your nameplates here" Margin="5" DragEnter="NameplateDragEnter" Grid.Row="3" Grid.Column="1" Foreground="White">
+            <Grid x:Name="DropGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="91*" />
+                    <ColumnDefinition Width="233*" />
+                </Grid.ColumnDefinitions>
+                <ListBox x:Name="DropListBox" Grid.ColumnSpan="2" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" AllowDrop="True" DragEnter="NameplateDragEnter" Drop="NameplateDrop"/>
+            </Grid>
+        </GroupBox>
+
+    </Grid>
+</Page>

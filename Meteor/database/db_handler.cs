@@ -1,38 +1,114 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Meteor.database
 {
-    class db_handler
+    public class db_handler
     {
-        #region Class Variables
-        SQLiteConnection db_connection;
-        #endregion
+        //Variables
+        private readonly SQLiteConnection db_connection;
 
-        #region Constructors
+        //Constructor
         public db_handler()
         {
-            
             db_connection = new SQLiteConnection("Data Source=Library.sqlite;Version=3;");
             db_connection.Open();
         }
-        #endregion
 
-        #region Get
+        //----------------------Library------------------------------------
 
-        #region Characters
-        //Gets the list of characters by game order or alphabetical order
+        public void reorder_workspace()
+        {
+            var sql = "select slot from workspaces";
+
+            var sqLiteCommand = new SQLiteCommand(sql, db_connection);
+            var executeReader = sqLiteCommand.ExecuteReader();
+            var i = 1;
+            while (executeReader.Read())
+            {
+                var slot = executeReader.GetInt32(0);
+                if (i != slot)
+                {
+                    var sql2 = "update workspaces set slot = @i where slot = @slot";
+                    sqLiteCommand = new SQLiteCommand(sql2, db_connection);
+                    sqLiteCommand.Parameters.AddWithValue("i", i);
+                    sqLiteCommand.Parameters.AddWithValue("slot", slot);
+                    sqLiteCommand.ExecuteNonQuery();
+                }
+                i++;
+            }
+        }
+
+        public void reorder_skins(int character_id, int workspace_id)
+        {
+            var sql =
+                "select slot from skin_library where character_id = @character_id and workspace_id = @workspace_id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("character_id", character_id);
+            command.Parameters.AddWithValue("workspace_id", workspace_id);
+            var reader = command.ExecuteReader();
+            var countslot = 1;
+            while (reader.Read())
+            {
+                var slot = reader.GetInt32(0);
+                if (countslot != slot)
+                {
+                    var sql2 =
+                        "update skin_library set slot = @countslot where slot = @slot and character_id = @character_id and workspace_id = @workspace_id";
+                    command = new SQLiteCommand(sql2, db_connection);
+                    command.Parameters.AddWithValue("countslot", countslot);
+                    command.Parameters.AddWithValue("slot", slot);
+                    command.Parameters.AddWithValue("character_id", character_id);
+                    command.Parameters.AddWithValue("workspace_id", workspace_id);
+                    command.ExecuteNonQuery();
+                }
+                countslot++;
+            }
+        }
+
+        public void restore_default(int slot, int char_id, string workspace)
+        {
+            var sql =
+                "select skin_id from skin_library where slot = @slot and character_id = @char_id and workspace_id = 1";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("slot", slot);
+            command.Parameters.AddWithValue("char_id", char_id);
+            var reader = command.ExecuteReader();
+            var id = 0;
+            while (reader.Read())
+                id = reader.GetInt32(0);
+
+            sql =
+                "update skin_library set skin_id = @id where slot = @slot and character_id = @char_id and workspace_id = @workspace";
+            command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", id);
+            command.Parameters.AddWithValue("slot", slot);
+            command.Parameters.AddWithValue("char_id", char_id);
+            command.Parameters.AddWithValue("workspace", workspace);
+            command.ExecuteNonQuery();
+        }
+
+        public void replace_skin(int new_id, int char_id, int slot, int workspace_id)
+        {
+            var sql =
+                "update skin_library set  skin_id = @skin_id where character_id = @character_id and slot = @slot and workspace_id = @workspace_id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("skin_id", new_id);
+            command.Parameters.AddWithValue("character_id", char_id);
+            command.Parameters.AddWithValue("slot", slot);
+            command.Parameters.AddWithValue("workspace_id", workspace_id);
+            command.ExecuteNonQuery();
+        }
+
+        //----------------------Characters----------------------------------
+
         public ArrayList get_characters(int mode)
         {
-            ArrayList characters = new ArrayList();
-            string sql = "";
+            var characters = new ArrayList();
+            var sql = "";
 
             switch (mode)
             {
@@ -45,535 +121,528 @@ namespace Meteor.database
             }
 
 
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 characters.Add(reader.GetString(0));
-            }
 
             return characters;
         }
 
-        //Gets character id
-        public int get_character_id(String char_name)
+        public int get_character_id(string char_name)
         {
-            int id = 0;
-            String sql = "Select id from characters where name = @name";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var id = 0;
+            var sql = "Select id from characters where name = @name";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("name", char_name);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 id = reader.GetInt32(0);
-            }
 
             return id;
         }
 
-        public int get_character_id_msl(String msl_name)
+        public int get_character_id(int skin_id)
         {
-            int id = 0;
-            String sql = "Select id from characters where msl_name = @name";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("name", msl_name);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var id = 0;
+            var sql = "Select character_id from skins where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", skin_id);
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 id = reader.GetInt32(0);
-            }
 
             return id;
+        }
+
+        public String get_character_name(int skin_id)
+        {
+            var name = "";
+            var sql = "Select characters.name from characters join skins on(characters.id = skins.character_id) where skins.id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", skin_id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                name = reader.GetString(0);
+
+            return name;
+        }
+
+        public String get_character_name_nameplate(int nameplate_id)
+        {
+            var name = "";
+            var sql = "Select characters.name from characters join nameplates on(characters.id = nameplates.character_id) where nameplates.id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", nameplate_id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                name = reader.GetString(0);
+
+            return name;
+        }
+
+        public int get_character_id_msl(string msl_name)
+        {
+            var id = 0;
+            var sql = "Select id from characters where msl_name = @name";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("name", msl_name);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                id = reader.GetInt32(0);
+
+            return id;
+        }
+
+        public int get_character_id_cspfoldername(string msl_name)
+        {
+            var id = 0;
+            var sql = "Select id from characters where csp_folder = @name";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("name", msl_name);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                id = reader.GetInt32(0);
+
+            return id;
+        }
+
+        public String get_character_cspfolder(int char_id)
+        {
+            String folder = "";
+            var sql = "Select csp_folder from characters where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", char_id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                folder = reader.GetString(0);
+
+            return folder;
         }
 
         public int get_character_uichar_position(int char_id)
         {
-            int id = 0;
-            String sql = "Select ui_char_db_id from characters where id = @id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var id = 0;
+            var sql = "Select ui_char_db_id from characters where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("id", char_id);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 id = reader.GetInt32(0);
-            }
 
             return id;
         }
 
-        public Boolean check_msl_character_name(String foldername)
+        public bool check_msl_character_name(string foldername)
         {
-            Boolean result = false;
+            var result = false;
 
-            String sql = "Select id from characters where msl_name = @foldername";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql = "Select id from characters where msl_name = @foldername";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("foldername", foldername);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 result = true;
-            }
 
             return result;
         }
 
-        public int get_character_skin_count(int character_id,int workspace_id)
+        public bool get_character_dlc(int char_id)
         {
-            int id = 0;
-            String sql = "Select count(*) from skin_library where character_id = @character_id and workspace_id = @workspace_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("character_id", character_id);
-            command.Parameters.AddWithValue("workspace_id", workspace_id);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                id = reader.GetInt32(0);
-            }
+            var test = false;
 
-            return id;
-        }
-        #endregion
+            var sql = "select dlc from characters where id = @char_id";
 
-        #region Skins
-        //gets the skin list for a specific character name
-        public ArrayList get_character_skins(String char_name, String workspace_id)
-        {
-            ArrayList skins = new ArrayList();
-
-            String sql = "select skins.name from skin_library Join skins on(skins.id = skin_library.skin_id) Join characters on(characters.id = skin_library.character_id) Where characters.name = @char_name and skin_library.workspace_id = @workspace_id Order by skin_library.Slot";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("char_name", char_name);
-            command.Parameters.AddWithValue("workspace_id", Int32.Parse(workspace_id));
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                skins.Add(reader.GetString(0));
-            }
-
-            return skins;
-        }
-
-        //gets the skin list for a specific character name
-        public Boolean get_character_dlc(int char_id)
-        {
-            Boolean test = false;
-
-            String sql = "select dlc from characters where id = @char_id";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("char_id", char_id);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                int val = reader.GetInt32(0);
+                var val = reader.GetInt32(0);
                 if (val == 1)
-                {
                     test = true;
-                }
             }
 
             return test;
         }
 
-        //gets the custom skin list for a specific character name
-        public ArrayList get_character_custom_skins(String char_name, String workspace_id)
+        public String get_character_value(String select,String field,String value)
         {
-            ArrayList skins = new ArrayList();
+            String result = "";
 
-            String sql = "select skins.name from skins Join characters on(characters.id = skins.character_id) Where characters.name = @char_name and skins.locked = 0 Order by skins.id";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("char_name", char_name);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var sql = "Select " + select + " from characters where " + field + " = @value";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("value", value);
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
+                result = reader.GetString(0);
+
+            return result;
+        }
+
+
+        //----------------------Skins----------------------------------------
+
+        public ArrayList get_character_skins(string char_name, string workspace_id)
+        {
+            var skins = new ArrayList();
+
+            var sql =
+                "select skins.name from skin_library Join skins on(skins.id = skin_library.skin_id) Join characters on(characters.id = skin_library.character_id) Where characters.name = @char_name and skin_library.workspace_id = @workspace_id Order by skin_library.Slot";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("char_name", char_name);
+            command.Parameters.AddWithValue("workspace_id", int.Parse(workspace_id));
+            var reader = command.ExecuteReader();
+            while (reader.Read())
                 skins.Add(reader.GetString(0));
-            }
 
             return skins;
         }
 
-        //gets the custom skin list for a specific character name
-        public ArrayList get_character_custom_skins_id(String char_name, String workspace_id)
+        public int get_character_skin_count(int character_id, int workspace_id)
         {
-            ArrayList skins = new ArrayList();
-
-            String sql = "select skins.id from skins Join characters on(characters.id = skins.character_id) Where characters.name = @char_name and skins.locked = 0 Order by skins.id";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("char_name", char_name);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                skins.Add(reader.GetInt32(0));
-            }
-
-            return skins;
-        }
-
-        //gets the custom skin list for a specific character name
-        public ArrayList get_character_builder_skins_id(int workspace_id)
-        {
-            ArrayList skins = new ArrayList();
-
-            String sql = "select skins.id, skin_library.slot,skins.character_id from skins Join skin_library on(skin_library.skin_id = skins.id) Where skins.locked = 0 and skin_library.workspace_id = @workspace_id Order by skins.id";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var id = 0;
+            var sql =
+                "Select count(*) from skin_library where character_id = @character_id and workspace_id = @workspace_id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("character_id", character_id);
             command.Parameters.AddWithValue("workspace_id", workspace_id);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
-                int[] val = new int[] { reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2) };
-                skins.Add(val);
-            }
+                id = reader.GetInt32(0);
+
+            return id;
+        }
+
+        public ArrayList get_character_custom_skins(string char_name, string workspace_id)
+        {
+            var skins = new ArrayList();
+
+            var sql =
+                "select skins.name from skins Join characters on(characters.id = skins.character_id) Where characters.name = @char_name and skins.locked = 0 Order by skins.id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("char_name", char_name);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                skins.Add(reader.GetString(0));
 
             return skins;
         }
 
-        //Get's a skin id based on char id and slot
-        public int get_skin_id(int char_id, int slot,int workspace_id)
+        public ArrayList get_character_custom_skins_id(string char_name, string workspace_id)
         {
-            String sql = "Select skin_id from skin_library where character_id = @char_id and slot = @slot and workspace_id = @workspace_id";
-            int id = 0;
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var skins = new ArrayList();
+
+            var sql =
+                "select skins.id from skins Join characters on(characters.id = skins.character_id) Where characters.name = @char_name and skins.locked = 0 Order by skins.id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("char_name", char_name);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                skins.Add(reader.GetInt32(0));
+
+            return skins;
+        }
+
+        public int get_skin_id(int char_id, int slot, int workspace_id)
+        {
+            var sql =
+                "Select skin_id from skin_library where character_id = @char_id and slot = @slot and workspace_id = @workspace_id";
+            var id = 0;
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("char_id", char_id);
             command.Parameters.AddWithValue("slot", slot);
             command.Parameters.AddWithValue("workspace_id", workspace_id);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 id = reader.GetInt32(0);
-            }
 
             return id;
         }
 
-        //Gets a skin gb_uid based on char id and slot
         public int get_skin_gb_id(int skin_id)
         {
-            String sql = "Select gb_id from skins where id = @skin_id";
-            int id = 0;
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql = "Select gb_id from skins where id = @skin_id";
+            var id = 0;
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("skin_id", skin_id);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 id = reader.GetInt32(0);
-            }
 
             return id;
         }
 
-        //Gets a skin gb_uid based on char id and slot
         public int get_skin_gb_uid(int skin_id)
         {
-            String sql = "Select gb_uid from skins where id = @skin_id";
-            int id = 0;
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql = "Select gb_uid from skins where id = @skin_id";
+            var id = 0;
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("skin_id", skin_id);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 id = reader.GetInt32(0);
-            }
 
             return id;
         }
 
-        //Gets the skin info
-        public String[] get_skin_info(int skin_id)
+        public string[] get_skin_info(int skin_id)
         {
-            String[] info;
+            string[] info;
 
-            String sql = "select name, author, models, csps from skins where id = @skin_id";
-            String name = "";
-            String author = "";
-            String models = "";
-            String csps = "";
+            var sql = "select name, author, models, csps from skins where id = @skin_id";
+            var name = "";
+            var author = "";
+            var models = "";
+            var csps = "";
 
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("skin_id", skin_id);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
             {
                 name = reader.GetString(0);
                 author = reader.GetString(1);
                 if (!reader.IsDBNull(2))
-                {
                     models = reader.GetString(2);
-                }
 
                 if (!reader.IsDBNull(3))
-                {
                     csps = reader.GetString(3);
-                }
-
             }
 
-            info = new String[] { name, author, models, csps };
+            info = new[] { name, author, models, csps };
             return info;
         }
 
-        public Boolean skin_locked(int skin_id)
+        public bool skin_locked(int skin_id)
         {
-            Boolean test = false;
+            var test = false;
 
-            String sql = "Select locked from skins where id = @skin_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql = "Select locked from skins where id = @skin_id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("skin_id", skin_id);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
-                test = reader.GetInt32(0) == 1? true: false;
-            }
+                test = reader.GetInt32(0) == 1 ? true : false;
 
             return test;
         }
 
-        public Boolean skin_locked(int slot,int character_id)
+        public bool skin_locked(int slot, int character_id)
         {
-            Boolean test = false;
+            var test = false;
 
-            String sql = "Select locked from skin_library where slot = @slot and character_id = @character_id and workspace_id = @workspace_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql =
+                "Select locked from skin_library where slot = @slot and character_id = @character_id and workspace_id = @workspace_id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("slot", slot);
             command.Parameters.AddWithValue("character_id", character_id);
             command.Parameters.AddWithValue("workspace_id", get_property("workspace"));
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 test = reader.GetInt32(0) == 1 ? true : false;
-            }
 
             return test;
         }
 
         public DataSet get_custom_skins()
         {
-            DataSet ds = new DataSet();
+            var ds = new DataSet();
 
-            String sql = "Select name as 'Skin Name', author as 'Skin Author',models as 'Model Files',csps as 'Csp files',gb_uid as 'Gamebanana User Id', id as 'Skin ID' from skins where locked = 0";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var sql =
+                "Select name as 'Skin Name', author as 'Skin Author',models as 'Model Files',csps as 'Csp files',gb_uid as 'Gamebanana User Id', id as 'Skin ID' from skins where locked = 0";
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
 
-            SQLiteDataAdapter sqlda = new SQLiteDataAdapter(sql,db_connection);
+            var sqlda = new SQLiteDataAdapter(sql, db_connection);
             sqlda.Fill(ds);
 
             return ds;
         }
 
-        public String[] get_skin_models(int skin_id)
+        public ArrayList get_custom_skins_id()
         {
-            String[] skin_models;
-            String sql = "select models from skins where id = @skin_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("skin_id", skin_id);
-            SQLiteDataReader reader = command.ExecuteReader();
-            String var = "";
+            var skins = new ArrayList();
+
+            var sql =
+                "select skins.id from skins Where skins.locked = 0 Order by skins.character_id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                skins.Add(reader.GetInt32(0));
+
+            return skins;
+        }
+
+        public ArrayList GetCustomSkins()
+        {
+            var skins = new ArrayList();
+
+            var sql =
+                "select skins.name from skins Where skins.locked = 0 Order by skins.character_id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                skins.Add(reader.GetString(0));
+
+            return skins;
+        }
+
+        public ArrayList get_character_builder_skins_id(int workspace_id)
+        {
+            var skins = new ArrayList();
+
+            var sql =
+                "select skins.id, skin_library.slot,skins.character_id from skins Join skin_library on(skin_library.skin_id = skins.id) Where skins.locked = 0 and skin_library.workspace_id = @workspace_id Order by skins.id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("workspace_id", workspace_id);
+            var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                var = reader.GetString(0);
+                int[] val = { reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2) };
+                skins.Add(val);
             }
+
+            return skins;
+        }
+
+        internal void remove_csp(int skin_id, string csp_type)
+        {
+            var csps = get_skin_csps(skin_id);
+            var count = 0;
+            var newcsps = "";
+            foreach (var s in csps)
+            {
+                if (s != csp_type)
+                    if (count == 0)
+                        newcsps += s;
+                    else
+                        newcsps += ";" + s;
+                count++;
+            }
+
+
+            var sql = "update skins set csps = @csps where id = @skin_id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("csps", newcsps);
+            command.Parameters.AddWithValue("skin_id", skin_id);
+            command.ExecuteNonQuery();
+        }
+
+        internal void remove_model(int skin_id, string model_name)
+        {
+            var models = get_skin_models(skin_id);
+            var count = 0;
+            var newmodels = "";
+            foreach (var s in models)
+            {
+                if (s != model_name)
+                    if (count == 0)
+                        newmodels += s;
+                    else
+                        newmodels += ";" + s;
+                count++;
+            }
+
+
+            var sql = "update skins set models = @models where id = @skin_id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("models", newmodels);
+            command.Parameters.AddWithValue("skin_id", skin_id);
+            command.ExecuteNonQuery();
+        }
+
+        public string[] get_skin_models(int skin_id)
+        {
+            string[] skin_models;
+            var sql = "select models from skins where id = @skin_id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("skin_id", skin_id);
+            var reader = command.ExecuteReader();
+            var var = "";
+            while (reader.Read())
+                var = reader.GetString(0);
             skin_models = var.Split(';');
             return skin_models;
         }
 
-        public String[] get_skin_csps(int skin_id)
+        public string[] get_skin_csps(int skin_id)
         {
-            String[] skin_csps;
-            String sql = "select csps from skins where id = @skin_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            string[] skin_csps;
+            var sql = "select csps from skins where id = @skin_id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("skin_id", skin_id);
-            SQLiteDataReader reader = command.ExecuteReader();
-            String var = "";
+            var reader = command.ExecuteReader();
+            var var = "";
             while (reader.Read())
-            {
                 var = reader.GetString(0);
-            }
             skin_csps = var.Split(';');
             return skin_csps;
         }
 
-        public Boolean check_skin_in_library(int skin_id)
+        public bool check_skin_in_library(int skin_id)
         {
-            Boolean test = false;
+            var test = false;
 
-            String sql = "Select slot from skin_library where skin_id = @skin_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql = "Select slot from skin_library where skin_id = @skin_id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("skin_id", skin_id);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 test = reader.GetInt32(0) > 0 ? true : false;
-            }
 
             return test;
         }
 
-        public String get_skin_modelfolder(int skin_id)
+        public string get_skin_modelfolder(int skin_id)
         {
-            String folder = "";
+            var folder = "";
 
 
-            String sql = "Select characters.model_folder from characters join skins on(skins.character_id = characters.id) where skins.id = @skin_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql =
+                "Select characters.model_folder from characters join skins on(skins.character_id = characters.id) where skins.id = @skin_id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("skin_id", skin_id);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 folder = reader.GetString(0);
-            }
 
             return folder;
         }
 
-        public int get_skin_id_hash(String skin_hash)
+        public int get_skin_id_hash(string skin_hash)
         {
-            String sql = "Select id from skins where model_hash_1 = @skin_hash or model_hash_2 = @skin_hash or csp_hash_1 = @skin_hash or csp_hash_2 = @skin_hash or csp_hash_3 = @skin_hash or csp_hash_4 = @skin_hash ";
-            int id = 0;
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql =
+                "Select id from skins where model_hash_1 = @skin_hash or model_hash_2 = @skin_hash or csp_hash_1 = @skin_hash or csp_hash_2 = @skin_hash or csp_hash_3 = @skin_hash or csp_hash_4 = @skin_hash ";
+            var id = 0;
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("skin_hash", skin_hash);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
-            {
                 id = reader.GetInt32(0);
-            }
 
-            return id;
-
-        }
-
-
-        #endregion
-
-        #region Workspaces
-        public ArrayList get_workspaces()
-        {
-            ArrayList workspaces = new ArrayList();
-            string sql = "select name from workspaces where slot != 1";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                workspaces.Add(reader.GetString(0));
-            }
-
-            return workspaces;
-        }
-        public Boolean workspace_default(int slot)
-        {
-            Boolean result = false;
-            string sql = "select locked from workspaces where slot = @slot";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("slot", slot);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                result = reader.GetInt32(0) == 1 ? true : false;
-            }
-
-            return result;
-        }
-        public int[] get_workspace_stats(int slot)
-        {
-            int[] stats;
-            int skin_count =0;
-            string sql = "select count(*) from skin_library join workspaces on (workspaces.id = skin_library.workspace_id) where skin_library.locked = 0 and  workspaces.slot = @slot";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("slot", slot);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                skin_count = reader.GetInt32(0);
-            }
-            stats = new int[] { skin_count };
-            return stats;
-        }
-        public int get_workspace_id(int slot)
-        {
-            int id =0;
-            string sql = "select id from workspaces where slot = @slot";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("slot", slot);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                id = reader.GetInt32(0);
-            }
             return id;
         }
 
-        public int get_workspace_slot(int id)
+        public void set_skin_name(string name, int id)
         {
-            int slot = 0;
-            string sql = "select slot from workspaces where id = @id";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("id", id);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                slot = reader.GetInt32(0);
-            }
-            return slot;
-        }
-        public String get_workspace_name(int id)
-        {
-            String name = "";
-            string sql = "select name from workspaces where id = @id";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("id", id);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                name = reader.GetString(0);
-            }
-            return name;
-        }
-
-        #endregion
-
-        #region Config
-        //Gets a property value
-        public String get_property(String property)
-        {
-            String value = "";
-            String sql = "select value from configuration where property = @property";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("property", property);
-            SQLiteDataReader reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                value = reader.GetString(0);
-            }
-
-            return value;
-        }
-        #endregion
-
-        #endregion
-
-        #region Set
-        public void set_skin_name(String name,int id)
-        {
-            String sql = "update skins set name = @name where id = @id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql = "update skins set name = @name where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("name", name);
             command.Parameters.AddWithValue("id", id);
             command.ExecuteNonQuery();
         }
 
-        public void set_skin_author(String author, int id)
+        public void set_skin_author(string author, int id)
         {
-            String sql = "update skins set author = @author where id = @id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql = "update skins set author = @author where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("author", author);
             command.Parameters.AddWithValue("id", id);
             command.ExecuteNonQuery();
@@ -581,25 +650,76 @@ namespace Meteor.database
 
         public void set_skin_gb_uid(int val, int skin_id)
         {
-            String sql = "update skins set gb_uid = @gb_uid  where id = @id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql = "update skins set gb_uid = @gb_uid  where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("gb_uid", val);
             command.Parameters.AddWithValue("id", skin_id);
             command.ExecuteNonQuery();
         }
 
-        public void set_property_value(String value,String property)
+        public int add_skin(string name, string author, string models, string csps, int character_id, int slot)
         {
-            String sql = "update configuration set value = @value where property =  @property";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("value", value);
-            command.Parameters.AddWithValue("property", property);
+            var sql =
+                "insert into skins (name,author,models,csps,character_id,locked,gb_uid) values(@name,@author,@models,@csps,@character_id,0,0)";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("author", author);
+            command.Parameters.AddWithValue("models", models);
+            command.Parameters.AddWithValue("csps", csps);
+            command.Parameters.AddWithValue("character_id", character_id);
+            command.Parameters.AddWithValue("slot", slot);
+            command.ExecuteNonQuery();
+
+            var id = db_connection.LastInsertRowId;
+
+            sql = "insert into skin_library (workspace_id,character_id,skin_id,slot,locked) values (" +
+                  get_property("workspace") + "," + character_id + "," + id + "," + slot + ",0)";
+            command = new SQLiteCommand(sql, db_connection);
+            command.ExecuteNonQuery();
+
+            return Convert.ToInt32(id);
+        }
+
+        public void insert_skin(int skin_id, int workspace_id, int char_id, int slot)
+        {
+            var sql =
+                "insert into skin_library (workspace_id,character_id,skin_id,slot,locked) values (@workspace_id,@char_id,@skin_id,@slot,0)";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("workspace_id", workspace_id);
+            command.Parameters.AddWithValue("skin_id", skin_id);
+            command.Parameters.AddWithValue("char_id", char_id);
+            command.Parameters.AddWithValue("slot", slot);
             command.ExecuteNonQuery();
         }
 
-        public void set_skin_hash(int id,int hash_id, String value)
+        public void convert_skin(string name, string author, string models, string csps, int character_id, int slot)
         {
-            String hashname = "";
+            var sql =
+                "insert into skins (name,author,models,csps,character_id,locked,gb_uid) values(@name,@author,@models,@csps,@character_id,0,0)";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("author", author);
+            command.Parameters.AddWithValue("models", models);
+            command.Parameters.AddWithValue("csps", csps);
+            command.Parameters.AddWithValue("character_id", character_id);
+            command.ExecuteNonQuery();
+
+            var id = db_connection.LastInsertRowId;
+
+            sql =
+                "update skin_library set skin_id = @skin_id where slot = @slot and workspace_id = @workspace_id and character_id = @character_id";
+            command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("skin_id", id);
+            command.Parameters.AddWithValue("character_id", character_id);
+            command.Parameters.AddWithValue("slot", slot);
+            command.Parameters.AddWithValue("workspace_id", get_property("workspace"));
+
+            command.ExecuteNonQuery();
+        }
+
+        public void set_skin_hash(int id, int hash_id, string value)
+        {
+            var hashname = "";
             switch (hash_id)
             {
                 case 0:
@@ -620,101 +740,458 @@ namespace Meteor.database
                 case 5:
                     hashname = "csp_hash_4";
                     break;
-
             }
-            String sql = "update skins set @hashname = @value where id = @id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("hashname", hashname);
+            var sql = "update skins set " + hashname + " = @value where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("value", value);
             command.Parameters.AddWithValue("id", id);
             command.ExecuteNonQuery();
         }
 
-        public void set_workspace_name(String name, int slot)
+        internal void remove_skin(int slot, int character_id, string selected_workspace)
         {
-            String sql = "update workspaces set name = @name where slot = @slot";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("name", name);
+            var sql =
+                "delete from skin_library where slot = @slot and character_id = @character_id and workspace_id = @workspace_id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("slot", slot);
-            command.ExecuteNonQuery();
-        }
-        #endregion
-        
-        #region Insert
-
-        #region Skins
-        public int add_skin(String name, String author, String models, String csps, int character_id, int slot)
-        {
-            String sql = "insert into skins (name,author,models,csps,character_id,locked,gb_uid) values(@name,@author,@models,@csps,@character_id,0,0)";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("name", name);
-            command.Parameters.AddWithValue("author", author);
-            command.Parameters.AddWithValue("models", models);
-            command.Parameters.AddWithValue("csps", csps);
             command.Parameters.AddWithValue("character_id", character_id);
-            command.Parameters.AddWithValue("slot", slot);
+            command.Parameters.AddWithValue("workspace_id", selected_workspace);
             command.ExecuteNonQuery();
-
-            long id = db_connection.LastInsertRowId;
-
-            sql = "insert into skin_library (workspace_id,character_id,skin_id,slot,locked) values (" + get_property("workspace") + "," + character_id + "," + id + "," + slot + ",0)";
-            command = new SQLiteCommand(sql, db_connection);
-            command.ExecuteNonQuery();
-
-            return Convert.ToInt32(id);
         }
 
-        public void insert_skin(int skin_id,int workspace_id,int char_id,int slot)
+        internal void delete_skin(int skin_id)
         {
-            String sql = "insert into skin_library (workspace_id,character_id,skin_id,slot,locked) values (@workspace_id,@char_id,@skin_id,@slot,0)";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("workspace_id", workspace_id);
-            command.Parameters.AddWithValue("skin_id", skin_id);
+            var sql = "delete from skins where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", skin_id);
+            command.ExecuteNonQuery();
+        }
+
+        public void add_model(int skin_id, string model_name)
+        {
+            var models = get_skin_models(skin_id);
+            var present = false;
+            var newmodels = "";
+            foreach (var m in models)
+            {
+                if (m != "")
+                    newmodels += m + ";";
+
+                if (m == model_name)
+                    present = true;
+            }
+
+            if (!present)
+            {
+                newmodels += model_name;
+                var sql = "update skins set models = @newmodels where id = @skin_id";
+                var command = new SQLiteCommand(sql, db_connection);
+                command.Parameters.AddWithValue("newmodels", newmodels);
+                command.Parameters.AddWithValue("skin_id", skin_id);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public void add_csp(int skin_id, string csp_type)
+        {
+            var csps = get_skin_csps(skin_id);
+            var present = false;
+            var newcsps = "";
+            foreach (var c in csps)
+            {
+                if (c != "")
+                    newcsps += c + ";";
+
+                if (c == csp_type)
+                    present = true;
+            }
+
+            if (!present)
+            {
+                newcsps += csp_type;
+                var sql = "update skins set csps = @newcsps where id = @skin_id";
+                var command = new SQLiteCommand(sql, db_connection);
+                command.Parameters.AddWithValue("newcsps", newcsps);
+                command.Parameters.AddWithValue("skin_id", skin_id);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public void set_skin_nameplate(int char_id,int slot,int nameplate_id, int workspace)
+        {
+            var sql =
+               "update skin_library set nameplate_id = @nameplate_id where character_id = @char_id and slot = @slot and workspace_id = @workspace";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("workspace", workspace);
             command.Parameters.AddWithValue("char_id", char_id);
+            command.Parameters.AddWithValue("nameplate_id", nameplate_id);
             command.Parameters.AddWithValue("slot", slot);
             command.ExecuteNonQuery();
         }
 
-        public void convert_skin(String name, String author, String models, String csps, int character_id, int slot)
+
+        //----------------------Nameplates-----------------------------------
+
+        public string[] get_nameplate_info(int nameplate_id)
         {
-            String sql = "insert into skins (name,author,models,csps,character_id,locked,gb_uid) values(@name,@author,@models,@csps,@character_id,0,0)";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            string[] info;
+
+            var sql = "select name, author from nameplates where id = @nameplate_id";
+            var name = "";
+            var author = "";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("nameplate_id", nameplate_id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                name = reader.GetString(0);
+                author = reader.GetString(1);
+            }
+
+            info = new[] { name, author };
+            return info;
+        }
+
+        public ArrayList get_character_nameplates(int char_id)
+        {
+            ArrayList al = new ArrayList();
+            var sql =
+                "Select name from nameplates where character_id = @char_id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("char_id", char_id);
+            var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                String s = reader.GetString(0);
+                al.Add(s);
+            }
+
+            return al;
+        }
+
+        public ArrayList get_character_nameplates_id(int char_id)
+        {
+            ArrayList al = new ArrayList();
+            var sql =
+                "Select id from nameplates where character_id = @char_id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("char_id", char_id);
+            var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                int s = reader.GetInt32(0);
+                al.Add(s);
+            }
+
+            return al;
+        }
+
+        public String get_skin_nameplate(int slot, int character_id, int workspace)
+        {
+            String name = "";
+            var sql = "Select nameplates.name from nameplates join skin_library on(nameplates.id = skin_library.nameplate_id) where skin_library.character_id = @id and skin_library.slot = @slot and skin_library.workspace_id = @workspace";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", character_id);
+            command.Parameters.AddWithValue("slot", slot);
+            command.Parameters.AddWithValue("workspace", workspace);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                name = reader.GetString(0);
+
+            return name;
+        }
+
+        public ArrayList get_character_custom_nameplates(string char_name, string workspace_id)
+        {
+            var nameplates = new ArrayList();
+
+            var sql =
+                "select nameplates.name from nameplates Join characters on(characters.id = nameplates.character_id) Where characters.name = @char_name Order by nameplates.id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("char_name", char_name);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                nameplates.Add(reader.GetString(0));
+
+            return nameplates;
+        }
+
+        public ArrayList get_character_custom_nameplates_id(string char_name, string workspace_id)
+        {
+            var nameplates = new ArrayList();
+
+            var sql =
+                "select nameplates.id from nameplates Join characters on(characters.id = nameplates.character_id) Where characters.name = @char_name  Order by nameplates.id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("char_name", char_name);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                nameplates.Add(reader.GetInt32(0));
+
+            return nameplates;
+        }
+
+        public int get_character_id_nameplate(int nameplate_id)
+        {
+            var sql =
+               "Select character_id from nameplates where id = @id";
+            var id = 0;
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", nameplate_id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                id = reader.GetInt32(0);
+
+            return id;
+        }
+
+        public ArrayList GetCustomNameplates()
+        {
+            var nameplates = new ArrayList();
+
+            var sql =
+                "select name from nameplates order by id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                nameplates.Add(reader.GetString(0));
+
+            return nameplates;
+        }
+
+        public ArrayList get_custom_nameplates_id()
+        {
+            var nameplates_id = new ArrayList();
+
+            var sql =
+                "select id from nameplates Order by id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                nameplates_id.Add(reader.GetInt32(0));
+
+            return nameplates_id;
+        }
+
+        public void set_nameplate_name(string name, int id)
+        {
+            var sql = "update nameplates set name = @name where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("name", name);
-            command.Parameters.AddWithValue("author", author);
-            command.Parameters.AddWithValue("models", models);
-            command.Parameters.AddWithValue("csps", csps);
-            command.Parameters.AddWithValue("character_id", character_id);
+            command.Parameters.AddWithValue("id", id);
+            command.ExecuteNonQuery();
+        }
+
+        public void set_nameplate_author(string name, int id)
+        {
+            var sql = "update nameplates set author = @name where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("id", id);
+            command.ExecuteNonQuery();
+        }
+
+        public long insert_nameplate(int char_id)
+        {
+            var sql = "insert into nameplates (name,character_id,author,hash) values (@name,@char_id,'','')";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("name", "New Nameplate");
+            command.Parameters.AddWithValue("char_id", char_id);
             command.ExecuteNonQuery();
 
-            long id = db_connection.LastInsertRowId;
+            return db_connection.LastInsertRowId;
+        }
 
-            sql = "update skin_library set skin_id = @skin_id where slot = @slot and workspace_id = @workspace_id and character_id = @character_id";
-            command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("skin_id", id);
-            command.Parameters.AddWithValue("character_id", character_id);
+        internal void delete_nameplate(int skin_id)
+        {
+            var sql = "delete from nameplates where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", skin_id);
+            command.ExecuteNonQuery();
+        }
+
+        public int get_character_nameplate_count(int char_id)
+        {
+            var sql =
+              "Select nameplate_count from characters where id = @id";
+            var id = 0;
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", char_id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                id = reader.GetInt32(0);
+
+            return id;
+        }
+
+
+        public ArrayList get_custom_nameplates()
+        {
+            ArrayList nameplates = new ArrayList();
+
+            var sql = "select nameplates.id, nameplates.character_id, skin_library.Slot, characters.csp_folder from nameplates join skin_library on (nameplates.id = skin_library.nameplate_id) join characters on (nameplates.character_id = characters.id) order by nameplates.id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                int[] values = new int[] { reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2) };
+                nameplates.Add(values);
+            }
+           
+
+            return nameplates;
+        }
+
+        //----------------------Workspace-----------------------------------
+
+        public ArrayList get_workspaces()
+        {
+            var workspaces = new ArrayList();
+            var sql = "select name from workspaces where slot != 1";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                workspaces.Add(reader.GetString(0));
+
+            return workspaces;
+        }
+
+        public int get_workspace_count()
+        {
+            var id = 0;
+            var sql = "select count(*) from workspaces";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                id = reader.GetInt32(0);
+            return id;
+        }
+
+        public bool workspace_default(int slot)
+        {
+            var result = false;
+            var sql = "select locked from workspaces where slot = @slot";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("slot", slot);
-            command.Parameters.AddWithValue("workspace_id", get_property("workspace"));
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                result = reader.GetInt32(0) == 1 ? true : false;
 
+            return result;
+        }
+
+        public int[] get_workspace_stats(int slot)
+        {
+            int[] stats;
+            var skin_count = 0;
+            var sql =
+                "select count(*) from skin_library join workspaces on (workspaces.id = skin_library.workspace_id) where skin_library.locked = 0 and  workspaces.slot = @slot";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("slot", slot);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                skin_count = reader.GetInt32(0);
+            stats = new[] { skin_count };
+            return stats;
+        }
+
+        public int get_workspace_id(int slot)
+        {
+            var id = 0;
+            var sql = "select id from workspaces where slot = @slot";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("slot", slot);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                id = reader.GetInt32(0);
+            return id;
+        }
+
+        public int get_workspace_slot(int id)
+        {
+            var slot = 0;
+            var sql = "select slot from workspaces where id = @id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                slot = reader.GetInt32(0);
+            return slot;
+        }
+
+        public string GetWorkspaceName(int id)
+        {
+            var name = "";
+            var sql = "select name from workspaces where id = @id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                name = reader.GetString(0);
+            return name;
+        }
+
+        public void set_workspace_name(string name, int workspaceid)
+        {
+            var sql = "update workspaces set name = @name where id = @id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("id", workspaceid);
+            command.ExecuteNonQuery();
+        }
+
+        internal void clear_workspace(int workspace_id)
+        {
+            var sql = "delete from skin_library where workspace_id = @workspace_id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("workspace_id", workspace_id);
+            command.ExecuteNonQuery();
+        }
+
+        internal void delete_workspace(int workspace_id)
+        {
+            var sql = "delete from skin_library where workspace_id = @workspace_id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("workspace_id", workspace_id);
+            command.ExecuteNonQuery();
+
+            sql = "delete from workspaces where id = @workspace_id";
+            command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("workspace_id", workspace_id);
             command.ExecuteNonQuery();
         }
 
         public void add_default_skins(long id)
         {
+            var lines = new ArrayList();
+            var sql = "select character_id,skin_id,slot from skin_library Where skin_library.workspace_id = 1";
 
-            ArrayList lines = new ArrayList();
-            String sql = "select character_id,skin_id,slot from skin_library Where skin_library.workspace_id = 1";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                int[] line = new int[] { reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2) };
+                int[] line = { reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2) };
                 lines.Add(line);
             }
 
             foreach (int[] line in lines)
             {
-                sql = "insert into skin_library (character_id,skin_id,slot,locked,workspace_id) values (@character_id,@skin_id,@slot,1,@id)";
+                sql =
+                    "insert into skin_library (character_id,skin_id,slot,locked,workspace_id) values (@character_id,@skin_id,@slot,1,@id)";
                 command = new SQLiteCommand(sql, db_connection);
                 command.Parameters.AddWithValue("character_id", line[0]);
                 command.Parameters.AddWithValue("skin_id", line[1]);
@@ -724,294 +1201,218 @@ namespace Meteor.database
             }
         }
 
-        public void copy_skins(long id_source,long id_dest)
+        public Boolean copy_skins(long id_source, long id_dest)
         {
-            clear_workspace(Convert.ToInt32(id_dest));
+            Boolean result = true;
 
-            ArrayList lines = new ArrayList();
-            String sql = "select character_id,skin_id,slot,locked from skin_library Where skin_library.workspace_id = "+id_source;
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
+            try
             {
-                int[] line = new int[] { reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetInt32(3) };
-                lines.Add(line);
-            }
+                clear_workspace(Convert.ToInt32(id_dest));
 
-            foreach (int[] line in lines)
-            {
-                sql = "insert into skin_library (character_id,skin_id,slot,locked,workspace_id) values (@character_id,@skin_id,@slot,1,@id)";
-                command = new SQLiteCommand(sql, db_connection);
-                command.Parameters.AddWithValue("character_id", line[0]);
-                command.Parameters.AddWithValue("skin_id", line[1]);
-                command.Parameters.AddWithValue("slot", line[2]);
-                command.Parameters.AddWithValue("locked", line[3]);
-                command.Parameters.AddWithValue("id", id_dest);
-                command.ExecuteNonQuery();
-            }
-        }
+                var lines = new ArrayList();
+                var sql = "select character_id,skin_id,slot,locked from skin_library Where skin_library.workspace_id = " + id_source;
 
-        public void add_model(int skin_id, String model_name)
-        {
-            String[] models = get_skin_models(skin_id);
-            Boolean present = false;
-            String newmodels = "";
-            foreach (String m in models)
-            {
-                if(m != "")
+                var command = new SQLiteCommand(sql, db_connection);
+                var reader = command.ExecuteReader();
+                while (reader.Read())
                 {
-                    newmodels += m + ";";
-                }
-                
-                if(m == model_name)
-                {
-                    present = true;
-                }
-            }
-
-            if (!present)
-            {
-                newmodels += model_name;
-                String sql = "update skins set models = @newmodels where id = @skin_id";
-                SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-                command.Parameters.AddWithValue("newmodels", newmodels);
-                command.Parameters.AddWithValue("skin_id", skin_id);
-                command.ExecuteNonQuery();
-            }
-
-        }
-
-        public void add_csp(int skin_id, String csp_type)
-        {
-            String[] csps = get_skin_csps(skin_id);
-            Boolean present = false;
-            String newcsps = "";
-            foreach (String c in csps)
-            {
-                if (c != "")
-                {
-                    newcsps += c + ";";
+                    int[] line = { reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetInt32(3) };
+                    lines.Add(line);
                 }
 
-                if (c == csp_type)
+                foreach (int[] line in lines)
                 {
-                    present = true;
+                    sql =
+                        "insert into skin_library (character_id,skin_id,slot,locked,workspace_id) values (@character_id,@skin_id,@slot,1,@id)";
+                    command = new SQLiteCommand(sql, db_connection);
+                    command.Parameters.AddWithValue("character_id", line[0]);
+                    command.Parameters.AddWithValue("skin_id", line[1]);
+                    command.Parameters.AddWithValue("slot", line[2]);
+                    command.Parameters.AddWithValue("locked", line[3]);
+                    command.Parameters.AddWithValue("id", id_dest);
+                    command.ExecuteNonQuery();
                 }
             }
-
-            if (!present)
+            catch
             {
-                newcsps += csp_type;
-                String sql = "update skins set csps = @newcsps where id = @skin_id";
-                SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-                command.Parameters.AddWithValue("newcsps", newcsps);
-                command.Parameters.AddWithValue("skin_id", skin_id);
-                command.ExecuteNonQuery();
+                result = false;
             }
 
+            return result;
         }
 
-        public void restore_default(int slot,int char_id,String workspace)
+        public long add_workspace(string name)
         {
-            String sql = "select skin_id from skin_library where slot = @slot and character_id = @char_id and workspace_id = 1";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("slot", slot);
-            command.Parameters.AddWithValue("char_id", char_id);
-            SQLiteDataReader reader = command.ExecuteReader();
-            int id = 0;
-            while (reader.Read())
-            {
-                id = reader.GetInt32(0);
-            }
+            reorder_workspace();
+            int newSlot = get_workspace_count();
 
-            sql = "update skin_library set skin_id = @id where slot = @slot and character_id = @char_id and workspace_id = @workspace";
-            command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("id", id);
-            command.Parameters.AddWithValue("slot", slot);
-            command.Parameters.AddWithValue("char_id", char_id);
-            command.Parameters.AddWithValue("workspace", workspace);
-            command.ExecuteNonQuery();
-        }
-
-        public void replace_skin(int new_id,int char_id, int slot,int workspace_id)
-        {
-            
-
-            String sql = "update skin_library set  skin_id = @skin_id where character_id = @character_id and slot = @slot and workspace_id = @workspace_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("skin_id", new_id);
-            command.Parameters.AddWithValue("character_id", char_id);
-            command.Parameters.AddWithValue("slot", slot);
-            command.Parameters.AddWithValue("workspace_id", workspace_id);
-            command.ExecuteNonQuery();
-        }
-
-       
-        #endregion
-
-        #region Workspace
-        public long add_workspace(String name, int slot)
-        {
-            String sql = "insert into workspaces (name,slot,locked) values (@name,@slot,0)";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
+            var sql = "insert into workspaces (name,slot,locked) values (@name,@slot,0)";
+            var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("name", name);
-            command.Parameters.AddWithValue("slot", slot);
+            command.Parameters.AddWithValue("slot", newSlot);
             command.ExecuteNonQuery();
 
             return db_connection.LastInsertRowId;
         }
-        #endregion
 
-        #endregion
 
-        #region Remove
-        internal void remove_skin(int slot,int character_id, string selected_workspace)
+        //----------------------Packer----------------------------------------
+
+        public DataSet get_packer_content()
         {
-            String sql = "delete from skin_library where slot = @slot and character_id = @character_id and workspace_id = @workspace_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("slot", slot);
-            command.Parameters.AddWithValue("character_id", character_id);
-            command.Parameters.AddWithValue("workspace_id", selected_workspace);
-            command.ExecuteNonQuery();
-        }
+            ArrayList results = new ArrayList();
+            DataSet ds = new DataSet();
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Content Type");
+            dt.Columns.Add("Name");
+            dt.Columns.Add("Installed on");
 
-        internal void delete_skin(int skin_id)
-        {
-            String sql = "delete from skins where id = @id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("id", skin_id);
-            command.ExecuteNonQuery();
-        }
+            var sql =
+                "Select content_type, content_id from packer";
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
 
-        internal void remove_csp(int skin_id, String csp_type)
-        {
-            String[] csps = get_skin_csps(skin_id);
-            int count = 0;
-            String newcsps = "";
-            foreach(String s in csps)
-            {
-                if(s != csp_type)
-                {
-                    if (count == 0)
-                    {
-                        newcsps += s;
-                    }else
-                    {
-                        newcsps += ";"+s;
-                    }
-                }
-                count++;
-                
-            }
-
-
-            String sql = "update skins set csps = @csps where id = @skin_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("csps", newcsps);
-            command.Parameters.AddWithValue("skin_id", skin_id);
-            command.ExecuteNonQuery();
-        }
-
-        internal void remove_model(int skin_id,String model_name)
-        {
-            String[] models = get_skin_models(skin_id);
-            int count = 0;
-            String newmodels = "";
-            foreach (String s in models)
-            {
-                if (s != model_name)
-                {
-                    if (count == 0)
-                    {
-                        newmodels += s;
-                    }
-                    else
-                    {
-                        newmodels += ";" + s;
-                    }
-                }
-                count++;
-            }
-
-
-            String sql = "update skins set models = @models where id = @skin_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("models", newmodels);
-            command.Parameters.AddWithValue("skin_id", skin_id);
-            command.ExecuteNonQuery();
-        }
-
-        internal void clear_workspace(int workspace_id)
-        {
-            String sql = "delete from skin_library where workspace_id = @workspace_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("workspace_id", workspace_id);
-            command.ExecuteNonQuery();
-        }
-
-        internal void delete_workspace(int workspace_id)
-        {
-            String sql = "delete from skin_library where workspace_id = @workspace_id";
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("workspace_id", workspace_id);
-            command.ExecuteNonQuery();
-
-            sql = "delete from workspaces where id = @workspace_id";
-            command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("workspace_id", workspace_id);
-            command.ExecuteNonQuery();
-        }
-        #endregion
-
-        #region Reorder
-        public void reorder_workspace()
-        {
-            string sql = "select slot from workspaces";
-
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            SQLiteDataReader reader = command.ExecuteReader();
-            int countslot = 1;
             while (reader.Read())
             {
-                int slot = reader.GetInt32(0);
-                if(countslot != slot)
+                int[] ids = new int[] { reader.GetInt32(0), reader.GetInt32(1) };
+                String type = "";
+                String name = "";
+                String parent = "";
+
+                switch (ids[0])
                 {
-                    String sql2 = "update workspaces set slot = @countslot where slot = @slot";
-                    command = new SQLiteCommand(sql2, db_connection);
-                    command.Parameters.AddWithValue("countslot", countslot);
-                    command.Parameters.AddWithValue("slot", slot);
-                    command.ExecuteNonQuery();
+                    //Skins
+                    case 0:
+                        type = "Skins";
+                        name = get_skin_info(ids[1])[0];
+                        parent = get_character_name(ids[1]);
+                        break;
+                    case 1:
+                        type = "Nameplate";
+                        name = get_nameplate_info(ids[1])[0];
+                        parent = get_character_name(ids[1]);
+                        break;
                 }
-                countslot++;
+                DataRow dr = dt.NewRow();
+                dr[0] = type;
+                dr[1] = name;
+                dr[2] = parent;
+                dt.Rows.Add(dr);
             }
+            ds.Tables.Add(dt);
+
+            return ds;
         }
 
-        public void reorder_skins(int character_id, int workspace_id)
+        public ArrayList get_packer_ids()
         {
-            string sql = "select slot from skin_library where character_id = @character_id and workspace_id = @workspace_id";
+            ArrayList al = new ArrayList();
+            var sql =
+                "Select content_type, content_id from packer";
+            var command = new SQLiteCommand(sql, db_connection);
+            var reader = command.ExecuteReader();
 
-            SQLiteCommand command = new SQLiteCommand(sql, db_connection);
-            command.Parameters.AddWithValue("character_id", character_id);
-            command.Parameters.AddWithValue("workspace_id", workspace_id);
-            SQLiteDataReader reader = command.ExecuteReader();
-            int countslot = 1;
             while (reader.Read())
             {
-                int slot = reader.GetInt32(0);
-                if (countslot != slot)
-                {
-                    String sql2 = "update skin_library set slot = @countslot where slot = @slot and character_id = @character_id and workspace_id = @workspace_id";
-                    command = new SQLiteCommand(sql2, db_connection);
-                    command.Parameters.AddWithValue("countslot", countslot);
-                    command.Parameters.AddWithValue("slot", slot);
-                    command.Parameters.AddWithValue("character_id", character_id);
-                    command.Parameters.AddWithValue("workspace_id", workspace_id);
-                    command.ExecuteNonQuery();
-                }
-                countslot++;
+                int[] ids = new int[] { reader.GetInt32(0), reader.GetInt32(1) };
+                al.Add(ids);
+            }
+
+            return al;
+        }
+
+        public void add_packer_item(int type, int id)
+        {
+            var sql = "insert into packer (content_type,content_id) values (@type,@id)";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("type", type);
+            command.Parameters.AddWithValue("id", id);
+            command.ExecuteNonQuery();
+
+        }
+
+        public void clear_packer_content()
+        {
+            var sql = "delete from packer";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.ExecuteNonQuery();
+        }
+
+        //----------------------Config----------------------------------------
+
+        public string get_property(string property)
+        {
+            var value = "";
+            var sql = "select value from configuration where property = @property";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("property", property);
+            var reader = command.ExecuteReader();
+
+            while (reader.Read())
+                value = reader.GetString(0);
+
+            return value;
+        }
+
+
+        public void set_property_value(string value, string property)
+        {
+            var test = get_property(property);
+            if (test != "")
+            {
+                var sql = "update configuration set value = @value where property =  @property";
+                var command = new SQLiteCommand(sql, db_connection);
+                command.Parameters.AddWithValue("value", value);
+                command.Parameters.AddWithValue("property", property);
+                command.ExecuteNonQuery();
+            }
+            else
+            {
+                var sql = "insert into configuration ('property','value') values (@property,@value)";
+                var command = new SQLiteCommand(sql, db_connection);
+                command.Parameters.AddWithValue("value", value);
+                command.Parameters.AddWithValue("property", property);
+                command.ExecuteNonQuery();
             }
         }
-        #endregion
+
+        
+
+        
+
+        
+
+        
+
+
+        
+
+        
+
+        
+
+        
+
+
+        
+
+
+        public Boolean UpdateDatabase(String query)
+        {
+            try
+            {
+                var command = new SQLiteCommand(query, db_connection);
+                command.ExecuteNonQuery();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
+
     }
 }

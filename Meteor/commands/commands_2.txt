@@ -1,0 +1,1 @@
+﻿alter table skin_library add nameplate_id integer;update skin_library set nameplate_id = 0 where 1 = 1;create table nameplates(id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, name text,author text,character_id int,hash text);

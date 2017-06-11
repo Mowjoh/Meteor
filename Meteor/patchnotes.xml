@@ -1,33 +1,5 @@
-<package version="0.7.4.0">
-  <patchnote version="0.7.4.0">
-    <patch>Corrected Tooltips</patch>
-  </patchnote>
-  <patchnote version="0.7.3.0">
-    <patch>Resized interface for 1366*768 screens</patch>
-  </patchnote>
-  <patchnote version="0.7.2.0">
-    <patch>Better Dev Logs</patch>
-  </patchnote>
-  <patchnote version="0.7.1.1">
-    <patch>bug hotfix</patch>
-  </patchnote>
-  <patchnote version="0.7.1.0">
-    <patch>Safe SQL queries</patch>
-  </patchnote>
-  <patchnote version="0.7.0.4">
-    <patch>Control blocks</patch>
-  </patchnote>
-  <patchnote version="0.7.0.3">
-    <patch>workspace bufixes</patch>
-  </patchnote>
-  <patchnote version="0.7.0.2">
-    <patch>Added workspace skin sync</patch>
-  </patchnote>
-  <patchnote version="0.7.0.1">
-    <patch>Added active workspace label</patch>
-    <patch>Changed workspace behavior / hidden default workspace</patch>
-  </patchnote>
-  <patchnote version="0.7.0.0">
-    <patch>Basically almost complete Meteor (first release)</patch>
+<package version="0.9.0.0">
+  <patchnote version="0.9.0.0">
+    <patch>Some bugfixes</patch>
   </patchnote>
 </package>
