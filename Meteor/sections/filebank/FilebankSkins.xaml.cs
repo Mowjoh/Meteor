@@ -72,6 +72,7 @@ namespace Meteor.sections.filebank
                 AuthorValueLabel.Content = infos[1];
                 CspsValueLabel.Content = infos[3];
                 ModelsValueLabel.Content = infos[2];
+                CharacterValueLabel.Content = infos[4];
                 SkinIdValueLabel.Content = (int)Skins[SkinsListBox.SelectedIndex];
             }
         }
@@ -194,7 +195,7 @@ namespace Meteor.sections.filebank
         }
 
         //Reloads
-        private void ReloadSkins()
+        public void ReloadSkins()
         {
             if (CharacterListBox.SelectedIndex == -1) return;
 

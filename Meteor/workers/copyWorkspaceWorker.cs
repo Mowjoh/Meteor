@@ -17,7 +17,7 @@ namespace Meteor.workers
         //Constructor
         public copyWorkspaceWorker(db_handler databaseHandler) : base(databaseHandler)
         {
-
+            Name = "copyWorkspaceWorker";
         }
 
         //Launch command

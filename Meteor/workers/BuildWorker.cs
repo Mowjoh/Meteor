@@ -10,17 +10,20 @@ namespace Meteor.workers
 
         public BuildWorker(db_handler databaseHandler) : base(databaseHandler)
         {
-
+            Name = "BuildWorker";
         }
 
-        protected internal void Launch(builder build)
+        protected internal override void Launch()
         {
-            _build = build;
+            _build = new builder(int.Parse(DbHandler.get_property("workspace")),int.Parse(DbHandler.get_property("region")), int.Parse(DbHandler.get_property("language")),DbHandler);
+            Message = "Building Workspace";
             _worker.RunWorkerAsync();
         }
 
         protected override void WorkerDowork(object sender, DoWorkEventArgs e)
         {
+            Status = 1;
+
             var activeWorkspace = int.Parse(DbHandler.get_property("workspace"));
 
             //Making sure it's the proper ID
@@ -31,6 +34,7 @@ namespace Meteor.workers
 
             //Building folders
             _build.build();
+
         }
 
         

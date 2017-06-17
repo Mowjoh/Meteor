@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Meteor.sections"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      Title="Stages" MinWidth="800" MinHeight="500" Width="650" Height="324">
+      Title="Stages" MinWidth="800" MinHeight="500" Width="Auto" Height="Auto">
 
     <Grid x:Name="StagesGrid" MinWidth="800" MinHeight="500">
         <Label x:Name="messageLabel" Content="This section is under construction, come back later!"

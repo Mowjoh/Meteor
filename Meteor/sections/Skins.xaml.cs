@@ -20,10 +20,10 @@ namespace Meteor.sections
 
         private readonly db_handler _dbHandler;
 
-        private String SelectedCharacterName { get; set; }
+        public string SelectedCharacterName { get; set; }
         private int SelectedCharacterId { get; set;  }
         private int SelectedSkinId { get; set; }
-        private int SelectedSlot { get; set; }
+        public int SelectedSlot { get; set; }
         private Skin SelectedSkin { get; set; }
 
         private int ActiveWorkspace { get; set; }
@@ -74,64 +74,7 @@ namespace Meteor.sections
         //Skin List
         private void SkinSelected(object sender, SelectionChangedEventArgs e)
         {
-            //If no skin is selected
-            if (SkinsListBox.SelectedIndex == -1)
-            {
-                ClearSkinControls();
-            }
-            else
-            {
-                ActiveWorkspace = int.Parse(_dbHandler.get_property("workspace"));
-                //Setting up global variables
-                SelectedSlot = SkinsListBox.SelectedIndex + 1;
-                SelectedSkinId = _dbHandler.get_skin_id(SelectedCharacterId, SelectedSlot, ActiveWorkspace);
-
-                //Getting id
-                var gbUid = _dbHandler.get_skin_gb_uid(SelectedSkinId);
-
-                if (SelectedSlot > 0)
-                {
-                    //Loading info
-                    var infos = _dbHandler.get_skin_info(SelectedSkinId);
-                    SkinNameValueTextBox.Text = infos[0];
-                    SkinAuthorValueTextBox.Text = infos[1];
-                    SkinSlotValueTextBox.Text = SelectedSlot.ToString();
-
-                    //Getting locks
-                    var skinLock = _dbHandler.skin_locked(SelectedSkinId);
-                    var workspaceLock = _dbHandler.skin_locked(SelectedSlot, SelectedCharacterId);
-
-                    //Setting control states
-                    SetSkinState(workspaceLock, skinLock, gbUid);
-
-
-
-                    if (SelectedSlot < 17)
-                    {
-                        LoadingNameplates = true;
-                        SkinNameplateValueComboBox.Items.Clear();
-                        SkinNameplateValueComboBox.Items.Add("No Nameplate");
-                        foreach (String s in _dbHandler.get_character_nameplates(SelectedCharacterId))
-                        {
-                            SkinNameplateValueComboBox.Items.Add(s);
-                        }
-                        SkinNameplateValueComboBox.IsEnabled = true;
-                        LoadingNameplates = false;
-                    }
-                    else
-                    {
-                        SkinNameplateValueComboBox.IsEnabled = false;
-                    }
-
-
-                    //loading skin files
-                    LoadSkinFiles();
-                }
-
-                //Writing stuff
-                            MeteorCode.WriteToConsole("Selected slot " + SelectedSlot, 3);
-                            MeteorCode.WriteToConsole("Selected skin id " + SelectedSkinId, 3);
-            }
+            RefreshInformations();
         }
 
         private void AddSkin(object sender, RoutedEventArgs e)
@@ -378,7 +321,7 @@ namespace Meteor.sections
 
 
         //Loads
-        private void LoadSkinList(string selectedCharacter)
+        public void LoadSkinList(string selectedCharacter)
         {
             var skins = _dbHandler.get_character_skins(selectedCharacter, _dbHandler.get_property("workspace"));
             SkinsListBox.Items.Clear();
@@ -474,9 +417,66 @@ namespace Meteor.sections
             CharacterListView.SelectedIndex = slot;
         }
 
-        private void SelectSkinSlot(int slot)
+        public void RefreshInformations()
         {
-            SkinsListBox.SelectedIndex = slot - 1;
+            //If no skin is selected
+            if (SkinsListBox.SelectedIndex == -1)
+            {
+                ClearSkinControls();
+            }
+            else
+            {
+                ActiveWorkspace = int.Parse(_dbHandler.get_property("workspace"));
+                //Setting up global variables
+                SelectedSlot = SkinsListBox.SelectedIndex + 1;
+                SelectedSkinId = _dbHandler.get_skin_id(SelectedCharacterId, SelectedSlot, ActiveWorkspace);
+
+                //Getting id
+                var gbUid = _dbHandler.get_skin_gb_uid(SelectedSkinId);
+
+                if (SelectedSlot > 0)
+                {
+                    //Loading info
+                    var infos = _dbHandler.get_skin_info(SelectedSkinId);
+                    SkinNameValueTextBox.Text = infos[0];
+                    SkinAuthorValueTextBox.Text = infos[1];
+                    SkinSlotValueTextBox.Text = SelectedSlot.ToString();
+
+                    //Getting locks
+                    var skinLock = _dbHandler.skin_locked(SelectedSkinId);
+                    var workspaceLock = _dbHandler.skin_locked(SelectedSlot, SelectedCharacterId);
+
+                    //Setting control states
+                    SetSkinState(workspaceLock, skinLock, gbUid);
+
+
+
+                    if (SelectedSlot < 17)
+                    {
+                        LoadingNameplates = true;
+                        SkinNameplateValueComboBox.Items.Clear();
+                        SkinNameplateValueComboBox.Items.Add("No Nameplate");
+                        foreach (String s in _dbHandler.get_character_nameplates(SelectedCharacterId))
+                        {
+                            SkinNameplateValueComboBox.Items.Add(s);
+                        }
+                        SkinNameplateValueComboBox.IsEnabled = true;
+                        LoadingNameplates = false;
+                    }
+                    else
+                    {
+                        SkinNameplateValueComboBox.IsEnabled = false;
+                    }
+
+
+                    //loading skin files
+                    LoadSkinFiles();
+                }
+
+                //Writing stuff
+                MeteorCode.WriteToConsole("Selected slot " + SelectedSlot, 3);
+                MeteorCode.WriteToConsole("Selected skin id " + SelectedSkinId, 3);
+            }
         }
 
         private void ClearSkinControls()

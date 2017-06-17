@@ -27,7 +27,7 @@ namespace Meteor.workers
         //Constructor
         public DownloadWorker(db_handler databaseHandler) : base(databaseHandler)
         {
-
+            _worker.WorkerReportsProgress = true;
         }
 
         protected internal void Launch(String url)

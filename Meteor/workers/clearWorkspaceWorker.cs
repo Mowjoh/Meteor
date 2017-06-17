@@ -10,6 +10,7 @@ namespace Meteor.workers
 
         public ClearWorkspaceWorker(db_handler databaseHandler) : base(databaseHandler)
         {
+            Name = "ClearWorkspaceWorker";
         }
 
         public void Launch(int selectedWorkspace)

@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Meteor.sections"
       xmlns:System="clr-namespace:System;assembly=mscorlib" x:Name="SkinsPage" x:Class="Meteor.sections.Skins"
       mc:Ignorable="d"
-      Title="Skins" MinWidth="800" MinHeight="446" Height="342" Width="652">
+      Title="Skins" MinWidth="800" MinHeight="446">
 
     <Grid x:Name="SkinsPageGrid">
         <Grid.RowDefinitions>

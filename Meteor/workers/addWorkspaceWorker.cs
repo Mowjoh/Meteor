@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using Meteor.database;
+using Meteor.sections;
 
 namespace Meteor.workers
 {
@@ -10,7 +11,7 @@ namespace Meteor.workers
         //Constructor
         public addWorkspaceWorker(db_handler dbHandler) : base(dbHandler)
         {
-            
+            Name = "addWorkspaceWorker";
         }
 
 
@@ -26,7 +27,7 @@ namespace Meteor.workers
 
         protected internal override void PostWork()
         {
-            MeteorCode.WriteToConsole("Workspace was successfully added",0);
+          
         }
 
 

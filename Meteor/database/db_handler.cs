@@ -393,11 +393,12 @@ namespace Meteor.database
         {
             string[] info;
 
-            var sql = "select name, author, models, csps from skins where id = @skin_id";
+            var sql = "select skins.name, skins.author, skins.models, skins.csps,characters.name from skins join characters on (skins.character_id = characters.id) where skins.id = @skin_id";
             var name = "";
             var author = "";
             var models = "";
             var csps = "";
+            var character = "";
 
             var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("skin_id", skin_id);
@@ -411,9 +412,11 @@ namespace Meteor.database
 
                 if (!reader.IsDBNull(3))
                     csps = reader.GetString(3);
+                if (!reader.IsDBNull(4))
+                    character = reader.GetString(4);
             }
 
-            info = new[] { name, author, models, csps };
+            info = new[] { name, author, models, csps,character };
             return info;
         }
 
@@ -836,9 +839,10 @@ namespace Meteor.database
         {
             string[] info;
 
-            var sql = "select name, author from nameplates where id = @nameplate_id";
+            var sql = "select nameplates.name, nameplates.author, characters.name from nameplates join characters on(characters.id = nameplates.character_id) where nameplates.id = @nameplate_id";
             var name = "";
             var author = "";
+            var character = "";
 
             var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("nameplate_id", nameplate_id);
@@ -847,9 +851,10 @@ namespace Meteor.database
             {
                 name = reader.GetString(0);
                 author = reader.GetString(1);
+                character = reader.GetString(2);
             }
 
-            info = new[] { name, author };
+            info = new[] { name, author,character };
             return info;
         }
 
@@ -1090,10 +1095,12 @@ namespace Meteor.database
             return result;
         }
 
-        public int[] get_workspace_stats(int slot)
+        public String[] get_workspace_stats(int slot)
         {
-            int[] stats;
-            var skin_count = 0;
+            string[] stats;
+            var skinCount = 0;
+            var nameplateCount = 0;
+            var buildcount = 0;
             var sql =
                 "select count(*) from skin_library join workspaces on (workspaces.id = skin_library.workspace_id) where skin_library.locked = 0 and  workspaces.slot = @slot";
 
@@ -1101,8 +1108,55 @@ namespace Meteor.database
             command.Parameters.AddWithValue("slot", slot);
             var reader = command.ExecuteReader();
             while (reader.Read())
-                skin_count = reader.GetInt32(0);
-            stats = new[] { skin_count };
+                skinCount = reader.GetInt32(0);
+
+            sql =
+                "select count(*) from skin_library join workspaces on (workspaces.id = skin_library.workspace_id) where nameplate_id != 0 and  workspaces.slot = @slot";
+
+            command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("slot", slot);
+            reader = command.ExecuteReader();
+            while (reader.Read())
+                nameplateCount = reader.GetInt32(0);
+
+            sql =
+                "select date from workspaces where workspaces.slot = @slot";
+
+            command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("slot", slot);
+            reader = command.ExecuteReader();
+            string date = "";
+            while (reader.Read())
+                date = reader.GetString(0);
+
+            sql =
+                "select builds from workspaces where workspaces.slot = @slot";
+
+            command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("slot", slot);
+            reader = command.ExecuteReader();
+            while (reader.Read())
+                buildcount = reader.GetInt32(0);
+
+            sql =
+                "select charaname,max(cnt) from ( select count(*) as cnt,characters.name as charaname from skin_library join characters on (characters.id = skin_library.character_id) join workspaces on (skin_library.workspace_id = workspaces.id) where workspaces.slot = @slot and skin_library.locked = 0 group by skin_library.character_id)";
+
+            command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("slot", slot);
+            reader = command.ExecuteReader();
+            string mostskin = "";
+            try
+            {
+                while (reader.Read())
+                    mostskin = reader.GetString(0);
+            }
+            catch
+            {
+                
+            }
+            
+
+            stats = new[] { skinCount.ToString(), nameplateCount.ToString(), date, buildcount.ToString(), mostskin };
             return stats;
         }
 
@@ -1244,7 +1298,7 @@ namespace Meteor.database
         public long add_workspace(string name)
         {
             reorder_workspace();
-            int newSlot = get_workspace_count();
+            int newSlot = get_workspace_count() +1;
 
             var sql = "insert into workspaces (name,slot,locked) values (@name,@slot,0)";
             var command = new SQLiteCommand(sql, db_connection);
@@ -1255,6 +1309,41 @@ namespace Meteor.database
             return db_connection.LastInsertRowId;
         }
 
+        public void SetWorkspaceDate(string date, int workspaceId)
+        {
+            var sql =
+                "update workspaces set date = @date where id = @workspace_id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("date", date);
+            command.Parameters.AddWithValue("workspace_id", workspaceId);
+            command.ExecuteNonQuery();
+        }
+
+        public void upBuildCount(int workspaceId)
+        {
+            int builds = getWorkspaceBuilds(workspaceId) +1;
+            var sql =
+                "update workspaces set builds = @builds where id = @workspace_id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("builds", builds.ToString());
+            command.Parameters.AddWithValue("workspace_id", workspaceId);
+            command.ExecuteNonQuery();
+        }
+
+        public int getWorkspaceBuilds(int workspaceId)
+        {
+            var builds = 0;
+            var sql = "select builds from workspaces where id = @id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("id", workspaceId);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+                builds = reader.GetInt32(0);
+            return builds;
+        }
 
         //----------------------Packer----------------------------------------
 
@@ -1376,27 +1465,6 @@ namespace Meteor.database
                 command.ExecuteNonQuery();
             }
         }
-
-        
-
-        
-
-        
-
-        
-
-
-        
-
-        
-
-        
-
-        
-
-
-        
-
 
         public Boolean UpdateDatabase(String query)
         {

@@ -21,8 +21,6 @@ namespace Meteor.sections
         private int ActiveWorkspaceSlot { get; set; }
         private int SelectedWorkspaceId { get; set; }
 
-        private readonly builder _builder;
-
         public Workspace()
         {
             InitializeComponent();
@@ -45,15 +43,6 @@ namespace Meteor.sections
 
             LoadWorkspaceStats();
             
-            //Instanciancing builder
-            uichar_handler uichar = new uichar_handler();
-            if (!File.Exists(uichar.filepath)) return;
-
-            var region = int.Parse(_dbHandler.get_property("region"));
-            var language = int.Parse(_dbHandler.get_property("language"));
-            var workspace = int.Parse(_dbHandler.get_property("workspace"));
-
-            _builder = new builder(workspace, region, language, _dbHandler, uichar);
         }
 
         //Listbox Actions
@@ -102,8 +91,6 @@ namespace Meteor.sections
             if (WorkspacesListBox.Items.Count < 9)
             {
                 ((MainWindow)Application.Current.MainWindow).AddWorkspaceWorker.Launch();
-
-                            MeteorCode.WriteToConsole("Added a new workspace", 0);
             }
             else
             {
@@ -179,7 +166,7 @@ namespace Meteor.sections
         //Sm4sh Explorer
         private void BuildWorkspace(object sender, RoutedEventArgs e)
         {
-            ((MainWindow)Application.Current.MainWindow).BuildWorker.Launch(_builder);
+            ((MainWindow)Application.Current.MainWindow).BuildWorker.Launch();
         }
 
         private void LaunchS4E(object sender, RoutedEventArgs e)
@@ -235,7 +222,7 @@ namespace Meteor.sections
         }
 
         //Loads
-        private void ReloadWorkspacesList()
+        public void ReloadWorkspacesList()
         {
             var selected = WorkspacesListBox.SelectedIndex;
             WorkspacesListBox.Items.Clear();
@@ -261,10 +248,14 @@ namespace Meteor.sections
                 WorkspacesListBox.SelectedIndex = WorkspacesListBox.Items.Count - 1;
         }
 
-        private void LoadWorkspaceStats()
+        public void LoadWorkspaceStats()
         {
             var stats = _dbHandler.get_workspace_stats(WorkspacesListBox.SelectedIndex + 2);
-            Skin_Count_Value_Label.Content = stats[0].ToString();
+            SkinCountValueLabel.Content = stats[0];
+            NameplateCountValueLabel.Content = stats[1];
+            DateCreatedValueLabel.Content = stats[2];
+            BuildCountValueLabel.Content = stats[3];
+            MostSkinsValueLabel.Content = stats[4];
         }
 
         //S4E Interaction

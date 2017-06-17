@@ -13,6 +13,7 @@ using Meteor.database;
 using Path = System.IO.Path;
 using System.Xml;
 using Microsoft.Win32;
+using Xceed.Wpf.Toolkit;
 using winforms = System.Windows.Forms;
 
 namespace Meteor.sections
@@ -302,39 +303,12 @@ namespace Meteor.sections
 
         private void SaveColor(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(RedValueTextBox.Text, out int r))
-                if (int.TryParse(BlueValueTextBox.Text, out int b))
-                    if (int.TryParse(GreenValueTextBox.Text, out int g))
-                        if ((r > 255) | (g > 255) | (b > 255))
-                        {
-                            WriteToConsole("Values cannot be > 255", 1);
-                        }
-                        else
-                        {
-                            if ((r < 0) | (g < 0) | (b < 0))
-                            {
-                                WriteToConsole("Values cannot be < 0", 1);
-                            }
-                            else
-                            {
-                                var redValue = r.ToString("X");
-                                var greenValue = g.ToString("X");
-                                var blueValue = b.ToString("X");
-                                redValue = redValue.Length == 1 ? "0" + redValue : redValue;
-                                greenValue = greenValue.Length == 1 ? "0" + greenValue : greenValue;
-                                blueValue = blueValue.Length == 1 ? "0" + blueValue : blueValue;
 
-                                var color = "FF" + redValue + blueValue + greenValue;
-                                _dbHandler.set_property_value(color, "background");
-                                UpdateBackground();
-                            }
-                        }
-                    else
-                        WriteToConsole("Green value is not a number", 1);
-                else
-                    WriteToConsole("Blue value is not a number", 1);
-            else
-                WriteToConsole("Red value is not a number", 1);
+            var color = ColorPicker.SelectedColor.ToString();
+            _dbHandler.set_property_value(color, "background");
+            UpdateBackground();
+
+        
         }
 
         private void UpdateBackground()
@@ -360,7 +334,7 @@ namespace Meteor.sections
                     Offset = 0.12
                 };
 
-                var gradientColor2= ColorConverter.ConvertFromString("#" + color);
+                var gradientColor2= ColorConverter.ConvertFromString(color);
                 if (gradientColor2 != null)
                 {
                     var gs2 = new GradientStop

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -8,6 +9,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Meteor.database;
+using Meteor.sections;
+using Meteor.sections.filebank;
 using Meteor.updates;
 using Meteor.workers;
 
@@ -34,6 +37,8 @@ namespace Meteor
         public BuildWorker BuildWorker;
         private DownloadWorker _downloadWorker;
 
+        private Worker _currentWorker;
+
         //Controller
         private int _controllerPercent;
         private string _controllerMessage = "";
@@ -55,46 +60,42 @@ namespace Meteor
             try
             {
                 _dbHandler = new db_handler();
-                            MeteorCode.WriteToConsole("The connection to the database was successful.", 3);
+                MeteorCode.WriteToConsole("The connection to the database was successful.", 3);
                 DatabaseUpdater updooter = new DatabaseUpdater();
                 if (updooter.UpdootDatabase())
                 {
-                                MeteorCode.WriteToConsole("The database update was succesfull.", 0);
-                    
+                    MeteorCode.WriteToConsole("The database update was succesfull.", 0);
                 }
                 else
                 {
                     if(File.Exists(_appPath + "/command.txt"))
                     {
-                                    MeteorCode.WriteToConsole("There was an issue with the database update", 2);
+                        MeteorCode.WriteToConsole("There was an issue with the database update", 2);
                     }
                 }
             }
             catch
             {
-                            MeteorCode.WriteToConsole(
-                    "The connection to the database was unsuccessful. Please check that the Library is there.", 2);
+                MeteorCode.WriteToConsole(
+                "The connection to the database was unsuccessful. Please check that the Library is there.", 2);
             }
 
             Console.Text = "";
+            ActiveWorkspaceTextBox.Text = _dbHandler.GetWorkspaceName(int.Parse(_dbHandler.get_property("workspace")));
 
             SetupWorkers();
-
-
-                        MeteorCode.WriteToConsole("Welcome to Meteor !", 0);
-
-            #endregion
-
             UpdateBackgroundColor();
+            InitializeMeteor();
+            MeteorCode.WriteToConsole("Welcome to Meteor !", 0);
 
             var updater = new Updater(_appPath);
 
             var args = Environment.GetCommandLineArgs();
-
             if (args.Length != 2) return;
-
-                        MeteorCode.WriteToConsole(args[1], 0);
+            MeteorCode.WriteToConsole(args[1], 0);
             _downloadWorker.Launch(args[1]);
+
+            #endregion
         }
 
         //Init procedures
@@ -166,7 +167,7 @@ namespace Meteor
                     Offset = 0.12
                 };
 
-                var gradientColor2 = ColorConverter.ConvertFromString("#" + color);
+                var gradientColor2 = ColorConverter.ConvertFromString(color);
                 if (gradientColor2 != null)
                 {
                     var gs2 = new GradientStop
@@ -213,6 +214,17 @@ namespace Meteor
             statusbar.Value = val;
         }
 
+        //First boot
+        private void InitializeMeteor()
+        {
+            //Check for first boot
+            if (_dbHandler.get_property("initialized") == "0")
+            {
+                _dbHandler.SetWorkspaceDate(DateTime.Now.ToLongDateString(),int.Parse(_dbHandler.get_property("workspace")));
+                _dbHandler.set_property_value("1", "initialized");
+            }
+        }
+
 
         //Section actions
         private void ChangeSection(object sender, SelectionChangedEventArgs e)
@@ -224,7 +236,10 @@ namespace Meteor
             {
                 case "Skins":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[0];
-                                MeteorCode.WriteToConsole("Section changed to Skins", 3);
+                    MeteorCode.WriteToConsole("Section changed to Skins", 3);
+                    Skins skinsPage = (Skins)SkinsFrame.Content;
+                    skinsPage.LoadSkinList(skinsPage.SelectedCharacterName);
+                    skinsPage.SkinsListBox.SelectedIndex = skinsPage.SelectedSlot-1;
                     break;
                 case "Stages":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[1];
@@ -237,11 +252,25 @@ namespace Meteor
                 case "FileBank":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[3];
                                 MeteorCode.WriteToConsole("Section changed to Filebank", 3);
+                    Filebank FilebankPage = (Filebank) FilebankFrame.Content;
 
+                    FilebankNameplates FilebankNameplatesPage =
+                        (FilebankNameplates) FilebankPage.FilebankNameplateFrame.Content;
+                    FilebankNameplatesPage.ReloadNameplates();
+
+                    FilebankSkins FilebankSkinsPage =
+                        (FilebankSkins) FilebankPage.FilebankSkinFrame.Content;
+                    FilebankSkinsPage.ReloadSkins();
+
+                    FilebankPacker FilebankPackerPage =
+                        (FilebankPacker) FilebankPage.FilebankPackerFrame.Content;
+                    FilebankPackerPage.Reload();
                     break;
                 case "Workspace":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[4];
                                 MeteorCode.WriteToConsole("Section changed to Workspace", 3);
+                    Workspace workspacePage = (Workspace) WorkspaceFrame.Content;
+                    workspacePage.LoadWorkspaceStats();
                     break;
                 case "Configuration":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[5];
@@ -272,6 +301,7 @@ namespace Meteor
             _controllerWorker.DoWork += ControllerWorkerDoWork;
             _controllerWorker.ProgressChanged += ControllerWorkerProgress;
             _controllerWorker.WorkerReportsProgress = true;
+            _controllerWorker.RunWorkerCompleted += ControllerWorkerCompleted;
 
             //Launching BackgroundWorkers
             _controllerWorker.RunWorkerAsync();
@@ -279,33 +309,27 @@ namespace Meteor
 
         }
 
-        private void CheckWorkerStatus()
+        private Worker CheckWorkerStatus()
         {
-            //Getting Status
-            var addWorkspaceStatus = AddWorkspaceWorker.Status;
-            var copyWorkerStatus = CopyWorkspaceWorker.Status;
-            var mslWorkerStatus = MslWorkspaceWorker.Status;
-            var clearWorkspaceStatus = ClearWorkspaceWorker.Status;
 
-            if (!(addWorkspaceStatus != 0 | copyWorkerStatus != 0 | mslWorkerStatus != 0 | clearWorkspaceStatus != 0)) return;
+            List<Worker> workers = new List<Worker> { AddWorkspaceWorker, CopyWorkspaceWorker, MslWorkspaceWorker, ClearWorkspaceWorker, BuildWorker };
 
-            //Refresh specific Workers
-            if (addWorkspaceStatus != 0)
+            foreach (var worker in workers)
             {
-                RefreshWorker(AddWorkspaceWorker);
+                var workerStatus = worker.Status;
+               
+                if (workerStatus != 0)
+                {
+                    if (workerStatus == 3)
+                    {
+                        RefreshWorker(worker);
+                        return worker;
+                    }
+                    RefreshWorker(worker);
+                }
             }
-            if (copyWorkerStatus != 0)
-            {
-                RefreshWorker(CopyWorkspaceWorker);
-            }
-            if (mslWorkerStatus != 0)
-            {
-                RefreshWorker(MslWorkspaceWorker);
-            }
-            if (clearWorkspaceStatus != 0)
-            {
-                RefreshWorker(ClearWorkspaceWorker);
-            }
+
+            return null;
         }
 
         private void RefreshWorker(Worker worker)
@@ -338,17 +362,41 @@ namespace Meteor
 
                 //Worker has completed the task
                 case 3:
-                    if (_controllerLock)
-                    {
-                        _controllerMessage = worker.Message;
-                        _controllerWorker.ReportProgress(3);
-                        worker.PostWork();
-                        worker.Status = 0;
-                    }
+                    _controllerMessage = worker.Message;
+                    _controllerWorker.ReportProgress(3);
+                    worker.Status = 0;
                     break;
             }
         }
 
+        private void PostWork(Worker worker)
+        {
+            Workspace workspace = (Workspace)WorkspaceFrame.Content;
+            switch (worker?.Name)
+            {
+                case "addWorkspaceWorker":
+                    
+                    workspace.ReloadWorkspacesList();
+                    workspace.LoadWorkspaceStats();
+                    MeteorCode.WriteToConsole("Workspace was successfully added", 0);
+                    break;
+
+                case "ClearWorkspaceWorker":
+                    workspace.LoadWorkspaceStats();
+                    MeteorCode.WriteToConsole("Workspace was successfully cleared", 0);
+                    break;
+                case "copyWorkspaceWorker":
+                    workspace.LoadWorkspaceStats();
+                    MeteorCode.WriteToConsole("Workspace was successfully synced from the active workspace", 0);
+                    break;
+                case "BuildWorker":
+                    _dbHandler.upBuildCount(int.Parse(_dbHandler.get_property("workspace")));
+                    workspace.LoadWorkspaceStats();
+                    MeteorCode.WriteToConsole("Workspace built!",0);
+                    break;
+
+            }
+        }
 
         private void UrlWorkerDoWork(object sender, DoWorkEventArgs e)
         {
@@ -379,14 +427,18 @@ namespace Meteor
 
         private void ControllerWorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            while (true)
+            var workerFinished = false;
+            while (!workerFinished)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(25);
 
-                CheckWorkerStatus();
+                var current = CheckWorkerStatus();
+                _currentWorker = current;
+
+                if (_currentWorker == null) return;
+                workerFinished = true;
 
             }
-            // ReSharper disable once FunctionNeverReturns
         }
 
         private void ControllerWorkerProgress(object sender, ProgressChangedEventArgs e)
@@ -420,6 +472,12 @@ namespace Meteor
                     break;
 
             }
+        }
+
+        private void ControllerWorkerCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            PostWork(_currentWorker);
+            _controllerWorker.RunWorkerAsync();
         }
 
     }

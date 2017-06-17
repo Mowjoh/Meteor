@@ -25,7 +25,10 @@ namespace Meteor.sections.filebank
             _dbHandler = new db_handler();
             ActiveWorkspace = int.Parse(_dbHandler.get_property("workspace"));
 
+            LoadCharacters();
             ReloadNameplates();
+
+            
         }
 
         //Character Select
@@ -44,6 +47,7 @@ namespace Meteor.sections.filebank
                 ListBoxItem lbi = (ListBoxItem)NameplateListBox.Items[NameplateListBox.SelectedIndex];
                 NameValueTextBox.Text = lbi.Content.ToString();
                 IdValueLabel.Content = (int)Nameplates[NameplateListBox.SelectedIndex];
+                CharacterValueLabel.Content = infos[2];
 
                 SelectedId = (int)Nameplates[NameplateListBox.SelectedIndex];
             }
@@ -87,10 +91,14 @@ namespace Meteor.sections.filebank
 
         private void PackNameplate(object sender, RoutedEventArgs e)
         {
-            var id = (int)Nameplates[NameplateListBox.SelectedIndex];
-            _dbHandler.get_custom_nameplates_id();
-            _dbHandler.add_packer_item(1, id);
-                        MeteorCode.WriteToConsole("Nameplate added to packer", 0);
+            if (NameplateListBox.SelectedIndex != -1)
+            {
+                var id = (int)Nameplates[NameplateListBox.SelectedIndex];
+                _dbHandler.get_custom_nameplates_id();
+                _dbHandler.add_packer_item(1, id);
+                MeteorCode.WriteToConsole("Nameplate added to packer", 0);
+            }
+            
         }
 
         
@@ -177,5 +185,21 @@ namespace Meteor.sections.filebank
             }
         }
 
+        private void LoadCharacters()
+        {
+            CharacterComboBox.Items.Clear();
+            var characters = _dbHandler.get_characters(int.Parse(_dbHandler.get_property("sort_order")));
+
+            var allCharactersItem = new ListBoxItem { Content = "All Characters" };
+            CharacterComboBox.Items.Add(allCharactersItem);
+
+            foreach (string s in characters)
+            {
+                var item = new ComboBoxItem { Content = s };
+                CharacterComboBox.Items.Add(item);
+            }
+
+            CharacterComboBox.SelectedIndex = 0;
+        }
     }
 }

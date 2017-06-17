@@ -31,14 +31,15 @@ namespace Meteor.content
         public long skin_bytes = 0;
 
         //Constructor
-        public builder(int workspace, int region, int language, db_handler db, uichar_handler uichar)
+        public builder(int workspace, int region, int language, db_handler db)
         {
+            
             workspace_id = workspace;
             this.region = region;
             this.language = language;
             this.db = db;
 
-            this.uichar = uichar;
+            this.uichar = new uichar_handler();
 
             workspace_path = app_path + "/workspaces/workspace_" + workspace_id;
 
@@ -82,6 +83,7 @@ namespace Meteor.content
                     language_code = "jp";
                     break;
             }
+
             datafolder = "data(" + region_code + "_" + language_code + ")";
         }
 
@@ -92,7 +94,12 @@ namespace Meteor.content
             build_skins();
             
             build_nameplates();
-            build_ui_char();
+
+            if (db.get_property("uichar") == "1")
+            {
+                build_ui_char();
+            }
+            
         }
 
         private void build_skins()
@@ -213,7 +220,11 @@ namespace Meteor.content
         {
             int[] chara_track = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             int last_id = -1;
-            reset_nameplates();
+            if (db.get_property("uichar") == "1")
+            {
+                reset_nameplates();
+            }
+            
             foreach(int[] nameplate in db.get_custom_nameplates())
             {
                 int id = nameplate[0];
@@ -263,11 +274,15 @@ namespace Meteor.content
                     File.Copy(current_nameplate.full_path, destination,true);
                 }
 
-                int ui_char_slot = slot + 36;
-                if(slot != 0 && slot < 17)
+                if (db.get_property("uichar") == "1")
                 {
-                    uichar.setFile(ui_char_id, ui_char_slot, nameplate_slot);
+                    int ui_char_slot = slot + 36;
+                    if (slot != 0 && slot < 17)
+                    {
+                        uichar.setFile(ui_char_id, ui_char_slot, nameplate_slot);
+                    }
                 }
+                
                 
                 
 

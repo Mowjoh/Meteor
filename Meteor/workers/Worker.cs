@@ -19,6 +19,8 @@ namespace Meteor.workers
         protected String _message;
         private int _progressStyle = 0;
 
+        public string Name { get; set; }
+
         //Status Code. -1 for error, 0 for stopped, 1 for success, + for other codes
         protected int _status;
 

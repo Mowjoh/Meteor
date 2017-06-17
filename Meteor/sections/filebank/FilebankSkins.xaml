@@ -14,8 +14,8 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="51"/>
-            <RowDefinition Height="226*"/>
-            <RowDefinition Height="253*"/>
+            <RowDefinition Height="223*"/>
+            <RowDefinition Height="176*"/>
         </Grid.RowDefinitions>
         <Grid x:Name="CharacterSelectGrid" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
@@ -44,29 +44,35 @@
                     <ColumnDefinition Width="91*" />
                     <ColumnDefinition Width="233*" />
                 </Grid.ColumnDefinitions>
-                <Label x:Name="AuthorLabel" Content="Author" HorizontalAlignment="Left"
+                <Label x:Name="CharacterLabel1" Content="Character" HorizontalAlignment="Left"
                     Margin="10,10,0,0" VerticalAlignment="Top" Foreground="White"
-                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="47" />
-                <Label x:Name="ModelsLabel" Content="Models" HorizontalAlignment="Left"
-                    Margin="10,41,0,0" VerticalAlignment="Top" Foreground="White"
-                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="49" />
-                <Label x:Name="CspsLabel" Content="Csps" HorizontalAlignment="Left"
-                    Margin="10,72,0,0" VerticalAlignment="Top" Foreground="White"
-                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="35" />
-                <Label x:Name="SkinIdLabel" Content="Skin ID" HorizontalAlignment="Left"
-                    Margin="10,103,0,0" VerticalAlignment="Top" Foreground="White"
-                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="47" />
-                <Label x:Name="AuthorValueLabel" Content=""
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="64" />
+                <Label x:Name="CharacterValueLabel" Content=""
                     Margin="10,10,10,0" VerticalAlignment="Top" Foreground="White"
                     RenderTransformOrigin="-0.474,-0.692" Grid.Column="1" Height="26" />
+                <Label x:Name="AuthorLabel" Content="Author" HorizontalAlignment="Left"
+                    Margin="10,36,0,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="47" />
+                <Label x:Name="ModelsLabel" Content="Models" HorizontalAlignment="Left"
+                    Margin="10,67,0,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="49" />
+                <Label x:Name="CspsLabel" Content="Csps" HorizontalAlignment="Left"
+                    Margin="10,98,0,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="35" />
+                <Label x:Name="SkinIdLabel" Content="Skin ID" HorizontalAlignment="Left"
+                    Margin="10,129,0,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Height="26" Width="47" />
+                <Label x:Name="AuthorValueLabel" Content=""
+                    Margin="10,36,10,0" VerticalAlignment="Top" Foreground="White"
+                    RenderTransformOrigin="-0.474,-0.692" Grid.Column="1" Height="26" />
                 <Label x:Name="ModelsValueLabel" Content=""
-                    Margin="10,41,10,0" VerticalAlignment="Top" Foreground="White"
+                    Margin="10,67,10,0" VerticalAlignment="Top" Foreground="White"
                     RenderTransformOrigin="-0.474,-0.692" Grid.Column="1" Height="26" />
                 <Label x:Name="CspsValueLabel" Content=""
-                    Margin="10,72,10,0" VerticalAlignment="Top" Foreground="White"
+                    Margin="10,98,10,0" VerticalAlignment="Top" Foreground="White"
                     RenderTransformOrigin="-0.474,-0.692" Grid.Column="1" Height="26" />
                 <Label x:Name="SkinIdValueLabel" Content=""
-                    Margin="10,103,10,0" VerticalAlignment="Top" Foreground="White"
+                    Margin="10,129,10,0" VerticalAlignment="Top" Foreground="White"
                     RenderTransformOrigin="-0.474,-0.692" Grid.Column="1" Height="26" />
             </Grid>
         </GroupBox>
