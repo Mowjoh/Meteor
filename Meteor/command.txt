@@ -1,1 +1,0 @@
-﻿insert into configuration ('property','value') values('pastebin','1')

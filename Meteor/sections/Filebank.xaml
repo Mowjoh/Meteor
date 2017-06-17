@@ -22,9 +22,9 @@
                 FontSize="16" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
             <ListBox x:Name="FilebankSectionListBox" Foreground="White" Background="{x:Null}"
                 BorderBrush="{x:Null}" Margin="10,3,0,0" ToolTip="Select a content category" SelectionChanged="filebank_action_list_SelectionChanged" Grid.Row="1">
-                <ListBoxItem x:Name="SkinItem" Content="Skins" />
-                <ListBoxItem x:Name="NameplateItem" Content="Nameplates" />
-                <ListBoxItem x:Name="PackerItem" Content="Packer" />
+                <ListBoxItem x:Name="SkinItem" Content="Skins" Style="{DynamicResource mowjohListStyle}" />
+                <ListBoxItem x:Name="NameplateItem" Content="Nameplates" Style="{DynamicResource mowjohListStyle}" />
+                <ListBoxItem x:Name="PackerItem" Content="Packer" Style="{DynamicResource mowjohListStyle}" />
             </ListBox>
         </Grid>
         <TabControl x:Name="FilebankContentArea" Background="{x:Null}" BorderBrush="{x:Null}"

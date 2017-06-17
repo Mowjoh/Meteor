@@ -23,9 +23,9 @@ namespace Meteor.workers
         protected override void WorkerDowork(object sender, DoWorkEventArgs e)
         {
             base.WorkerDowork(sender, e);
-            var id = dbHandler.get_workspace_id(_selectedWorkspace);
-            dbHandler.clear_workspace(id);
-            dbHandler.add_default_skins(Convert.ToInt64(id));
+            var id = DbHandler.get_workspace_id(_selectedWorkspace);
+            DbHandler.clear_workspace(id);
+            DbHandler.add_default_skins(Convert.ToInt64(id));
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Meteor.workers
 
         protected override void WorkerDowork(object sender, DoWorkEventArgs e)
         {
-            var activeWorkspace = int.Parse(dbHandler.get_property("workspace"));
+            var activeWorkspace = int.Parse(DbHandler.get_property("workspace"));
 
             //Making sure it's the proper ID
             _build.set_workspace_id(activeWorkspace);

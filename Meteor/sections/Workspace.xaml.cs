@@ -1,6 +1,5 @@
-﻿using System;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -104,11 +103,11 @@ namespace Meteor.sections
             {
                 ((MainWindow)Application.Current.MainWindow).AddWorkspaceWorker.Launch();
 
-                WriteToConsole("Added a new workspace", 0);
+                            MeteorCode.WriteToConsole("Added a new workspace", 0);
             }
             else
             {
-                WriteToConsole("You cannot have more than 9 workspaces", 1);
+                            MeteorCode.WriteToConsole("You cannot have more than 9 workspaces", 1);
             }
         }
 
@@ -117,7 +116,7 @@ namespace Meteor.sections
             var selected = WorkspacesListBox.SelectedIndex + 2;
             if (selected == ActiveWorkspaceSlot)
             {
-                WriteToConsole("It's the same workspace, you dummy", 1);
+                            MeteorCode.WriteToConsole("It's the same workspace, you dummy", 1);
             }
             else
             {
@@ -140,7 +139,7 @@ namespace Meteor.sections
 
             ReloadWorkspacesList();
 
-            WriteToConsole("Changed workspace name to " + name, 0);
+                        MeteorCode.WriteToConsole("Changed workspace name to " + name, 0);
         }
 
         private void SetWorkspaceNameKeyDown(object sender, KeyEventArgs e)
@@ -174,7 +173,7 @@ namespace Meteor.sections
             }
 
 
-            WriteToConsole("Changed selected workspace", 0);
+                        MeteorCode.WriteToConsole("Changed selected workspace", 0);
         }
 
         //Sm4sh Explorer
@@ -197,7 +196,7 @@ namespace Meteor.sections
             }
             catch
             {
-                WriteToConsole("Sm4sh Explorer couldn't be launched. Is it setup in config?", 2);
+                            MeteorCode.WriteToConsole("Sm4sh Explorer couldn't be launched. Is it setup in config?", 2);
             }
         }
 
@@ -212,7 +211,7 @@ namespace Meteor.sections
                 _dbHandler.delete_workspace(id);
                 _dbHandler.reorder_workspace();
                 ReloadWorkspacesList();
-                WriteToConsole("Workspace deleted", 0);
+                            MeteorCode.WriteToConsole("Workspace deleted", 0);
 
 
                 if (_dbHandler.get_property("workspace") == ActiveWorkspaceId.ToString())
@@ -220,7 +219,7 @@ namespace Meteor.sections
             }
             else
             {
-                WriteToConsole("You cannot delete your last workspace", 2);
+                            MeteorCode.WriteToConsole("You cannot delete your last workspace", 2);
             }
         }
 
@@ -296,40 +295,9 @@ namespace Meteor.sections
             }
             else
             {
-                WriteToConsole("Could not assign Sm4sh Explorer's workspace", 1);
+                            MeteorCode.WriteToConsole("Could not assign Sm4sh Explorer's workspace", 1);
             }
         }
 
-        //Console Writing
-        private void WriteToConsole(string s, int type)
-        {
-            var typeText = "";
-            var date = DateTime.Now.ToString(CultureInfo.CurrentCulture);
-            switch (type)
-            {
-                case 0:
-                    typeText = "Success";
-                    break;
-                case 1:
-                    typeText = "Warning";
-                    break;
-                case 2:
-                    typeText = "Error";
-                    break;
-                case 3:
-                    typeText = "Dev Log";
-                    break;
-            }
-
-            if (type != 3)
-            {
-                ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
-            }
-            else
-            {
-                if (_dbHandler.get_property("dev_logs") == "1")
-                    ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
-            }
-        }
     }
 }

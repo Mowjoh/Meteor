@@ -21,8 +21,9 @@ namespace Meteor.sections
     [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
     public partial class Configuration 
     {
-        private readonly Pastebin.Pastebin _pastebin;
         private readonly db_handler _dbHandler;
+
+        private bool _loading = true;
 
         private string AppPath { get; } = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory?.FullName;
 
@@ -31,7 +32,6 @@ namespace Meteor.sections
             InitializeComponent();
             
             _dbHandler = new db_handler();
-            _pastebin = new Pastebin.Pastebin("f165a49418f0ed6c5f61e9e233889d91");
 
             retreive_config();
         }
@@ -62,6 +62,7 @@ namespace Meteor.sections
             //ui_char status
             UicharStatusLabel.Content = _dbHandler.get_property("ui_char") == "1" ? "Status : imported" : "Status : not present";
 
+            _loading = false;
         }
 
         //Regional options
@@ -123,32 +124,42 @@ namespace Meteor.sections
             if (e.Key != Key.Enter) return;
 
             var exepath = S4EPathTextbox.Text;
-            var directoryInfo = new FileInfo(exepath).Directory;
-            if (directoryInfo != null)
+            try
             {
-                var path = directoryInfo.FullName;
-                var filetype = new FileInfo(exepath).Extension;
+                var directoryInfo = new FileInfo(exepath).Directory;
+                if (directoryInfo != null)
+                {
+                    var path = directoryInfo.FullName;
+                    var filetype = new FileInfo(exepath).Extension;
 
-                if (filetype == ".exe")
-                    if (new FileInfo(exepath).Exists)
-                    {
-                        if (new FileInfo(exepath).Name != "Sm4shFileExplorer.exe")
-                            WriteToConsole(
-                                "The file you selected is not called 'Sm4shFileExplorer.exe' but was still saved.", 1);
+                    if (filetype == ".exe")
+                        if (new FileInfo(exepath).Exists)
+                        {
+                            if (new FileInfo(exepath).Name != "Sm4shFileExplorer.exe")
+                                WriteToConsole(
+                                    "The file you selected is not called 'Sm4shFileExplorer.exe' but was still saved.",
+                                    1);
 
-                        _dbHandler.set_property_value(exepath, "s4e_exe");
-                        _dbHandler.set_property_value(path, "s4e_path");
-                        WriteToConsole("Sm4sh Explorer's executable path set to : " + exepath, 0);
-                        S4EPathTextbox.Text = exepath;
-                        ChangeS4EWorkspaceLocation(int.Parse(_dbHandler.get_property("workspace")));
-                    }
+                            _dbHandler.set_property_value(exepath, "s4e_exe");
+                            _dbHandler.set_property_value(path, "s4e_path");
+                            WriteToConsole("Sm4sh Explorer's executable path set to : " + exepath, 0);
+                            S4EPathTextbox.Text = exepath;
+                            ChangeS4EWorkspaceLocation(int.Parse(_dbHandler.get_property("workspace")));
+                        }
+                        else
+                        {
+                            WriteToConsole("The path is invalid. There is no file at that location", 2);
+                        }
                     else
-                    {
-                        WriteToConsole("The path is invalid. There is no file at that location", 2);
-                    }
-                else
-                    WriteToConsole("The path is invalid. It's not pointing to a .exe", 2);
+                        WriteToConsole("The path is invalid. It's not pointing to a .exe", 2);
+                }
             }
+            catch(Exception s4EpathException)
+            {
+                WriteToConsole("An error happend while setting up the path", 2);
+                MeteorCode.Paste(s4EpathException.Message, s4EpathException.StackTrace);
+            }
+            
         }
 
         private void S4EPathSave(object sender, RoutedEventArgs e)
@@ -251,14 +262,8 @@ namespace Meteor.sections
         {
             if (e.Key == Key.Enter)
             {
-                /* if (ConfigurationSection.SaveGamebananaUserId(config_gbuser.Text))
-                 {
-                     Write_Console("Gamebanana user changed to " + config_gbuser.Text, 0);
-                 }
-                 else
-                 {
-                     Write_Console("Failed to change the Gamebanana user ID", 2);
-                 }*/
+                _dbHandler.set_property_value(GbuidTextBox.Text, "gb_uid");
+                WriteToConsole("Gamebanana User Id set", 0);
             }
         }
 
@@ -266,14 +271,8 @@ namespace Meteor.sections
         {
             if (e.Key == Key.Enter)
             {
-                /* if (ConfigurationSection.SaveUsername(config_username.Text))
-                 {
-                     Write_Console("Username changed to " + config_username.Text, 0);
-                 }
-                 else
-                 {
-                     Write_Console("Failed to change the Gamebanana user ID", 2);
-                 }*/
+                _dbHandler.set_property_value(UsernameTextBox.Text,"username");
+                WriteToConsole("Username set",0);
             }
         }
 
@@ -385,7 +384,7 @@ namespace Meteor.sections
 
         private void TestPaste(object sender, RoutedEventArgs e)
         {
-            Paste("Test Paste", "Test Stack");
+            MeteorCode.Paste("Test Paste", "Test Stack");
         }
 
 
@@ -445,6 +444,8 @@ namespace Meteor.sections
 
         private void WriteToConsole(string s, int type)
         {
+            if(_loading) return;
+
             var typeText = "";
             var date = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             switch (type)
@@ -471,30 +472,6 @@ namespace Meteor.sections
             {
                 if (_dbHandler.get_property("dev_logs") == "1")
                     ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
-            }
-        }
-
-        private void Paste(String message, String stack)
-        {
-            if (_dbHandler.get_property("pastebin") == "1")
-            {
-                var result = MessageBox.Show("An error happened with Meteor. Open the pastebin?", "Segtendo WARNING",
-                    MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-                if (result == MessageBoxResult.Yes)
-                {
-
-                    try
-                    {
-                        var url = _pastebin.CreatePaste("Meteor Error", "csharp", "Error Message : " + message + "\n StackTrace:" + stack, Pastebin.PasteExposure.Public, Pastebin.PasteExpiration.OneWeek);
-
-                        Process.Start(url);
-                    }
-                    catch (Exception ee)
-                    {
-                        WriteToConsole("Pastebin error : " + ee.Message, 2);
-                    }
-                }
-
             }
         }
 

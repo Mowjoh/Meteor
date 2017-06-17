@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Meteor.sections"
       xmlns:System="clr-namespace:System;assembly=mscorlib" x:Name="SkinsPage" x:Class="Meteor.sections.Skins"
       mc:Ignorable="d"
-      Title="Skins" MinWidth="800" MinHeight="446">
+      Title="Skins" MinWidth="800" MinHeight="446" Height="342" Width="652">
 
     <Grid x:Name="SkinsPageGrid">
         <Grid.RowDefinitions>
@@ -14,9 +14,9 @@
             <RowDefinition Height="171*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="173*"/>
-            <ColumnDefinition Width="221*"/>
-            <ColumnDefinition Width="406*"/>
+            <ColumnDefinition Width="43*"/>
+            <ColumnDefinition Width="49*"/>
+            <ColumnDefinition Width="68*"/>
         </Grid.ColumnDefinitions>
 
         <Grid x:Name="CharacterGrid" Margin="5,0,5,5" Grid.RowSpan="2">
@@ -28,10 +28,75 @@
             <Label x:Name="CharacterHeaderlabel" Content="Characters" HorizontalAlignment="Center"
                 VerticalAlignment="Center" Background="{x:Null}" Foreground="White" FontStyle="Italic"
                 FontSize="16" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0" />
-            <ListBox x:Name="CharacterListBox" Foreground="White" Background="{x:Null}" BorderBrush="White"
-                Margin="0,5,0,0" ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                ScrollViewer.HorizontalScrollBarVisibility="Hidden" SelectionChanged="CharacterSelected"
-                ToolTip="Select a character you want to edit" Grid.Row="1" BorderThickness="0,0,1,0" />
+            <ListView x:Name="CharacterListView" Foreground="White" BorderBrush="White" Background="{x:Null}" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0,0,5,0" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" BorderThickness="0,0,1,0" SelectionChanged="CharacterSelected">
+                <ListView.Resources>
+                    <Style TargetType="GridViewColumnHeader">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </Style>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                            <Border
+                                                BorderBrush="LightSkyBlue"
+                                                BorderThickness="1"
+                                                Background="{TemplateBinding Background}">
+                                                <GridViewRowPresenter HorizontalAlignment="Stretch" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Width="Auto" Margin="0" Content="{TemplateBinding Content}"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                            <Border
+                                                BorderBrush="White"
+                                                BorderThickness="1"
+                                                Background="{TemplateBinding Background}">
+                                                <GridViewRowPresenter HorizontalAlignment="Stretch" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Width="Auto" Margin="0" Content="{TemplateBinding Content}"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Margin" Value="0,0,10,0" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                    <Border
+                                        BorderBrush="Transparent"
+                                        BorderThickness="1"
+                                        Background="{TemplateBinding Background}">
+                                        <GridViewRowPresenter HorizontalAlignment="Stretch" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Width="Auto" Margin="0" Content="{TemplateBinding Content}"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+                    </Style>
+
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn x:Name="GridViewColumnName" Header="" Width="auto">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image x:Name="Image_GridViewColumnName" Height="30px" Width="30px" Source="{Binding CharacterImageSource}" />
+                                        <Label Content="{Binding CharacterLabelValue}" Width="120" Foreground="White" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
 
         </Grid>
         <Grid x:Name="SkinsGrid" Grid.Column="1" Margin="5,0" Grid.RowSpan="2">
@@ -46,7 +111,10 @@
 
             <ListBox x:Name="SkinsListBox" Background="{x:Null}" BorderBrush="White" Foreground="White"
                 SelectionChanged="SkinSelected" ToolTip="Select a skin you want to edit"
-                Margin="5" Grid.Row="1" BorderThickness="0,0,1,0" />
+                Margin="0,5,5,5" Grid.Row="1" BorderThickness="0,0,1,0" ItemContainerStyle="{DynamicResource mowjohListStyle}">
+            </ListBox>
+
+
             <Button x:Name="AddSkinButton" Content="Add Skin Slot" HorizontalAlignment="Center"
         Margin="0,0,0,2" VerticalAlignment="Center" Width="172" Click="AddSkin"
         ToolTip="Press this button to add a new skin slot !" Grid.Row="2" />
@@ -92,9 +160,9 @@
                 <Button x:Name="AuthorButton" Content="Author page" HorizontalAlignment="Center"
                 Margin="45,12,47,11" VerticalAlignment="Center" Width="130" Click="GoToAuthorPage"
                 ToolTip="Go to the Author's Gamebanana page" Grid.Column="1" Height="20" Grid.Row="1" Visibility="Hidden" />
-                <Button x:Name="ConvertButton" Content="Convert to custom skin"
-                Margin="10,12,10,11" VerticalAlignment="Center" Click="ConvertSkin"
-                ToolTip="Convert this default skin into a custom one you can edit" Height="20" Grid.Row="1" HorizontalAlignment="Center" Width="142" />
+                <Button x:Name="ConvertButton" Content="Convert to custom"
+                Margin="0,12,0,11" VerticalAlignment="Center" Click="ConvertSkin"
+                ToolTip="Convert this default skin into a custom one you can edit" Height="20" Grid.Row="1" />
                 <Button x:Name="ForgeButton" Content="Open in Forge" HorizontalAlignment="Center"
                 Margin="45,7,47,7" VerticalAlignment="Center" Width="130" Click="StartForge"
                 ToolTip="Open the model in Forge and see how it looks!" Grid.Column="1" Height="20" Grid.Row="2" Visibility="Hidden" />
@@ -110,19 +178,21 @@
                 <Label x:Name="ModelLabel" Content="Model" HorizontalAlignment="Left"
                 VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Height="26"
                 Width="44" />
-                <Label x:Name="ChrLabel" Content="Chr" HorizontalAlignment="Left"
+                <Label x:Name="ChrLabel" Content="Chr"
                 VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Grid.Column="1"
-                Margin="157,0,0,0" Height="26" Width="28" />
+                Margin="0,0,10,0" Height="26" HorizontalAlignment="Right" Width="32" />
                 <ListBox x:Name="ModelListBox" Foreground="White" BorderBrush="#FFFFFBFB"
                 Background="{x:Null}" AllowDrop="True" DragEnter="DragEnterModel"
                 Drop="DropModel"
-                ToolTip="Drop your cXX or [name]/cXX here !" BorderThickness="0,0,1,0" />
+                ToolTip="Drop your cXX or [name]/cXX here !" BorderThickness="0,0,1,0" Margin="0,26,0,0" ItemContainerStyle="{DynamicResource mowjohListStyle}" />
                 <ListBox x:Name="CspListBox" Foreground="White" BorderBrush="{x:Null}"
                 Background="{x:Null}" Grid.Column="1" DragEnter="DragEnterCsp"
                 Drop="DropCsp" AllowDrop="True"
-                ToolTip="Drop your csps or a folder containing them here" />
+                ToolTip="Drop your csps or a folder containing them here" Margin="0,26,0,0" ItemContainerStyle="{DynamicResource mowjohListStyle}" />
             </Grid>
         </GroupBox>
 
     </Grid>
+
 </Page>
+

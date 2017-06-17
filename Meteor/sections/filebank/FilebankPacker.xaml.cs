@@ -33,11 +33,11 @@ namespace Meteor.sections.filebank
             var pacman = new packer(_dbHandler, ActiveWorkspace);
             if (pacman.pack())
             {
-                WriteToConsole("Archive Packed", 0);
+                            MeteorCode.WriteToConsole("Archive Packed", 0);
             }
             else
             {
-                WriteToConsole("Archive wasn't packed", 2);
+                            MeteorCode.WriteToConsole("Archive wasn't packed", 2);
             }
         }
 
@@ -47,36 +47,5 @@ namespace Meteor.sections.filebank
 
         }
 
-        //Console Writing
-        private void WriteToConsole(string s, int type)
-        {
-            var typeText = "";
-            var date = DateTime.Now.ToString(CultureInfo.CurrentCulture);
-            switch (type)
-            {
-                case 0:
-                    typeText = "Success";
-                    break;
-                case 1:
-                    typeText = "Warning";
-                    break;
-                case 2:
-                    typeText = "Error";
-                    break;
-                case 3:
-                    typeText = "Dev Log";
-                    break;
-            }
-
-            if (type != 3)
-            {
-                ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
-            }
-            else
-            {
-                if (_dbHandler.get_property("dev_logs") == "1")
-                    ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
-            }
-        }
     }
 }

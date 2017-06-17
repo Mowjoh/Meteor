@@ -100,7 +100,7 @@ namespace Meteor.sections.filebank
             }
             else
             {
-                WriteToConsole("You have to remove it from the workspaces first", 1);
+                            MeteorCode.WriteToConsole("You have to remove it from the workspaces first", 1);
             }
         }
 
@@ -108,7 +108,7 @@ namespace Meteor.sections.filebank
         {
             var id = (int)Skins[SkinsListBox.SelectedIndex];
             _dbHandler.add_packer_item(0, id);
-            WriteToConsole("Skin added to packer", 0);
+                        MeteorCode.WriteToConsole("Skin added to packer", 0);
         }
 
         //Launches forge
@@ -134,10 +134,10 @@ namespace Meteor.sections.filebank
                 }
                 else
                 {
-                    WriteToConsole("Smash Forge was not found in /forge", 1);
+                                MeteorCode.WriteToConsole("Smash Forge was not found in /forge", 1);
                 }
             else
-                WriteToConsole("There is no body/cXX to open in Smash Forge", 1);
+                            MeteorCode.WriteToConsole("There is no body/cXX to open in Smash Forge", 1);
         }
 
         //Inserts the skin in the active workspace
@@ -149,9 +149,9 @@ namespace Meteor.sections.filebank
             var character = _dbHandler.get_character_name(id);
 
             var slot = _dbHandler.get_character_skins(character, workspace.ToString()).Count + 1;
-            WriteToConsole("Trying to insert skin #" + id + " into slot #" + slot + " for character '" + character + "' into workspace #" + workspace, 3);
+                        MeteorCode.WriteToConsole("Trying to insert skin #" + id + " into slot #" + slot + " for character '" + character + "' into workspace #" + workspace, 3);
             _dbHandler.insert_skin(id, workspace, character_id, slot);
-            WriteToConsole("The skin was inserted in the workspace", 0);
+                        MeteorCode.WriteToConsole("The skin was inserted in the workspace", 0);
         }
 
         private void FilebankDeleteKey(object sender, KeyEventArgs e)
@@ -186,7 +186,7 @@ namespace Meteor.sections.filebank
                     }
                     else
                     {
-                        WriteToConsole("You have to remove it from the workspaces first", 1);
+                                    MeteorCode.WriteToConsole("You have to remove it from the workspaces first", 1);
                     }
                 }
 
@@ -226,36 +226,5 @@ namespace Meteor.sections.filebank
             }
         }
 
-        //Console Writing
-        private void WriteToConsole(string s, int type)
-        {
-            var typeText = "";
-            var date = DateTime.Now.ToString(CultureInfo.CurrentCulture);
-            switch (type)
-            {
-                case 0:
-                    typeText = "Success";
-                    break;
-                case 1:
-                    typeText = "Warning";
-                    break;
-                case 2:
-                    typeText = "Error";
-                    break;
-                case 3:
-                    typeText = "Dev Log";
-                    break;
-            }
-
-            if (type != 3)
-            {
-                ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
-            }
-            else
-            {
-                if (_dbHandler.get_property("dev_logs") == "1")
-                    ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
-            }
-        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Windows;
 using Meteor.database;
 
 namespace Meteor.workers
@@ -18,10 +19,16 @@ namespace Meteor.workers
         {
             Message = "Creating Workspace";
 
-            var id = dbHandler.add_workspace("New Workspace");
-            dbHandler.add_default_skins(id);
+            var id = DbHandler.add_workspace("New Workspace");
+            DbHandler.add_default_skins(id);
            
         }
+
+        protected internal override void PostWork()
+        {
+            MeteorCode.WriteToConsole("Workspace was successfully added",0);
+        }
+
 
     }
 }

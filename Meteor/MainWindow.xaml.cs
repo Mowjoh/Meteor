@@ -55,24 +55,24 @@ namespace Meteor
             try
             {
                 _dbHandler = new db_handler();
-                WriteToConsole("The connection to the database was successful.", 3);
+                            MeteorCode.WriteToConsole("The connection to the database was successful.", 3);
                 DatabaseUpdater updooter = new DatabaseUpdater();
                 if (updooter.UpdootDatabase())
                 {
-                    WriteToConsole("The database update was succesfull.", 0);
+                                MeteorCode.WriteToConsole("The database update was succesfull.", 0);
                     
                 }
                 else
                 {
                     if(File.Exists(_appPath + "/command.txt"))
                     {
-                        WriteToConsole("There was an issue with the database update", 2);
+                                    MeteorCode.WriteToConsole("There was an issue with the database update", 2);
                     }
                 }
             }
             catch
             {
-                WriteToConsole(
+                            MeteorCode.WriteToConsole(
                     "The connection to the database was unsuccessful. Please check that the Library is there.", 2);
             }
 
@@ -81,7 +81,7 @@ namespace Meteor
             SetupWorkers();
 
 
-            WriteToConsole("Welcome to Meteor !", 0);
+                        MeteorCode.WriteToConsole("Welcome to Meteor !", 0);
 
             #endregion
 
@@ -93,7 +93,7 @@ namespace Meteor
 
             if (args.Length != 2) return;
 
-            WriteToConsole(args[1], 0);
+                        MeteorCode.WriteToConsole(args[1], 0);
             _downloadWorker.Launch(args[1]);
         }
 
@@ -182,7 +182,6 @@ namespace Meteor
 
             Background = lgb;
         }
-
         
         //Process Status Functions
         private void ChangeProgressBarStyle(int mode)
@@ -215,41 +214,6 @@ namespace Meteor
         }
 
 
-        //Console actions
-        private void WriteToConsole(string s, int type)
-        {
-            var typeText = "";
-            var date = DateTime.Now.ToString(CultureInfo.CurrentCulture);
-            switch (type)
-            {
-                case 0:
-                    typeText = "Success";
-                    break;
-                case 1:
-                    typeText = "Warning";
-                    break;
-                case 2:
-                    typeText = "Error";
-                    break;
-                case 3:
-                    typeText = "Dev Log";
-                    break;
-                default:
-                    typeText = "huh?";
-                    break;
-            }
-
-            if (type != 3)
-            {
-                Console.Text = date + " | " + typeText + " | " + s + "\n" + Console.Text;
-            }
-            else
-            {
-                if (_dbHandler.get_property("dev_logs") == "1")
-                    Console.Text = date + " | " + typeText + " | " + s + "\n" + Console.Text;
-            }
-        }
-
         //Section actions
         private void ChangeSection(object sender, SelectionChangedEventArgs e)
         {
@@ -260,32 +224,32 @@ namespace Meteor
             {
                 case "Skins":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[0];
-                    WriteToConsole("Section changed to Skins", 3);
+                                MeteorCode.WriteToConsole("Section changed to Skins", 3);
                     break;
                 case "Stages":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[1];
-                    WriteToConsole("Section changed to Stages", 3);
+                                MeteorCode.WriteToConsole("Section changed to Stages", 3);
                     break;
                 case "Interface":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[2];
-                    WriteToConsole("Section changed to Interface", 3);
+                                MeteorCode.WriteToConsole("Section changed to Interface", 3);
                     break;
                 case "FileBank":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[3];
-                    WriteToConsole("Section changed to Filebank", 3);
+                                MeteorCode.WriteToConsole("Section changed to Filebank", 3);
 
                     break;
                 case "Workspace":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[4];
-                    WriteToConsole("Section changed to Workspace", 3);
+                                MeteorCode.WriteToConsole("Section changed to Workspace", 3);
                     break;
                 case "Configuration":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[5];
-                    WriteToConsole("Section changed to Configuration", 3);
+                                MeteorCode.WriteToConsole("Section changed to Configuration", 3);
                     break;
                 case "About":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[6];
-                    WriteToConsole("Section changed to About", 3);
+                                MeteorCode.WriteToConsole("Section changed to About", 3);
                     break;
             }
         }
@@ -378,6 +342,7 @@ namespace Meteor
                     {
                         _controllerMessage = worker.Message;
                         _controllerWorker.ReportProgress(3);
+                        worker.PostWork();
                         worker.Status = 0;
                     }
                     break;
@@ -405,7 +370,7 @@ namespace Meteor
             {
                 var lines = File.ReadAllLines(_appPath + "/downloads/url.txt");
 
-                WriteToConsole("Url Detected", 0);
+                            MeteorCode.WriteToConsole("Url Detected", 0);
                 _downloadWorker.Launch(lines[1]);
 
                 File.Delete(_appPath + "/downloads/url.txt");

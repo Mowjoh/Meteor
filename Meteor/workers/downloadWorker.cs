@@ -138,7 +138,7 @@ namespace Meteor.workers
                 foreach (var s in subfolders)
                 {
                     var name = newpath.GetFileName(s);
-                    if (dbHandler.check_msl_character_name(name))
+                    if (DbHandler.check_msl_character_name(name))
                     {
                         mslFolders.Add(s);
                     }
@@ -211,16 +211,16 @@ namespace Meteor.workers
 
                 try
                 {
-                    var ActiveWorkspace = int.Parse(dbHandler.get_property("workspace"));
+                    var ActiveWorkspace = int.Parse(DbHandler.get_property("workspace"));
                     var skin_name = skin.Split('_')[2];
                     if (skin_folder.Split('_')[0] == "meteor" && skin_folder.Split('_')[1] == "xx" &&
                         skin_folder.Split('_').Length == 3)
                     {
-                        var character_id = dbHandler.get_character_id_msl(charaName);
-                        var skin_count = dbHandler.get_character_skin_count(character_id, ActiveWorkspace);
-                        var last_id = dbHandler.add_skin(skin_name, "", "", "", character_id, skin_count + 1);
+                        var character_id = DbHandler.get_character_id_msl(charaName);
+                        var skin_count = DbHandler.get_character_skin_count(character_id, ActiveWorkspace);
+                        var last_id = DbHandler.add_skin(skin_name, "", "", "", character_id, skin_count + 1);
 
-                        var created_skin = new Skin(skin_count + 1, last_id, character_id, ActiveWorkspace, dbHandler);
+                        var created_skin = new Skin(skin_count + 1, last_id, character_id, ActiveWorkspace, DbHandler);
                         created_skin.get_models(skin + "/model/");
                         created_skin.get_csps(skin + "/csp/");
 
@@ -234,9 +234,9 @@ namespace Meteor.workers
                             var names = xml.SelectSingleNode("/metadata/meta[attribute::name='name']");
                             var name = names.InnerText;
 
-                            dbHandler.set_skin_author(author, last_id);
-                            dbHandler.set_skin_gb_uid(-1, last_id);
-                            dbHandler.set_skin_name(name, last_id);
+                            DbHandler.set_skin_author(author, last_id);
+                            DbHandler.set_skin_gb_uid(-1, last_id);
+                            DbHandler.set_skin_name(name, last_id);
 
                             LastInstallCharacterId = character_id;
                             LastInstallSkinSlot = skin_count + 1;
@@ -253,12 +253,12 @@ namespace Meteor.workers
         {
             try
             {
-                var ActiveWorkspace = int.Parse(dbHandler.get_property("workspace"));
+                var ActiveWorkspace = int.Parse(DbHandler.get_property("workspace"));
                 var skin_name = "";
-                var skin_count = dbHandler.get_character_skin_count(charId, ActiveWorkspace);
-                var last_id = dbHandler.add_skin(skin_name, "", "", "", charId, skin_count + 1);
+                var skin_count = DbHandler.get_character_skin_count(charId, ActiveWorkspace);
+                var last_id = DbHandler.add_skin(skin_name, "", "", "", charId, skin_count + 1);
 
-                var created_skin = new Skin(skin_count + 1, last_id, charId, ActiveWorkspace, dbHandler);
+                var created_skin = new Skin(skin_count + 1, last_id, charId, ActiveWorkspace, DbHandler);
                 created_skin.get_models(path + "/model/");
                 created_skin.get_csps(path + "/csp/");
 
@@ -275,12 +275,12 @@ namespace Meteor.workers
                     var gb_uid = names.InnerText;
 
                     int gbuid;
-                    dbHandler.set_skin_author(author, last_id);
-                    dbHandler.set_skin_gb_uid(-1, last_id);
-                    dbHandler.set_skin_name(name, last_id);
+                    DbHandler.set_skin_author(author, last_id);
+                    DbHandler.set_skin_gb_uid(-1, last_id);
+                    DbHandler.set_skin_name(name, last_id);
                     if (int.TryParse(gb_uid, out gbuid))
                     {
-                        dbHandler.set_skin_gb_uid(gbuid, last_id);
+                        DbHandler.set_skin_gb_uid(gbuid, last_id);
                     }
 
 
@@ -289,8 +289,8 @@ namespace Meteor.workers
                 }
                 else
                 {
-                    dbHandler.set_skin_author("Error parsing Author", last_id);
-                    dbHandler.set_skin_name("No Name", last_id);
+                    DbHandler.set_skin_author("Error parsing Author", last_id);
+                    DbHandler.set_skin_name("No Name", last_id);
                 }
 
             }
@@ -303,10 +303,10 @@ namespace Meteor.workers
         {
             try
             {
-                var activeWorkspace = int.Parse(dbHandler.get_property("workspace"));
+                var activeWorkspace = int.Parse(DbHandler.get_property("workspace"));
                 var fileFolder = path + "/file/";
                 var filePath = Directory.GetFiles(fileFolder)[0];
-                var createdNameplate = new nameplate(filePath, charId, activeWorkspace, dbHandler);
+                var createdNameplate = new nameplate(filePath, charId, activeWorkspace, DbHandler);
 
                 var xmlpath = path + "/meta/metadata.xml";
                 if (File.Exists(xmlpath))
@@ -319,8 +319,8 @@ namespace Meteor.workers
                     var name = names.InnerText;
                     var gb_uid = "";
 
-                    dbHandler.set_nameplate_author(author, createdNameplate.nameplate_id);
-                    dbHandler.set_nameplate_name(name, createdNameplate.nameplate_id);
+                    DbHandler.set_nameplate_author(author, createdNameplate.nameplate_id);
+                    DbHandler.set_nameplate_name(name, createdNameplate.nameplate_id);
 
                 }
             }

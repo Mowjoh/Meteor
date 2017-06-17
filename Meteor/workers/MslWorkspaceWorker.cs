@@ -41,8 +41,8 @@ namespace Meteor.workers
 
         protected override void WorkerDowork(object sender, DoWorkEventArgs e)
         {
-            var id = dbHandler.add_workspace("MSL Import");
-            dbHandler.add_default_skins(id);
+            var id = DbHandler.add_workspace("MSL Import");
+            DbHandler.add_default_skins(id);
 
             var workspacepath = new FileInfo(mslPath).DirectoryName;
             var libraryPath = workspacepath + "/mmsl_config/Library.xml";

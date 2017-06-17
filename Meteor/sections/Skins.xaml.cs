@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -17,7 +18,6 @@ namespace Meteor.sections
     {
         private string AppPath { get; } = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory?.FullName;
 
-        private readonly Pastebin.Pastebin _pastebin;
         private readonly db_handler _dbHandler;
 
         private String SelectedCharacterName { get; set; }
@@ -28,7 +28,9 @@ namespace Meteor.sections
 
         private int ActiveWorkspace { get; set; }
 
-        private Boolean LoadingNameplates { get; set; }
+        private bool LoadingNameplates { get; set; }
+
+        private ObservableCollection<CharactersListViewItemsData> CharactersItemsCollections { get; } = new ObservableCollection<CharactersListViewItemsData>();
 
         //Constructor
         public Skins()
@@ -36,7 +38,6 @@ namespace Meteor.sections
             InitializeComponent();
 
             _dbHandler = new db_handler();
-            _pastebin = new Pastebin.Pastebin("f165a49418f0ed6c5f61e9e233889d91");
 
             FillCharacters();
         }
@@ -46,19 +47,19 @@ namespace Meteor.sections
         private void CharacterSelected(object sender, SelectionChangedEventArgs e)
         {
             //Getting selected item
-            var li = (ListBoxItem)CharacterListBox.SelectedItem;
+            var li = (CharactersListViewItemsData)CharacterListView.SelectedItem;
             if (li != null)
             {
                 //Setup global values
-                SelectedCharacterName = li.Content.ToString();
+                SelectedCharacterName = li.CharacterLabelValue;
                 SelectedCharacterId = _dbHandler.get_character_id(SelectedCharacterName);
 
                 //Load the skin list for that selected character
                 LoadSkinList(SelectedCharacterName);
 
                 //Writing text on the console, for dev
-                WriteToConsole("Selected char name " + SelectedCharacterName, 3);
-                WriteToConsole("Selected char id " + SelectedCharacterId, 3);
+                            MeteorCode.WriteToConsole("Selected char name " + SelectedCharacterName, 3);
+                            MeteorCode.WriteToConsole("Selected char id " + SelectedCharacterId, 3);
             }
             //No character selected
             else
@@ -73,8 +74,6 @@ namespace Meteor.sections
         //Skin List
         private void SkinSelected(object sender, SelectionChangedEventArgs e)
         {
-            var li = (ListBoxItem)CharacterListBox.SelectedItem;
-
             //If no skin is selected
             if (SkinsListBox.SelectedIndex == -1)
             {
@@ -82,6 +81,7 @@ namespace Meteor.sections
             }
             else
             {
+                ActiveWorkspace = int.Parse(_dbHandler.get_property("workspace"));
                 //Setting up global variables
                 SelectedSlot = SkinsListBox.SelectedIndex + 1;
                 SelectedSkinId = _dbHandler.get_skin_id(SelectedCharacterId, SelectedSlot, ActiveWorkspace);
@@ -129,8 +129,8 @@ namespace Meteor.sections
                 }
 
                 //Writing stuff
-                WriteToConsole("Selected slot " + SelectedSlot, 3);
-                WriteToConsole("Selected skin id " + SelectedSkinId, 3);
+                            MeteorCode.WriteToConsole("Selected slot " + SelectedSlot, 3);
+                            MeteorCode.WriteToConsole("Selected skin id " + SelectedSkinId, 3);
             }
         }
 
@@ -143,8 +143,8 @@ namespace Meteor.sections
             }
             catch (Exception ee)
             {
-                WriteToConsole("There was an error while adding the skin", 2);
-                Paste(ee.Message, ee.StackTrace);
+                        MeteorCode.WriteToConsole("There was an error while adding the skin", 2);
+                MeteorCode.Paste(ee.Message, ee.StackTrace);
             }
 
 
@@ -157,14 +157,14 @@ namespace Meteor.sections
                 _dbHandler.remove_skin(SelectedSlot, SelectedCharacterId, _dbHandler.get_property("workspace"));
                 _dbHandler.reorder_skins(SelectedCharacterId, ActiveWorkspace);
                 LoadSkinList(SelectedCharacterName);
-                WriteToConsole("Skin removed from the workspace", 0);
+                            MeteorCode.WriteToConsole("Skin removed from the workspace", 0);
             }
             else
             {
                 if (!_dbHandler.skin_locked(SelectedSkinId))
                     RestoreSkin();
                 else
-                    WriteToConsole("Sorry, you cannot remove default skin slots!", 1);
+                                MeteorCode.WriteToConsole("Sorry, you cannot remove default skin slots!", 1);
             }
         }
 
@@ -177,7 +177,7 @@ namespace Meteor.sections
             var newName = SkinNameValueTextBox.Text;
             _dbHandler.set_skin_name(newName, SelectedSkinId);
 
-            WriteToConsole("Skin name saved", 0);
+                        MeteorCode.WriteToConsole("Skin name saved", 0);
 
             var lbi = (ListBoxItem)SkinsListBox.SelectedItem;
             lbi.Content = newName;
@@ -190,7 +190,7 @@ namespace Meteor.sections
                 var newName = SkinAuthorValueTextBox.Text;
                 _dbHandler.set_skin_author(newName, SelectedSkinId);
 
-                WriteToConsole("Skin author saved", 0);
+                            MeteorCode.WriteToConsole("Skin author saved", 0);
             }
         }
 
@@ -211,12 +211,12 @@ namespace Meteor.sections
                     if (selectedNameplateId == 0)
                     {
                         _dbHandler.set_skin_nameplate(SelectedCharacterId, SelectedSlot, selectedNameplateId, ActiveWorkspace);
-                        WriteToConsole("Nameplate dissociated", 0);
+                                    MeteorCode.WriteToConsole("Nameplate dissociated", 0);
                     }
                     else
                     {
                         _dbHandler.set_skin_nameplate(SelectedCharacterId, SelectedSlot, selectedNameplateId, ActiveWorkspace);
-                        WriteToConsole("Nameplate associated", 0);
+                                    MeteorCode.WriteToConsole("Nameplate associated", 0);
                     }
                 }
             }
@@ -226,7 +226,7 @@ namespace Meteor.sections
         {
             _dbHandler.convert_skin("Converted skin", "", "", "", SelectedCharacterId, SelectedSlot);
             LoadSkinList(SelectedCharacterName);
-            WriteToConsole("The skin was converted to a custom one", 3);
+                        MeteorCode.WriteToConsole("The skin was converted to a custom one", 3);
         }
 
         private void RestoreSkin()
@@ -262,11 +262,12 @@ namespace Meteor.sections
                 }
                 else
                 {
-                    WriteToConsole("Smash Forge was not found in /forge", 1);
+                                MeteorCode.WriteToConsole("Smash Forge was not found in /forge", 1);
                 }
             else
-                WriteToConsole("There is no body/cXX to open in Smash Forge", 1);
+                            MeteorCode.WriteToConsole("There is no body/cXX to open in Smash Forge", 1);
         }
+
 
         //Drag & Drop
         private void DragEnterModel(object sender, DragEventArgs e)
@@ -470,7 +471,7 @@ namespace Meteor.sections
                 count++;
             }
 
-            CharacterListBox.SelectedIndex = slot;
+            CharacterListView.SelectedIndex = slot;
         }
 
         private void SelectSkinSlot(int slot)
@@ -543,69 +544,33 @@ namespace Meteor.sections
         private void FillCharacters()
         {
             var chars = _dbHandler.get_characters(int.Parse(_dbHandler.get_property("sort_order")));
-            CharacterListBox.Items.Clear();
+
+            CharactersItemsCollections.Clear();
+
             foreach (string s in chars)
             {
-                var lbi = new ListBoxItem {Content = s};
-                CharacterListBox.Items.Add(lbi);
-            }
+                var characterName = s.Replace("&", "and");
+                characterName = characterName.Replace(".", "");
+                characterName = characterName == "All Miis" ? "Mii" : characterName;
 
-        }
-
-        //Console
-        private void WriteToConsole(string s, int type)
-        {
-            var typeText = "";
-            var date = DateTime.Now.ToString(CultureInfo.CurrentCulture);
-            switch (type)
-            {
-                case 0:
-                    typeText = "Success";
-                    break;
-                case 1:
-                    typeText = "Warning";
-                    break;
-                case 2:
-                    typeText = "Error";
-                    break;
-                case 3:
-                    typeText = "Dev Log";
-                    break;
-            }
-
-            if (type != 3)
-            {
-                ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
-            }
-            else
-            {
-                if (_dbHandler.get_property("dev_logs") == "1")
-                    ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
-            }
-        }
-
-        private void Paste(String message, String stack)
-        {
-            if (_dbHandler.get_property("pastebin") == "1")
-            {
-                var result = MessageBox.Show("An error happened with Meteor. Open the pastebin?", "Segtendo WARNING",
-                    MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-                if (result == MessageBoxResult.Yes)
+                CharactersItemsCollections.Add(new CharactersListViewItemsData()
                 {
-
-                    try
-                    {
-                        var url = _pastebin.CreatePaste("Meteor Error", "csharp", "Error Message : " + message + "\n StackTrace:" + stack, Pastebin.PasteExposure.Public, Pastebin.PasteExpiration.OneWeek);
-
-                        Process.Start(url);
-                    }
-                    catch (Exception ee)
-                    {
-                        WriteToConsole("Pastebin error : " + ee.Message, 2);
-                    }
-                }
-
+                    CharacterImageSource = AppPath+"/images/CharacterIcon/"+ characterName + ".png",
+                    CharacterLabelValue = s
+                });
             }
+
+            CharacterListView.ItemsSource = CharactersItemsCollections;
         }
+
+
+        
+
+    }
+
+    public class CharactersListViewItemsData
+    {
+        public string CharacterImageSource { get; set; }
+        public string CharacterLabelValue { get; set; }
     }
 }

@@ -26,8 +26,7 @@ namespace Meteor.workers
 
             Status = 1;
             Message = "Copying Workspace";
-            this._selectedWorkspace = selectedWorkspace;
-            
+            _selectedWorkspace = selectedWorkspace;
             _worker.RunWorkerAsync();
         }
 
@@ -36,10 +35,10 @@ namespace Meteor.workers
         protected override void WorkerDowork(object sender, DoWorkEventArgs e)
         {
             //Getting active workspace ID
-            int activeWorkspace = int.Parse(dbHandler.get_property("workspace"));
+            int activeWorkspace = int.Parse(DbHandler.get_property("workspace"));
 
             //Launching the copy process
-            dbHandler.copy_skins(activeWorkspace, _selectedWorkspace);
+            DbHandler.copy_skins(activeWorkspace, _selectedWorkspace);
         }
 
     }

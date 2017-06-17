@@ -27,7 +27,7 @@
             </Grid.RowDefinitions>
             <ListBox x:Name="WorkspacesListBox" Foreground="White" Background="{x:Null}" BorderBrush="White" ScrollViewer.VerticalScrollBarVisibility="Hidden"
                 ScrollViewer.HorizontalScrollBarVisibility="Hidden" ToolTip="Select a workspace !"
-                SelectionChanged="workspace_selected" Grid.Row="1" Margin="5,0" />
+                SelectionChanged="workspace_selected" Grid.Row="1" Margin="5,0" ItemContainerStyle="{DynamicResource mowjohListStyle}" />
             <Label x:Name="WoskpacesHeader" Content="Workspaces" HorizontalAlignment="Center"
                 Margin="0" VerticalAlignment="Center" Background="{x:Null}" Foreground="White"
                 FontStyle="Italic" FontSize="16" Height="31" Width="92" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />

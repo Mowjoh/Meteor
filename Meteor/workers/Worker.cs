@@ -12,9 +12,9 @@ namespace Meteor.workers
     public class Worker
     {
         //Class variables
-        protected BackgroundWorker _worker = new BackgroundWorker();
+        protected readonly BackgroundWorker _worker = new BackgroundWorker();
 
-        protected db_handler dbHandler;
+        protected readonly db_handler DbHandler;
         protected int _completion;
         protected String _message;
         private int _progressStyle = 0;
@@ -25,7 +25,7 @@ namespace Meteor.workers
         //Constructor
         protected Worker(db_handler databaseHandler)
         {
-            this.dbHandler = databaseHandler;
+            this.DbHandler = databaseHandler;
 
             _worker.DoWork += WorkerDowork;
             _worker.RunWorkerCompleted += WorkerCompleted;
@@ -38,6 +38,12 @@ namespace Meteor.workers
         {
             Status = 1;
             _worker.RunWorkerAsync();
+        }
+
+        //Post Work command
+        protected internal virtual void PostWork()
+        {
+            Status = 0;
         }
 
         //Async worker functions-----------------------------------------------------------

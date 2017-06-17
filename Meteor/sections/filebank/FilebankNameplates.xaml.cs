@@ -57,7 +57,7 @@ namespace Meteor.sections.filebank
             var newName = NameValueTextBox.Text;
             _dbHandler.set_nameplate_name(newName, SelectedId);
 
-            WriteToConsole("Nameplate name saved", 0);
+                        MeteorCode.WriteToConsole("Nameplate name saved", 0);
 
             var lbi = (ListBoxItem)NameplateListBox.SelectedItem;
             lbi.Content = newName;
@@ -70,7 +70,7 @@ namespace Meteor.sections.filebank
             var newName = AuthorValueTextBox.Text;
             _dbHandler.set_nameplate_author(newName, SelectedId);
 
-            WriteToConsole("Nameplate author saved", 0);
+                        MeteorCode.WriteToConsole("Nameplate author saved", 0);
         }
 
         //Actions
@@ -90,7 +90,7 @@ namespace Meteor.sections.filebank
             var id = (int)Nameplates[NameplateListBox.SelectedIndex];
             _dbHandler.get_custom_nameplates_id();
             _dbHandler.add_packer_item(1, id);
-            WriteToConsole("Nameplate added to packer", 0);
+                        MeteorCode.WriteToConsole("Nameplate added to packer", 0);
         }
 
         
@@ -107,7 +107,7 @@ namespace Meteor.sections.filebank
             //detect whether its a directory or file
             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                WriteToConsole("Please drop a chrn_11 file", 2);
+                            MeteorCode.WriteToConsole("Please drop a chrn_11 file", 2);
             }
 
             else
@@ -130,7 +130,7 @@ namespace Meteor.sections.filebank
                     }
                     catch (Exception ex)
                     {
-                        WriteToConsole("Error " + ex.Message, 2);
+                                    MeteorCode.WriteToConsole("Error " + ex.Message, 2);
                     }
 
                 }
@@ -177,36 +177,5 @@ namespace Meteor.sections.filebank
             }
         }
 
-        //Console Writing
-        private void WriteToConsole(string s, int type)
-        {
-            var typeText = "";
-            var date = DateTime.Now.ToString(CultureInfo.CurrentCulture);
-            switch (type)
-            {
-                case 0:
-                    typeText = "Success";
-                    break;
-                case 1:
-                    typeText = "Warning";
-                    break;
-                case 2:
-                    typeText = "Error";
-                    break;
-                case 3:
-                    typeText = "Dev Log";
-                    break;
-            }
-
-            if (type != 3)
-            {
-                ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
-            }
-            else
-            {
-                if (_dbHandler.get_property("dev_logs") == "1")
-                    ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
-            }
-        }
     }
 }

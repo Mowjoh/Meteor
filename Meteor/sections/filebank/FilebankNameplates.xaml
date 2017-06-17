@@ -36,7 +36,7 @@
             <Grid x:Name="NameplateListGrid">
                 <ListBox x:Name="NameplateListBox" Background="{x:Null}"
                     BorderBrush="{x:Null}" Foreground="White"
-                    SelectionChanged="NameplateSelected" ToolTip="Select a skin !" />
+                    SelectionChanged="NameplateSelected" ToolTip="Select a skin !" ItemContainerStyle="{DynamicResource mowjohListStyle}" />
             </Grid>
         </GroupBox>
         <GroupBox x:Name="AttributesGroupBox" Header="Attributes" Margin="5" Grid.Row="1" Grid.Column="1" Foreground="White">
