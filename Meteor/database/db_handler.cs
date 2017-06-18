@@ -113,10 +113,10 @@ namespace Meteor.database
             switch (mode)
             {
                 case 1:
-                    sql = "select name from characters order by id";
+                    sql = "select id, name from characters order by id";
                     break;
                 case 0:
-                    sql = "select name from characters order by name asc";
+                    sql = "select id, name from characters order by name asc";
                     break;
             }
 
@@ -124,7 +124,7 @@ namespace Meteor.database
             var command = new SQLiteCommand(sql, db_connection);
             var reader = command.ExecuteReader();
             while (reader.Read())
-                characters.Add(reader.GetString(0));
+                characters.Add(new string[] {reader.GetInt32(0).ToString(), reader.GetString(1) });
 
             return characters;
         }
@@ -288,14 +288,14 @@ namespace Meteor.database
             var skins = new ArrayList();
 
             var sql =
-                "select skins.name from skin_library Join skins on(skins.id = skin_library.skin_id) Join characters on(characters.id = skin_library.character_id) Where characters.name = @char_name and skin_library.workspace_id = @workspace_id Order by skin_library.Slot";
+                "select skins.id,skins.name from skin_library Join skins on(skins.id = skin_library.skin_id) Join characters on(characters.id = skin_library.character_id) Where characters.name = @char_name and skin_library.workspace_id = @workspace_id Order by skin_library.Slot";
 
             var command = new SQLiteCommand(sql, db_connection);
             command.Parameters.AddWithValue("char_name", char_name);
             command.Parameters.AddWithValue("workspace_id", int.Parse(workspace_id));
             var reader = command.ExecuteReader();
             while (reader.Read())
-                skins.Add(reader.GetString(0));
+                skins.Add(new string[] { reader.GetInt32(0).ToString() , reader.GetString(1) });
 
             return skins;
         }

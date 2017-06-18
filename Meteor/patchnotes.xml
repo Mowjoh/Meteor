@@ -1,4 +1,7 @@
-<package version="0.9.5.2">
+<package version="0.9.5.5">
+  <patchnote version="0.9.5.5">
+    <patch>Fixed downloads</patch>
+  </patchnote>
   <patchnote version="0.9.5.2">
     <patch>Fixed some bugs</patch>
   </patchnote>

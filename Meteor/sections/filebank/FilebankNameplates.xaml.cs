@@ -193,9 +193,9 @@ namespace Meteor.sections.filebank
             var allCharactersItem = new ListBoxItem { Content = "All Characters" };
             CharacterComboBox.Items.Add(allCharactersItem);
 
-            foreach (string s in characters)
+            foreach (string[] s in characters)
             {
-                var item = new ComboBoxItem { Content = s };
+                var item = new ComboBoxItem { Content = s[1] };
                 CharacterComboBox.Items.Add(item);
             }
 

@@ -91,6 +91,10 @@ namespace Meteor.workers
             set => _message = value;
         }
 
-        public int Style => _progressStyle;
+        public int Style
+        {
+            get => _progressStyle;
+            set => _progressStyle = value;
+        }
     }
 }

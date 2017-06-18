@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -35,7 +34,8 @@ namespace Meteor
         public MslWorkspaceWorker MslWorkspaceWorker;
         public ClearWorkspaceWorker ClearWorkspaceWorker;
         public BuildWorker BuildWorker;
-        private DownloadWorker _downloadWorker;
+        public DownloadWorker DownloadWorker;
+        public ContentInstallerWorker ContentInstallerWorker;
 
         private Worker _currentWorker;
 
@@ -93,7 +93,7 @@ namespace Meteor
             var args = Environment.GetCommandLineArgs();
             if (args.Length != 2) return;
             MeteorCode.WriteToConsole(args[1], 0);
-            _downloadWorker.Launch(args[1]);
+            DownloadWorker.Launch(args[1]);
 
             #endregion
         }
@@ -292,7 +292,8 @@ namespace Meteor
             MslWorkspaceWorker = new MslWorkspaceWorker(_dbHandler);
             ClearWorkspaceWorker = new ClearWorkspaceWorker(_dbHandler);
             BuildWorker = new BuildWorker(_dbHandler);
-            _downloadWorker = new DownloadWorker(_dbHandler);
+            DownloadWorker = new DownloadWorker(_dbHandler);
+            ContentInstallerWorker = new ContentInstallerWorker(_dbHandler);
 
             //Setting up BackgroundWorkers
             _urlWorker.DoWork += UrlWorkerDoWork;
@@ -312,7 +313,7 @@ namespace Meteor
         private Worker CheckWorkerStatus()
         {
 
-            List<Worker> workers = new List<Worker> { AddWorkspaceWorker, CopyWorkspaceWorker, MslWorkspaceWorker, ClearWorkspaceWorker, BuildWorker };
+            List<Worker> workers = new List<Worker> { AddWorkspaceWorker, CopyWorkspaceWorker, MslWorkspaceWorker, ClearWorkspaceWorker, BuildWorker, DownloadWorker, ContentInstallerWorker };
 
             foreach (var worker in workers)
             {
@@ -372,10 +373,10 @@ namespace Meteor
         private void PostWork(Worker worker)
         {
             Workspace workspace = (Workspace)WorkspaceFrame.Content;
+            Skins skins = (Skins) SkinsFrame.Content;
             switch (worker?.Name)
             {
                 case "addWorkspaceWorker":
-                    
                     workspace.ReloadWorkspacesList();
                     workspace.LoadWorkspaceStats();
                     MeteorCode.WriteToConsole("Workspace was successfully added", 0);
@@ -393,6 +394,14 @@ namespace Meteor
                     _dbHandler.upBuildCount(int.Parse(_dbHandler.get_property("workspace")));
                     workspace.LoadWorkspaceStats();
                     MeteorCode.WriteToConsole("Workspace built!",0);
+                    break;
+                case "DownloadWorker":
+                    ContentInstallerWorker.Launch();
+                    MeteorCode.WriteToConsole("Download successful", 0);
+                    break;
+                case "ContentInstallerWorker":
+                    skins.LoadSkinList(skins.SelectedCharacterName);
+                    MeteorCode.WriteToConsole("Content added!", 0);
                     break;
 
             }
@@ -419,7 +428,7 @@ namespace Meteor
                 var lines = File.ReadAllLines(_appPath + "/downloads/url.txt");
 
                             MeteorCode.WriteToConsole("Url Detected", 0);
-                _downloadWorker.Launch(lines[1]);
+                DownloadWorker.Launch(lines[1]);
 
                 File.Delete(_appPath + "/downloads/url.txt");
             }
@@ -430,7 +439,7 @@ namespace Meteor
             var workerFinished = false;
             while (!workerFinished)
             {
-                Thread.Sleep(25);
+                Thread.Sleep(75);
 
                 var current = CheckWorkerStatus();
                 _currentWorker = current;

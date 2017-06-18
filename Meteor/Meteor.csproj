@@ -29,7 +29,7 @@
     <UpdateUrl>http://localhost/Meteor/</UpdateUrl>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>3</ApplicationRevision>
+    <ApplicationRevision>6</ApplicationRevision>
     <ApplicationVersion>0.9.5.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -183,6 +183,7 @@
     <Compile Include="updates\Updater.cs" />
     <Compile Include="workers\BuildWorker.cs" />
     <Compile Include="workers\clearWorkspaceWorker.cs" />
+    <Compile Include="workers\contentInstallerWorker.cs" />
     <Compile Include="workers\copyWorkspaceWorker.cs" />
     <Compile Include="workers\addWorkspaceWorker.cs" />
     <Compile Include="workers\downloadWorker.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -52,7 +53,7 @@ namespace Meteor.sections
             {
                 //Setup global values
                 SelectedCharacterName = li.CharacterLabelValue;
-                SelectedCharacterId = _dbHandler.get_character_id(SelectedCharacterName);
+                SelectedCharacterId = li.itemid;
 
                 //Load the skin list for that selected character
                 LoadSkinList(SelectedCharacterName);
@@ -324,18 +325,17 @@ namespace Meteor.sections
         public void LoadSkinList(string selectedCharacter)
         {
             var skins = _dbHandler.get_character_skins(selectedCharacter, _dbHandler.get_property("workspace"));
-            SkinsListBox.Items.Clear();
-            foreach (string s in skins)
+            var items = new List<SkinListBoxItemData>();
+            foreach (string[] s in skins)
             {
-                var lbi = new ListBoxItem {Content = s};
                 var cm = new ContextMenu();
-                var m1 = new MenuItem {Header = "Remove skin from workspace"};
+                var m1 = new MenuItem { Header = "Remove skin from workspace" };
                 m1.Click += (s1, e) => { RemoveSkin(); };
                 cm.Items.Add(m1);
-                lbi.ContextMenu = cm;
-
-                SkinsListBox.Items.Add(lbi);
+                items.Add(new SkinListBoxItemData() {SkinId = int.Parse(s[0]), Content = s[1],ContextMenu = cm });
             }
+
+            SkinsListBox.ItemsSource = items;
         }
 
         private void LoadSkinFiles()
@@ -427,9 +427,11 @@ namespace Meteor.sections
             else
             {
                 ActiveWorkspace = int.Parse(_dbHandler.get_property("workspace"));
+                SkinListBoxItemData item = (SkinListBoxItemData) SkinsListBox.SelectedItems[0];
+
                 //Setting up global variables
                 SelectedSlot = SkinsListBox.SelectedIndex + 1;
-                SelectedSkinId = _dbHandler.get_skin_id(SelectedCharacterId, SelectedSlot, ActiveWorkspace);
+                SelectedSkinId = item.SkinId;
 
                 //Getting id
                 var gbUid = _dbHandler.get_skin_gb_uid(SelectedSkinId);
@@ -541,30 +543,29 @@ namespace Meteor.sections
             }
         }
 
-        private void FillCharacters()
+        public void FillCharacters()
         {
             var chars = _dbHandler.get_characters(int.Parse(_dbHandler.get_property("sort_order")));
 
             CharactersItemsCollections.Clear();
 
-            foreach (string s in chars)
+            foreach (string[] s in chars)
             {
-                var characterName = s.Replace("&", "and");
+                var characterName = s[1].Replace("&", "and");
                 characterName = characterName.Replace(".", "");
                 characterName = characterName == "All Miis" ? "Mii" : characterName;
 
                 CharactersItemsCollections.Add(new CharactersListViewItemsData()
                 {
                     CharacterImageSource = AppPath+"/images/CharacterIcon/"+ characterName + ".png",
-                    CharacterLabelValue = s
+                    CharacterLabelValue = s[1],
+                    itemid = int.Parse(s[0])
+                    
                 });
             }
 
             CharacterListView.ItemsSource = CharactersItemsCollections;
         }
-
-
-        
 
     }
 
@@ -572,5 +573,12 @@ namespace Meteor.sections
     {
         public string CharacterImageSource { get; set; }
         public string CharacterLabelValue { get; set; }
+        public int itemid { get; set; }
+    }
+
+    public class SkinListBoxItemData : ListBoxItem
+    {
+        public int SkinId { get; set; }
+        public string SkinLabelValue { get; set; }
     }
 }
