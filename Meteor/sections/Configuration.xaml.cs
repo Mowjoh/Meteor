@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security.Principal;
 using System.Windows;
@@ -13,30 +13,29 @@ using Meteor.database;
 using Path = System.IO.Path;
 using System.Xml;
 using Microsoft.Win32;
-using Xceed.Wpf.Toolkit;
 using winforms = System.Windows.Forms;
 
 namespace Meteor.sections
 {
-
     [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
-    public partial class Configuration 
+    public partial class Configuration
     {
+        //Private variables
         private readonly db_handler _dbHandler;
 
         private bool _loading = true;
 
-        private string AppPath { get; } = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory?.FullName;
-
+        //Constructor
         public Configuration()
         {
             InitializeComponent();
-            
+
             _dbHandler = new db_handler();
 
             retreive_config();
         }
 
+        //Makes the interface reflect the current configuration
         private void retreive_config()
         {
             //Region Select
@@ -61,16 +60,20 @@ namespace Meteor.sections
             GbuidTextBox.Text = _dbHandler.get_property("gb_uid");
 
             //ui_char status
-            UicharStatusLabel.Content = _dbHandler.get_property("ui_char") == "1" ? "Status : imported" : "Status : not present";
+            UicharStatusLabel.Content = _dbHandler.get_property("ui_char") == "1"
+                ? "Status : imported"
+                : "Status : not present";
 
+            //Disables the lock and allows the console to be written again
             _loading = false;
         }
 
         //Regional options
         private void RegionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //Getting the region
             var region = combo_region.SelectedIndex;
-            _dbHandler.set_property_value(region.ToString(), "region");
+           _dbHandler.set_property_value("region",region.ToString());
             switch (region)
             {
                 case 0:
@@ -88,7 +91,7 @@ namespace Meteor.sections
         private void LaunguageChanged(object sender, SelectionChangedEventArgs e)
         {
             var language = combo_language.SelectedIndex;
-            _dbHandler.set_property_value(language.ToString(), "language");
+            _dbHandler.set_property_value("language", language.ToString());
             switch (language)
             {
                 case 0:
@@ -141,8 +144,8 @@ namespace Meteor.sections
                                     "The file you selected is not called 'Sm4shFileExplorer.exe' but was still saved.",
                                     1);
 
-                            _dbHandler.set_property_value(exepath, "s4e_exe");
-                            _dbHandler.set_property_value(path, "s4e_path");
+                            _dbHandler.set_property_value("s4e_exe",exepath);
+                            _dbHandler.set_property_value("s4e_path", path);
                             WriteToConsole("Sm4sh Explorer's executable path set to : " + exepath, 0);
                             S4EPathTextbox.Text = exepath;
                             ChangeS4EWorkspaceLocation(int.Parse(_dbHandler.get_property("workspace")));
@@ -155,47 +158,55 @@ namespace Meteor.sections
                         WriteToConsole("The path is invalid. It's not pointing to a .exe", 2);
                 }
             }
-            catch(Exception s4EpathException)
+            catch (Exception s4EpathException)
             {
                 WriteToConsole("An error happend while setting up the path", 2);
                 MeteorCode.Paste(s4EpathException.Message, s4EpathException.StackTrace);
             }
-            
         }
 
         private void S4EPathSave(object sender, RoutedEventArgs e)
         {
-            //Dialog
-            var openFileDialog = new winforms.OpenFileDialog();
-            openFileDialog.ShowDialog();
-
-            if (openFileDialog.FileName != "")
+            try
             {
-                //Getting the values
-                var exepath = openFileDialog.FileName;
-                var directoryInfo = new FileInfo(exepath).Directory;
-                if (directoryInfo != null)
+                //Dialog
+                var openFileDialog = new winforms.OpenFileDialog();
+                openFileDialog.ShowDialog();
+
+                if (openFileDialog.FileName != "")
                 {
-                    var path = directoryInfo.FullName;
-                    var filetype = new FileInfo(exepath).Extension;
-
-                    if (filetype == ".exe")
+                    //Getting the values
+                    var exepath = openFileDialog.FileName;
+                    var directoryInfo = new FileInfo(exepath).Directory;
+                    if (directoryInfo != null)
                     {
-                        if (new FileInfo(exepath).Name != "Sm4shFileExplorer.exe")
-                            WriteToConsole(
-                                "The file you selected is not called 'Sm4shFileExplorer.exe' but was still saved.", 1);
+                        var path = directoryInfo.FullName;
+                        var filetype = new FileInfo(exepath).Extension;
 
-                        _dbHandler.set_property_value(exepath, "s4e_exe");
-                        _dbHandler.set_property_value(path, "s4e_path");
-                        WriteToConsole("Sm4sh Explorer's executable path set to : " + openFileDialog.FileName, 0);
-                        S4EPathTextbox.Text = openFileDialog.FileName;
-                        ChangeS4EWorkspaceLocation(int.Parse(_dbHandler.get_property("workspace")));
-                    }
-                    else
-                    {
-                        WriteToConsole("The file you selected is not a .exe", 2);
+                        if (filetype == ".exe")
+                        {
+                            if (new FileInfo(exepath).Name != "Sm4shFileExplorer.exe")
+                                WriteToConsole(
+                                    "The file you selected is not called 'Sm4shFileExplorer.exe' but was still saved.",
+                                    1);
+
+                            _dbHandler.set_property_value("s4e_exe" , exepath);
+                            _dbHandler.set_property_value("s4e_path" , path);
+                            WriteToConsole("Sm4sh Explorer's executable path set to : " + openFileDialog.FileName, 0);
+                            S4EPathTextbox.Text = openFileDialog.FileName;
+                            ChangeS4EWorkspaceLocation(int.Parse(_dbHandler.get_property("workspace")));
+                        }
+                        else
+                        {
+                            WriteToConsole("The file you selected is not a .exe", 2);
+                        }
                     }
                 }
+            }
+            catch (Exception s4EpathException)
+            {
+                WriteToConsole("An error happend while setting up the path", 2);
+                MeteorCode.Paste(s4EpathException.Message, s4EpathException.StackTrace);
             }
         }
 
@@ -204,19 +215,19 @@ namespace Meteor.sections
         private void AutomaticSearchUi(object sender, RoutedEventArgs e)
         {
             var baseFolder = _dbHandler.get_property("s4e_path");
-            var destination = AppPath + "/filebank/configuration/uichar/ui_character_db.bin";
+            var destination = MeteorCode.AppPath + "/filebank/configuration/uichar/ui_character_db.bin";
             if (Directory.Exists(baseFolder))
             {
                 var files = Directory.GetFiles(baseFolder, "ui_character_db.bin", SearchOption.AllDirectories);
                 if (files.Length > 0)
                 {
-                    if (!Directory.Exists(AppPath + "/filebank/configuration/uichar/"))
-                        Directory.CreateDirectory(AppPath + "/filebank/configuration/uichar/");
+                    if (!Directory.Exists(MeteorCode.AppPath + "/filebank/configuration/uichar/"))
+                        Directory.CreateDirectory(MeteorCode.AppPath + "/filebank/configuration/uichar/");
                     var filepath = files[0];
                     File.Copy(filepath, destination, true);
                     WriteToConsole("found the file at : " + filepath, 0);
                     UicharStatusLabel.Content = "Status : imported";
-                    _dbHandler.set_property_value("1", "ui_char");
+                    _dbHandler.set_property_value("ui_char" , "1");
                 }
                 else
                 {
@@ -231,39 +242,52 @@ namespace Meteor.sections
 
         private void PickUi(object sender, RoutedEventArgs e)
         {
+            //Setting up OpenFileDialog
             var ofd = new winforms.OpenFileDialog();
             ofd.ShowDialog();
             var filename = ofd.FileName;
-            var destination = AppPath + "filebank/configuration/uichar/ui_character_db.bin";
 
+            //Setting destination path
+            var destination = MeteorCode.AppPath + "filebank/configuration/uichar/ui_character_db.bin";
 
+            //Returning if the filename is incorrect
             if (Path.GetFileName(filename) != "ui_character_db.bin") return;
 
-            if (!Directory.Exists(AppPath + "filebank/configuration/uichar/"))
-                Directory.CreateDirectory(AppPath + "filebank/configuration/uichar/");
+            //Checking destination directory
+            if (!Directory.Exists(MeteorCode.AppPath + "filebank/configuration/uichar/"))
+            {
+                Directory.CreateDirectory(MeteorCode.AppPath + "filebank/configuration/uichar/");
+            }
+
             File.Copy(filename, destination, true);
 
-            WriteToConsole("ui_character_db.bin selected", 0);
+            //Setting database status
             UicharStatusLabel.Content = "Status : imported";
-            _dbHandler.set_property_value("1", "ui_char");
+            _dbHandler.set_property_value("ui_char", "1");
+
+            //Writing success
+            WriteToConsole("ui_character_db.bin selected", 0);
         }
 
 
         //Configuration actions
         private void SortbyChanged(object sender, SelectionChangedEventArgs e)
         {
-            
-
             var order = SortbyComboBox.SelectedIndex;
             _dbHandler.set_property_value(order.ToString(), "sort_order");
             WriteToConsole(order == 0 ? "Sort Order changed to Alphabetical" : "Sort Order changed to Game Order", 0);
+            if (!_loading)
+            {
+                MessageBox.Show("Meteor will now shut down to apply the changes");
+                Application.Current.Shutdown();
+            }
         }
 
         private void GbuidSave(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                _dbHandler.set_property_value(GbuidTextBox.Text, "gb_uid");
+                _dbHandler.set_property_value("gb_uid", GbuidTextBox.Text );
                 WriteToConsole("Gamebanana User Id set", 0);
             }
         }
@@ -272,29 +296,29 @@ namespace Meteor.sections
         {
             if (e.Key == Key.Enter)
             {
-                _dbHandler.set_property_value(UsernameTextBox.Text,"username");
-                WriteToConsole("Username set",0);
+                _dbHandler.set_property_value("username", UsernameTextBox.Text);
+                WriteToConsole("Username set", 0);
             }
         }
 
         private void ChangeDevlocks(object sender, RoutedEventArgs e)
         {
             var val = DevLogsCheckBox.IsChecked == true ? "1" : "0";
-            _dbHandler.set_property_value(val, "dev_logs");
+            _dbHandler.set_property_value("dev_logs", val);
             WriteToConsole(val == "1" ? "Dev Logs Activated" : "Dev Logs Deactivated", 0);
         }
 
         private void ChangePastebin(object sender, RoutedEventArgs e)
         {
             var val = PasteBinCheckBox.IsChecked == true ? "1" : "0";
-            _dbHandler.set_property_value(val, "pastebin");
+            _dbHandler.set_property_value("pastebin", val);
             WriteToConsole(val == "1" ? "Pastebin Activated" : "Pastebin Deactivated", 0);
         }
 
         private void S4EAutoLaunchChanged(object sender, RoutedEventArgs e)
         {
             var val = AutoLaunchS4ECheckBox.IsChecked == true ? "1" : "0";
-            _dbHandler.set_property_value(val, "s4e_launch");
+            _dbHandler.set_property_value("s4e_launch", val);
             WriteToConsole(
                 val == "1"
                     ? "Sm4sh Explorer will be launched after each export"
@@ -303,12 +327,9 @@ namespace Meteor.sections
 
         private void SaveColor(object sender, RoutedEventArgs e)
         {
-
             var color = ColorPicker.SelectedColor.ToString();
-            _dbHandler.set_property_value(color, "background");
+            _dbHandler.set_property_value("background", color);
             UpdateBackground();
-
-        
         }
 
         private void UpdateBackground()
@@ -334,7 +355,7 @@ namespace Meteor.sections
                     Offset = 0.12
                 };
 
-                var gradientColor2= ColorConverter.ConvertFromString(color);
+                var gradientColor2 = ColorConverter.ConvertFromString(color);
                 if (gradientColor2 != null)
                 {
                     var gs2 = new GradientStop
@@ -348,7 +369,7 @@ namespace Meteor.sections
                 }
             }
 
-            ((MainWindow)Application.Current.MainWindow).Background = lgb;
+            ((MainWindow) Application.Current.MainWindow).Background = lgb;
         }
 
         private void FixRegistryClick(object sender, RoutedEventArgs e)
@@ -367,7 +388,7 @@ namespace Meteor.sections
         {
             //Loading local manifest
             var xml = new XmlDocument();
-            var workspacePath = AppPath + "/workspaces/workspace_" + workspaceId + "/";
+            var workspacePath = MeteorCode.AppPath + "/workspaces/workspace_" + workspaceId + "/";
             if (!Directory.Exists(workspacePath + "/content/patch/"))
                 Directory.CreateDirectory(workspacePath + "/content/patch/");
             if (File.Exists(_dbHandler.get_property("s4e_path") + "/sm4shmod.xml"))
@@ -404,7 +425,8 @@ namespace Meteor.sections
                 var customProtocol = Registry.ClassesRoot.OpenSubKey("meteor\\shell\\open\\command", true);
                 if (customProtocol != null)
                 {
-                    customProtocol.SetValue("", "\"" + AppPath + "\\Meteor.exe\" \"%1\"", RegistryValueKind.String);
+                    customProtocol.SetValue("", "\"" + MeteorCode.AppPath + "\\Meteor.exe\" \"%1\"",
+                        RegistryValueKind.String);
                     customProtocol.Close();
                 }
                 WriteToConsole("Fixed the download issue", 0);
@@ -413,12 +435,11 @@ namespace Meteor.sections
             {
                 WriteToConsole("You must launch the application as Admin to do that", 2);
             }
-
         }
 
         private void WriteToConsole(string s, int type)
         {
-            if(_loading) return;
+            if (_loading) return;
 
             var typeText = "";
             var date = DateTime.Now.ToString(CultureInfo.CurrentCulture);
@@ -440,15 +461,17 @@ namespace Meteor.sections
 
             if (type != 3)
             {
-                ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
+                ((MainWindow) Application.Current.MainWindow).Console.Text =
+                    date + " | " + typeText + " | " + s + "\n" +
+                    ((MainWindow) Application.Current.MainWindow).Console.Text;
             }
             else
             {
                 if (_dbHandler.get_property("dev_logs") == "1")
-                    ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
+                    ((MainWindow) Application.Current.MainWindow).Console.Text =
+                        date + " | " + typeText + " | " + s + "\n" +
+                        ((MainWindow) Application.Current.MainWindow).Console.Text;
             }
         }
-
     }
-
 }

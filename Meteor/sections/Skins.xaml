@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Meteor.sections"
       xmlns:System="clr-namespace:System;assembly=mscorlib" x:Name="SkinsPage" x:Class="Meteor.sections.Skins"
+      xmlns:dd="urn:gong-wpf-dragdrop"
       mc:Ignorable="d"
       Title="Skins" MinWidth="800" MinHeight="446">
 
@@ -97,6 +98,7 @@
                         </GridViewColumn>
                     </GridView>
                 </ListView.View>
+
             </ListView>
 
         </Grid>
@@ -110,9 +112,11 @@
                 VerticalAlignment="Center" Background="{x:Null}" Foreground="White" FontStyle="Italic"
                 FontSize="16" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
 
-            <ListBox x:Name="SkinsListBox" Background="{x:Null}" BorderBrush="White" Foreground="White"
+            <ListBox x:Name="SkinsListBox" Background="{x:Null}" BorderBrush="White" Foreground="White"  dd:DragDrop.IsDragSource="True"
+                     dd:DragDrop.IsDropTarget="True" 
                 SelectionChanged="SkinSelected" ToolTip="Select a skin you want to edit"
-                Margin="0,5,5,5" Grid.Row="1" BorderThickness="0,0,1,0" ItemContainerStyle="{DynamicResource mowjohListStyle}">
+                Margin="0,5,5,5" Grid.Row="1" BorderThickness="0,0,1,0" ItemContainerStyle="{DynamicResource mowjohListStyle}" PreviewMouseLeftButtonDown="DragSkin" AllowDrop="True">
+
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -120,12 +124,15 @@
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+
             </ListBox>
 
 
             <Button x:Name="AddSkinButton" Content="Add Skin Slot" HorizontalAlignment="Center"
-        Margin="0,0,0,2" VerticalAlignment="Center" Width="172" Click="AddSkin"
+        Margin="43,7,59,8" VerticalAlignment="Center" Width="130" Click="AddSkin"
         ToolTip="Press this button to add a new skin slot !" Grid.Row="2" />
+            <Button x:Name="MoveUpBotton" Content="↑" HorizontalAlignment="Center" Margin="0,0,212,0" Grid.Row="2" Width="20" RenderTransformOrigin="0.571,0.417" Height="35" VerticalAlignment="Center" FontSize="24" Click="MoveUpButtonClick"/>
+            <Button x:Name="MoveDownButton" Content="↓" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="2" VerticalAlignment="Top" Width="20" RenderTransformOrigin="0.571,0.417" Height="35" FontSize="24" Click="MoveDownButtonClick"/>
         </Grid>
         <GroupBox x:Name="SkinInfoGroupBox" Header="Skin Information" Foreground="White"
         Margin="5" Grid.Column="2">

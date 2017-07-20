@@ -103,6 +103,42 @@ namespace Meteor.database
             command.ExecuteNonQuery();
         }
 
+        public void swapSkins(int firstId,int firstSlot, int secondId,int secondSlot,int characterId, int workspaceId)
+        {
+            var sql = "update skin_library set skin_id = @firstId where slot = @secondSlot and workspace_id = @workspaceId and character_id = @characterId;update skin_library set skin_id = @secondId where slot = @firstSlot and workspace_id = @workspaceId and character_id = @characterId";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("firstId", firstId);
+            command.Parameters.AddWithValue("firstSlot", firstSlot);
+            command.Parameters.AddWithValue("secondId", secondId);
+            command.Parameters.AddWithValue("secondSlot", secondSlot);
+            command.Parameters.AddWithValue("characterId", characterId);
+            command.Parameters.AddWithValue("workspaceId", workspaceId);
+            command.ExecuteNonQuery();
+        }
+
+        public void restoreSkin(int skinSlot, int workspaceId, int characterId)
+        {
+            var sql = "select skin_id from skin_library where character_id = @characterId and workspace_id = 1 and slot = @skinSlot";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("characterId", characterId);
+            command.Parameters.AddWithValue("skinSlot", skinSlot);
+
+            var defaultId = 0;
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                defaultId = reader.GetInt32(0);
+            }
+            sql = "update skin_library set skin_id = @skinId where character_id = @characterId and workspace_id = @workspaceId and slot = @skinSlot";
+            command = new SQLiteCommand(sql, db_connection);
+
+            command.Parameters.AddWithValue("skinId", skinSlot);
+            command.Parameters.AddWithValue("skinSlot", defaultId);
+            command.Parameters.AddWithValue("characterId", characterId);
+            command.Parameters.AddWithValue("workspaceId", workspaceId);
+            command.ExecuteNonQuery();
+        }
+
         //----------------------Characters----------------------------------
 
         public ArrayList get_characters(int mode)
@@ -282,6 +318,48 @@ namespace Meteor.database
 
 
         //----------------------Skins----------------------------------------
+
+        public void ResetCharacterSkins(String character_id, string workspace_id)
+        {
+            DeleteCharacterSkins(character_id, workspace_id);
+            AddDefaultCharacterSkins(character_id, workspace_id);
+        }
+
+        public void DeleteCharacterSkins(String character_id, string workspace_id)
+        {
+            var sql = "delete from skin_library where workspace_id = @workspace_id and character_id = @character_id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("workspace_id", workspace_id);
+            command.Parameters.AddWithValue("character_id", character_id);
+            command.ExecuteNonQuery();
+        }
+
+        public void AddDefaultCharacterSkins(String character_id, string workspace_id)
+        {
+            var lines = new ArrayList();
+            var sql = "select character_id,skin_id,slot from skin_library Where skin_library.workspace_id = 1 and character_id = @character_id";
+
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("character_id", character_id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                int[] line = { reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2) };
+                lines.Add(line);
+            }
+
+            foreach (int[] line in lines)
+            {
+                sql =
+                    "insert into skin_library (character_id,skin_id,slot,locked,workspace_id) values (@character_id,@skin_id,@slot,1,@id)";
+                command = new SQLiteCommand(sql, db_connection);
+                command.Parameters.AddWithValue("character_id", line[0]);
+                command.Parameters.AddWithValue("skin_id", line[1]);
+                command.Parameters.AddWithValue("slot", line[2]);
+                command.Parameters.AddWithValue("id", workspace_id);
+                command.ExecuteNonQuery();
+            }
+        }
 
         public ArrayList get_character_skins(string char_name, string workspace_id)
         {
@@ -832,6 +910,24 @@ namespace Meteor.database
             command.ExecuteNonQuery();
         }
 
+        public bool getSkinLibraryLock(int characterId, int workspace, int slot)
+        {
+            bool test = false;
+
+            var sql = "select locked from skin_library where character_id = @character_id and slot = @slot and workspace_id = @workspace_id";
+            var command = new SQLiteCommand(sql, db_connection);
+            command.Parameters.AddWithValue("character_id", characterId);
+            command.Parameters.AddWithValue("workspace_id", workspace);
+            command.Parameters.AddWithValue("slot", slot);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var resultInt32 = reader.GetInt32(0);
+                test = resultInt32 == 1 ? true : false;
+            }
+
+            return test;
+        }
 
         //----------------------Nameplates-----------------------------------
 
@@ -1320,9 +1416,9 @@ namespace Meteor.database
             command.ExecuteNonQuery();
         }
 
-        public void upBuildCount(int workspaceId)
+        public void UpBuildCount(int workspaceId)
         {
-            int builds = getWorkspaceBuilds(workspaceId) +1;
+            int builds = GetWorkspaceBuilds(workspaceId) +1;
             var sql =
                 "update workspaces set builds = @builds where id = @workspace_id";
 
@@ -1332,7 +1428,7 @@ namespace Meteor.database
             command.ExecuteNonQuery();
         }
 
-        public int getWorkspaceBuilds(int workspaceId)
+        public int GetWorkspaceBuilds(int workspaceId)
         {
             var builds = 0;
             var sql = "select builds from workspaces where id = @id";
@@ -1445,7 +1541,7 @@ namespace Meteor.database
         }
 
 
-        public void set_property_value(string value, string property)
+        public void set_property_value(string property, string value)
         {
             var test = get_property(property);
             if (test != "")

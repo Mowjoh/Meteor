@@ -3,16 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Security.Permissions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using GongSolutions.Wpf.DragDrop;
 using Meteor.content;
 using Meteor.database;
-
+    
 namespace Meteor.sections
 {
     public partial class Skins
@@ -112,6 +114,114 @@ namespace Meteor.sections
             }
         }
 
+        private void ResetCharacterSkins()
+        {
+            _dbHandler.ResetCharacterSkins(SelectedCharacterId.ToString(), ActiveWorkspace.ToString());
+        }
+
+        private void MoveSkin(int firstSkinId, int secondSkinId,int firstSkinSlot,int secondSkinSlot, int order)
+        {
+            //Getting lock info to determine skin type
+            var firstSkinLibraryLock =_dbHandler.getSkinLibraryLock(SelectedCharacterId,ActiveWorkspace,firstSkinSlot);
+            var firstSkinLock = _dbHandler.skin_locked(firstSkinId);
+            var secondSkinLibraryLock = _dbHandler.getSkinLibraryLock(SelectedCharacterId, ActiveWorkspace, secondSkinSlot);
+            var secondSkinLock = _dbHandler.skin_locked(secondSkinId);
+
+            //Souce is a default skin
+            if (firstSkinLock && firstSkinLibraryLock)
+            {
+                MeteorCode.WriteToConsole("You cannot move around default skins",1);
+            }
+            //Source is a Custom skin on a default slot
+            if (!firstSkinLock && firstSkinLibraryLock)
+            {
+                //Destination is a default skin
+                if (secondSkinLock && secondSkinLibraryLock)
+                {
+                    _dbHandler.swapSkins(firstSkinId, firstSkinSlot, secondSkinId, secondSkinSlot,SelectedCharacterId, ActiveWorkspace);
+                    _dbHandler.restoreSkin(firstSkinSlot,ActiveWorkspace,SelectedCharacterId);
+                }
+                //Destination is a Custom skin on a default slot
+                if (!secondSkinLock && secondSkinLibraryLock)
+                {
+                    _dbHandler.swapSkins(firstSkinId,firstSkinSlot,secondSkinId,secondSkinSlot, SelectedCharacterId, ActiveWorkspace);
+                }
+                //Destination is a Custom skin on a Default slot
+                if (!secondSkinLock && !secondSkinLibraryLock)
+                {
+                    //Move and restore
+                }
+
+            }
+            //Source is a Custom skin on an additional slot
+            else
+            {
+                //Destination is a default skin
+                if (secondSkinLock && secondSkinLibraryLock)
+                {
+                    _dbHandler.swapSkins(firstSkinId, firstSkinSlot, secondSkinId, secondSkinSlot, SelectedCharacterId, ActiveWorkspace);
+                    _dbHandler.remove_skin(firstSkinSlot,SelectedCharacterId,ActiveWorkspace.ToString()); 
+                    _dbHandler.reorder_skins(SelectedCharacterId,ActiveWorkspace);
+                }
+                //Destination is a Custom skin on a default slot
+                if (!secondSkinLock && secondSkinLibraryLock)
+                {
+                    _dbHandler.swapSkins(firstSkinId, firstSkinSlot, secondSkinId, secondSkinSlot, SelectedCharacterId, ActiveWorkspace);
+                }
+                //Destination is a Custom skin on a Default slot
+                if (!secondSkinLock && !secondSkinLibraryLock)
+                {
+                    _dbHandler.swapSkins(firstSkinId, firstSkinSlot, secondSkinId, secondSkinSlot, SelectedCharacterId, ActiveWorkspace);
+                }
+            }
+            LoadSkinList(SelectedCharacterName);
+            SkinsListBox.SelectedIndex = secondSkinSlot-1;
+        }
+
+        private void MoveUp()
+        {
+            if (SkinsListBox.SelectedIndex != -1)
+            {
+                if (SkinsListBox.SelectedIndex == 0)
+                {
+                    MeteorCode.WriteToConsole("You cannot move this skin up", 1);
+                }
+                else
+                {
+                    SkinListBoxItemData item = (SkinListBoxItemData)SkinsListBox.Items[SkinsListBox.SelectedIndex - 1];
+                    MoveSkin(SelectedSkinId, item.SkinId, SkinsListBox.SelectedIndex + 1, SkinsListBox.SelectedIndex, 1);
+                }
+            }
+            else
+            {
+                MeteorCode.WriteToConsole("Select a skin first!", 1);
+            }
+
+
+        }
+
+        private void MoveDown()
+        {
+            if (SkinsListBox.SelectedIndex != -1)
+            {
+                if (SkinsListBox.SelectedIndex + 1 == SkinsListBox.Items.Count)
+                {
+                    MeteorCode.WriteToConsole("You cannot move this skin down", 1);
+                }
+                else
+                {
+                    SkinListBoxItemData item = (SkinListBoxItemData)SkinsListBox.Items[SkinsListBox.SelectedIndex + 1];
+                    MoveSkin(SelectedSkinId, item.SkinId, SkinsListBox.SelectedIndex + 1, SkinsListBox.SelectedIndex + 2, 1);
+                }
+            }
+            else
+            {
+                MeteorCode.WriteToConsole("Select a skin first!", 1);
+            }
+            
+
+            
+        }
 
         //Skin Information
         private void SaveSkinName(object sender, KeyEventArgs e)
@@ -324,6 +434,9 @@ namespace Meteor.sections
         //Loads
         public void LoadSkinList(string selectedCharacter)
         {
+            
+
+
             var skins = _dbHandler.get_character_skins(selectedCharacter, _dbHandler.get_property("workspace"));
             var items = new List<SkinListBoxItemData>();
             foreach (string[] s in skins)
@@ -332,7 +445,7 @@ namespace Meteor.sections
                 var m1 = new MenuItem { Header = "Remove skin from workspace" };
                 m1.Click += (s1, e) => { RemoveSkin(); };
                 cm.Items.Add(m1);
-                items.Add(new SkinListBoxItemData() {SkinId = int.Parse(s[0]), Content = s[1],ContextMenu = cm });
+                items.Add(new SkinListBoxItemData() {SkinId = int.Parse(s[0]), Content = s[1],ContextMenu = cm});
             }
 
             SkinsListBox.ItemsSource = items;
@@ -557,9 +670,9 @@ namespace Meteor.sections
 
                 CharactersItemsCollections.Add(new CharactersListViewItemsData()
                 {
-                    CharacterImageSource = AppPath+"/images/CharacterIcon/"+ characterName + ".png",
+                    CharacterImageSource = AppPath + "/images/CharacterIcon/" + characterName + ".png",
                     CharacterLabelValue = s[1],
-                    itemid = int.Parse(s[0])
+                    itemid = int.Parse(s[0]),
                     
                 });
             }
@@ -567,6 +680,19 @@ namespace Meteor.sections
             CharacterListView.ItemsSource = CharactersItemsCollections;
         }
 
+        private void DragSkin(object sender, MouseButtonEventArgs e)
+        {
+        }
+
+        private void MoveUpButtonClick(object sender, RoutedEventArgs e)
+        {
+            MoveUp();
+        }
+
+        private void MoveDownButtonClick(object sender, RoutedEventArgs e)
+        {
+            MoveDown();
+        }
     }
 
     public class CharactersListViewItemsData
@@ -580,5 +706,31 @@ namespace Meteor.sections
     {
         public int SkinId { get; set; }
         public string SkinLabelValue { get; set; }
+        public bool CanAcceptChildren { get; set; }
+        public ObservableCollection<SkinListBoxItemData> Children { get; private set; }
+    }
+
+    public class DropHandler : IDropTarget
+    {
+        public ObservableCollection<SkinListBoxItemData> Items;
+
+        public void DragOver(IDropInfo dropInfo)
+        {
+            SkinListBoxItemData sourceItem = dropInfo.Data as SkinListBoxItemData;
+            SkinListBoxItemData targetItem = dropInfo.TargetItem as SkinListBoxItemData;
+
+            if (sourceItem != null && targetItem != null && targetItem.CanAcceptChildren)
+            {
+                dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
+                dropInfo.Effects = DragDropEffects.Copy;
+            }
+        }
+
+        public void Drop(IDropInfo dropInfo)
+        {
+            SkinListBoxItemData sourceItem = dropInfo.Data as SkinListBoxItemData;
+            SkinListBoxItemData targetItem = dropInfo.TargetItem as SkinListBoxItemData;
+            targetItem.Children.Add(sourceItem);
+        }
     }
 }

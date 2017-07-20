@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Meteor.content
 {
-    class nameplate
+    class Nameplate
     {
 
         private readonly string app_path = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName;
@@ -24,7 +24,7 @@ namespace Meteor.content
 
         db_handler db;
 
-        public nameplate(int id,int char_id,int work_id, db_handler dbs)
+        public Nameplate(int id,int char_id,int work_id, db_handler dbs)
         {
             db = dbs;
             nameplate_id = id;
@@ -37,7 +37,7 @@ namespace Meteor.content
 
         }
 
-        public nameplate(String path, int char_id, int work_id, db_handler dbs)
+        public Nameplate(String path, int char_id, int work_id, db_handler dbs)
         {
             db = dbs;
             character_id = char_id;

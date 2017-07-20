@@ -168,7 +168,7 @@ namespace Meteor.content
                 {
                     case 1:
                         int char_id = db.get_character_id_nameplate(id);
-                        nameplate current_nameplate = new nameplate(id, char_id, workspace, db);
+                        Nameplate current_nameplate = new Nameplate(id, char_id, workspace, db);
                         int nameplate_slot = find_subfolder(packfolder + "0/" + char_id);
                         String destination = packfolder + "1/" + char_id + "/" + nameplate_slot + "/file/";
 
@@ -378,7 +378,7 @@ namespace Meteor.content
             }
         }
 
-        private void copy_manual_nameplate(String destination, nameplate nameplate)
+        private void copy_manual_nameplate(String destination, Nameplate nameplate)
         {
             String slot = nameplate_track[nameplate.character_id] < 10 ? "0" + nameplate_track[nameplate.character_id].ToString() : nameplate_track[nameplate.character_id].ToString();
             String filename = new FileInfo(nameplate.full_path).Name;

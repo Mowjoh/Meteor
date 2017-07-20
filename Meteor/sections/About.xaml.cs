@@ -1,67 +1,55 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml;
-using Meteor.database;
 
 namespace Meteor.sections
 {
-    /// <summary>
-    /// Interaction logic for About.xaml
-    /// </summary>
-    public partial class About : Page
+    //About class used as Page.
+    public partial class About
     {
-        private readonly db_handler _dbHandler;
         private string AppPath { get; } = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory?.FullName;
         private int _thanksCount;
 
         public About()
         {
             InitializeComponent();
-
-            _dbHandler = new db_handler();
             LoadLocalVersionNumber();
         }
 
         private void LoadLocalVersionNumber()
         {
-            //Loading local manifest
-            var xml2 = new XmlDocument();
-            if (File.Exists(AppPath + "/Meteor.exe.manifest"))
+            try
             {
-                xml2.Load(AppPath + "/Meteor.exe.manifest");
+                //Loading local manifest
+                var xml2 = new XmlDocument();
+                if (File.Exists(AppPath + "/Meteor.exe.manifest"))
+                {
+                    //Getting the value
+                    xml2.Load(AppPath + "/Meteor.exe.manifest");
+                    var node = xml2.SelectSingleNode("//*[local-name()='assembly']/*[local-name()='assemblyIdentity']");
+                    if (node?.Attributes == null) return;
+                    var versionNumber = node.Attributes[1].Value;
 
-                var nodes2 = xml2.SelectSingleNode("//*[local-name()='assembly']/*[local-name()='assemblyIdentity']");
-
-                if (nodes2?.Attributes == null) return;
-
-                var version2 = nodes2.Attributes[1].Value;
-                AppVersionLabel.Content = "Application Version : " + version2;
+                    //Setting the label to the versionNumber
+                    AppVersionLabel.Content = "Application Version : " + versionNumber;
+                }
             }
-            else
+            catch(ManifestLoadError manifestLoadError)
             {
+                //Pasting the error
+                MeteorCode.Paste(manifestLoadError.Message,manifestLoadError.StackTrace);
             }
+            
 
         }
 
         //Answer to the thanks button
         private void thanks_button(object sender, RoutedEventArgs e)
         {
+            //Trigger diffferent messages based on the count
             switch (_thanksCount)
             {
                 default:
@@ -129,9 +117,15 @@ namespace Meteor.sections
         //Launch the wiki web page
         private void goto_wiki(object sender, RoutedEventArgs e)
         {
+            //Launching a webpage
             Process.Start("http://www.mowjoh.com/Main_Page");
         }
 
+
+    }
+
+    internal abstract class ManifestLoadError : Exception
+    {
 
     }
 }

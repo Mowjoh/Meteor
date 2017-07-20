@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using Meteor.database;
 using Meteor.sections.filebank;
 

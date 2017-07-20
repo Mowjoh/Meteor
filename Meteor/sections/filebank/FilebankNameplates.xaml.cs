@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -80,7 +79,7 @@ namespace Meteor.sections.filebank
         //Actions
         private void DeleteNameplate(object sender, RoutedEventArgs e)
         {
-            nameplate n = new nameplate(SelectedId, _dbHandler.get_character_id_nameplate(SelectedId), ActiveWorkspace, _dbHandler);
+            Nameplate n = new Nameplate(SelectedId, _dbHandler.get_character_id_nameplate(SelectedId), ActiveWorkspace, _dbHandler);
             if (File.Exists(n.full_path))
             {
                 File.Delete(n.full_path);
@@ -132,7 +131,7 @@ namespace Meteor.sections.filebank
                         if (type == "chrn" && number == "11")
                         {
                             int charId = _dbHandler.get_character_id_cspfoldername(character);
-                            var nameplate = new nameplate(s, charId, ActiveWorkspace, _dbHandler);
+                            var nameplate = new Nameplate(s, charId, ActiveWorkspace, _dbHandler);
                             ReloadNameplates();
                         }
                     }

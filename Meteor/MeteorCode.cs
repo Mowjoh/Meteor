@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,9 +15,14 @@ namespace Meteor
 {
     static class MeteorCode
     {
+        //Public variables
+        public static string AppPath { get; } = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory?.FullName;
+
+        //Private variables
         private static readonly db_handler DbHandler = new db_handler();
         private static readonly Pastebin.Pastebin Pastebin = new Pastebin.Pastebin("f165a49418f0ed6c5f61e9e233889d91");
 
+        //Writes to the console with a status 
         public static void WriteToConsole(string s, int type)
         {
 
@@ -48,6 +55,7 @@ namespace Meteor
             }
         }
 
+        //Generates a pastebin and opens a webpage if user confirms
         public static void Paste(string message, string stack)
         {
             if (DbHandler.get_property("pastebin") == "1")

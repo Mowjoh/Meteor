@@ -391,7 +391,7 @@ namespace Meteor
                     MeteorCode.WriteToConsole("Workspace was successfully synced from the active workspace", 0);
                     break;
                 case "BuildWorker":
-                    _dbHandler.upBuildCount(int.Parse(_dbHandler.get_property("workspace")));
+                    _dbHandler.UpBuildCount(int.Parse(_dbHandler.get_property("workspace")));
                     workspace.LoadWorkspaceStats();
                     MeteorCode.WriteToConsole("Workspace built!",0);
                     break;
@@ -489,5 +489,9 @@ namespace Meteor
             _controllerWorker.RunWorkerAsync();
         }
 
+        private void ClearConsoleButton_Click(object sender, RoutedEventArgs e)
+        {
+            Console.Text = "";
+        }
     }
 }

@@ -216,7 +216,7 @@ namespace Meteor.workers
                 var activeWorkspace = int.Parse(DbHandler.get_property("workspace"));
                 var fileFolder = path + "/file/";
                 var filePath = Directory.GetFiles(fileFolder)[0];
-                var createdNameplate = new nameplate(filePath, charId, activeWorkspace, DbHandler);
+                var createdNameplate = new Nameplate(filePath, charId, activeWorkspace, DbHandler);
 
                 var xmlpath = path + "/meta/metadata.xml";
                 if (File.Exists(xmlpath))
@@ -238,7 +238,6 @@ namespace Meteor.workers
             {
             }
         }
-
 
         private void Extract()
         {

@@ -236,7 +236,7 @@ namespace Meteor.content
                 int basecount = db.get_character_nameplate_count(char_id);
                 nameplate_slot = basecount + chara_track[char_id];
 
-                nameplate current_nameplate = new nameplate(id, char_id, workspace_id, db);
+                Nameplate current_nameplate = new Nameplate(id, char_id, workspace_id, db);
 
                 if(last_id != id)
                 {

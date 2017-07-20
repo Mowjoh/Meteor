@@ -26,7 +26,6 @@ namespace Meteor_Updater
         ArrayList messages = new ArrayList();
 
         private readonly BackgroundWorker worker = new BackgroundWorker();
-        
 
         #endregion
 
@@ -60,7 +59,7 @@ namespace Meteor_Updater
         private void write_patch()
         {
             //Getting remote info
-            String remote_path = "http://mowjoh.com/meteor/Application Files/patchnotes.xml";
+            String remote_path = "http://meteor.mowjoh.com/Application Files/patchnotes.xml";
             XmlDocument xml = new XmlDocument();
             xml.Load(remote_path);
             XmlNode nodes = xml.SelectSingleNode("package");
@@ -150,7 +149,7 @@ namespace Meteor_Updater
         private string get_lastest_ver()
         {
             //Getting remote info
-            String remote_path = "http://mowjoh.com/meteor/Application Files/patchnotes.xml";
+            String remote_path = "http://meteor.mowjoh.com/Application Files/patchnotes.xml";
             XmlDocument xml = new XmlDocument();
             xml.Load(remote_path);
             XmlNode nodes = xml.SelectSingleNode("package");
@@ -208,68 +207,75 @@ namespace Meteor_Updater
         //Launches the update process
         private void update()
         {
-            //Getting local version info
-            XmlDocument local_xml = new XmlDocument();
-            String local_version = "";
-
-            if (File.Exists(app_path + "/Meteor.exe.manifest"))
+            try
             {
-                local_xml.Load(app_path + "/Meteor.exe.manifest");
-                XmlNode nodes = local_xml.SelectSingleNode("//*[local-name()='assembly']/*[local-name()='assemblyIdentity']");
-                local_version = nodes.Attributes[1].Value;
-                local_version = local_version.Replace('.', '_');
-            }
-            else
-            {
-                local_version = "0_0_0_0";
-            }
-           
+                //Getting local version info
+                XmlDocument local_xml = new XmlDocument();
+                String local_version = "";
 
-            //Getting remote info
-            String remote_path = "http://mowjoh.com/meteor/Application Files/Meteor_" + last_version + "/updatefiles.xml";
-            XmlDocument files_xml = new XmlDocument();
-            files_xml.Load(remote_path);
-            XmlNodeList file_list = files_xml.SelectNodes("package/file");
-
-            foreach (XmlElement xe in file_list)
-            {
-                String filepath = xe.InnerText;
-                String fileversion = xe.Attributes[0].Value.ToString();
-                String downloadpath = "http://mowjoh.com/meteor/Application Files/Meteor_" + last_version + "/" + filepath;
-                String destinationpath = System.IO.Path.GetDirectoryName(app_path + "/" + filepath);
-                if (!Directory.Exists(destinationpath))
+                if (File.Exists(app_path + "/Meteor.exe.manifest"))
                 {
-                    Directory.CreateDirectory(destinationpath);
+                    local_xml.Load(app_path + "/Meteor.exe.manifest");
+                    XmlNode nodes = local_xml.SelectSingleNode("//*[local-name()='assembly']/*[local-name()='assemblyIdentity']");
+                    local_version = nodes.Attributes[1].Value;
+                    local_version = local_version.Replace('.', '_');
+                }
+                else
+                {
+                    local_version = "0_0_0_0";
                 }
 
-                if (compare_version(local_version, fileversion))
-                {
-                    //Getting file
-                    using (WebClient webClient = new WebClient())
-                    {
-                        try
-                        {
-                            webClient.DownloadFile(new Uri(downloadpath), app_path + "/" + filepath);
-                            success_files.Add(filepath);
-                        }
-                        catch(Exception e)
-                        {
-                            messages.Add(e.Message);
-                            messages.Add(e.StackTrace);
-                            failed_files.Add(filepath);
-                        }
+                //Getting remote info
+                String remote_path = "http://meteor.mowjoh.com/Application Files/Meteor_" + last_version +
+                                     "/updatefiles.xml";
+                XmlDocument files_xml = new XmlDocument();
+                files_xml.Load(remote_path);
+                XmlNodeList file_list = files_xml.SelectNodes("package/file");
 
+                foreach (XmlElement xe in file_list)
+                {
+                    String filepath = xe.InnerText;
+                    String fileversion = xe.Attributes[0].Value.ToString();
+                    String downloadpath = "http://mowjoh.com/meteor/Application Files/Meteor_" + last_version + "/" +
+                                          filepath;
+                    String destinationpath = System.IO.Path.GetDirectoryName(app_path + "/" + filepath);
+                    if (!Directory.Exists(destinationpath))
+                    {
+                        Directory.CreateDirectory(destinationpath);
+                    }
+
+                    if (compare_version(local_version, fileversion))
+                    {
+                        //Getting file
+                        using (WebClient webClient = new WebClient())
+                        {
+                            try
+                            {
+                                webClient.DownloadFile(new Uri(downloadpath), app_path + "/" + filepath);
+                                success_files.Add(filepath);
+                            }
+                            catch (Exception e)
+                            {
+                                messages.Add(e.Message);
+                                messages.Add(e.StackTrace);
+                                failed_files.Add(filepath);
+                            }
+
+                        }
                     }
                 }
             }
-
-
+            catch (Exception e)
+            {
+                messages.Add(e.Message);
+                messages.Add(e.StackTrace);
+            }
         }
 
         //Saves the new manifest
         private void replace_manifest()
         {
-            String remote_path = "http://mowjoh.com/meteor/Application Files/Meteor_" + last_version + "/Meteor.exe.manifest";
+            String remote_path = "http://meteor.mowjoh.com/Application Files/Meteor_" + last_version + "/Meteor.exe.manifest";
             XmlDocument files_xml = new XmlDocument();
             files_xml.Load(remote_path);
             files_xml.Save(app_path + "/Meteor.exe.manifest");
@@ -277,6 +283,7 @@ namespace Meteor_Updater
         #endregion
 
         #region Actions
+
         //Launch MMSL
         private void launch_meteor(object sender, RoutedEventArgs e)
         {
