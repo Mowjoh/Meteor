@@ -1,0 +1,114 @@
+﻿<Page x:Class="Meteor.sections.WorkspaceSection"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Meteor.sections"
+      mc:Ignorable="d"
+      Title="Workspace" MinWidth="800" MinHeight="450">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="135*"/>
+            <RowDefinition Height="81*"/>
+            <RowDefinition Height="325*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="251*"/>
+            <ColumnDefinition Width="335*"/>
+            <ColumnDefinition Width="335*"/>
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="WorkspaceGrid" Grid.RowSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <ListBox x:Name="WorkspacesListBox" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                ScrollViewer.HorizontalScrollBarVisibility="Hidden" ToolTip="Select a workspace !"
+                SelectionChanged="workspace_selected" Grid.Row="1" Margin="5,0" ItemContainerStyle="{DynamicResource mowjohListStyle}" />
+            <Label x:Name="WoskpacesHeader" Content="Workspaces" HorizontalAlignment="Center"
+                Margin="0" VerticalAlignment="Center" Background="{x:Null}" Foreground="White"
+                FontStyle="Italic" FontSize="16" Height="31" Width="92" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+            <Button x:Name="AddWorkspaceButton" Content="Add Workspace" HorizontalAlignment="Center" Margin="46,13,47,11"
+                VerticalAlignment="Center" Width="142" Click="AddWorkspace" Height="22" Grid.Row="2" />
+        </Grid>
+        <GroupBox x:Name="InformationGroupBox" Header="Information" Foreground="White" Grid.Column="1" Margin="5">
+            <Grid x:Name="InformationGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="14*"/>
+                    <RowDefinition Height="17*"/>
+                </Grid.RowDefinitions>
+                <Label x:Name="WorkspaceNameLabel" Content="Workspace name :" HorizontalAlignment="Left"
+                    Margin="0,3,0,0" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Height="25" Width="207" />
+                <TextBox x:Name="WorkspaceNameTextBox"
+                    Margin="5,9,5,0" TextWrapping="Wrap"
+                    Text="Default Workspace"
+                    ToolTip="Change the workspace name here. Press Enter to save the changes" KeyDown="SetWorkspaceNameKeyDown" Grid.Row="1" Height="22" VerticalAlignment="Top" />
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="S4EGroupBox" Header="Sm4shExplorer" Foreground="White" Grid.Column="2" Margin="5">
+            <Grid x:Name="S4EGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Button x:Name="WorkspaceBuildButton" Content="Build Workspace"
+                    Margin="6,7" VerticalAlignment="Center" Click="BuildWorkspace"
+                    IsEnabled="False"
+                    ToolTip="This builds the modpack for S4E. It puts the content from the filebank into the workspace at the right place" />
+                <Button x:Name="S4ELaunchButton" Content="Launch Sm4sh Explorer" Margin="6,8,6,7" VerticalAlignment="Center"
+                    Click="LaunchS4E" IsEnabled="False" ToolTip="This button launches S4E" Grid.Row="1" />
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="ActionsGroupBox" Header="Actions" Foreground="White" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="5"
+        >
+            <Grid x:Name="ActionsGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Button x:Name="ClearWorkspaceButton" Content="Clear Workspace"
+                    Margin="5,4,5,3" VerticalAlignment="Center"
+                    Click="ClearWorkspace"
+                    ToolTip="This will remove all the content from the workspace and reset it to a default state. It won't delete the mods that it contains" Height="26" />
+                <Button x:Name="DeleteWorkspaceButton" Content="Delete Workspace"
+                    Margin="5,4,5,3" VerticalAlignment="Center" Click="DeleteWorkspace"
+                    ToolTip="This will delete the workspace. Everything you put in there will be deleted as well." Height="26" Grid.Column="1" />
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="ContentGroupBox" Header="Content" Foreground="White" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Margin="5"
+        >
+            <Grid x:Name="StatsGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Label x:Name="SkinsLabel" Content="Skins" Background="{x:Null}" Foreground="White"/>
+                <Label x:Name="SkinsValueLabel" Content="" Background="{x:Null}" Foreground="White" Grid.Column="1" HorizontalContentAlignment="Right"/>
+                <Label x:Name="NameplatesLabel" Content="Nameplates" Background="{x:Null}" Foreground="White" Grid.Row="1"/>
+                <Label x:Name="NameplatesValueLabel" Content="" Background="{x:Null}" Foreground="White" Grid.Column="1" HorizontalContentAlignment="Right" Grid.Row="1"/>
+                <Label x:Name="BuildCountLabel" Content="Build Count" Background="{x:Null}" Foreground="White" Grid.Row="7" Margin="0,0,0,-1"/>
+                <Label x:Name="BuildCountValueLabel" Content="" Background="{x:Null}" Foreground="White" Grid.Column="1" HorizontalContentAlignment="Right" Grid.Row="7" Margin="0,1,0,-1"/>
+                <Label x:Name="MostSkinsLabel" Content="Most Skins" Background="{x:Null}" Foreground="White" Grid.Column="2"/>
+                <Label x:Name="MostNameplatesLabel" Content="Most Nameplates" Background="{x:Null}" Foreground="White" Grid.Column="2" Grid.Row="1"/>
+                <Label x:Name="DateLabel" Content="Date Created" Background="{x:Null}" Foreground="White" Grid.Row="6"/>
+                <Label x:Name="DateValueLabel" Content="" Background="{x:Null}" Foreground="White" Grid.Column="1" HorizontalContentAlignment="Right" Grid.Row="6"/>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Page>

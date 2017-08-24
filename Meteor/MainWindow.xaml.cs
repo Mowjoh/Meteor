@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Entity;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using Meteor.database;
 using Meteor.sections;
@@ -23,19 +27,14 @@ namespace Meteor
         private readonly string _appPath = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName;
         private Mutex _mutex;
 
-        //Handlers
-        private readonly db_handler _dbHandler;
+        //Database
+        public MeteorDatabase meteorDatabase = new MeteorDatabase();
 
         //Workers
         private readonly BackgroundWorker _urlWorker = new BackgroundWorker();
         private readonly BackgroundWorker _controllerWorker = new BackgroundWorker();
-        public addWorkspaceWorker AddWorkspaceWorker;
-        public copyWorkspaceWorker CopyWorkspaceWorker;
-        public MslWorkspaceWorker MslWorkspaceWorker;
-        public ClearWorkspaceWorker ClearWorkspaceWorker;
         public BuildWorker BuildWorker;
         public DownloadWorker DownloadWorker;
-        public ContentInstallerWorker ContentInstallerWorker;
 
         private Worker _currentWorker;
 
@@ -44,6 +43,12 @@ namespace Meteor
         private string _controllerMessage = "";
         private int _controllerStyle;
         private bool _controllerLock;
+
+        private int clearCount = 0;
+
+        private int activeSection = 0;
+        private bool _loading = false;
+        
 
         #endregion
 
@@ -54,48 +59,22 @@ namespace Meteor
 
             InitializeComponent();
 
-            //Init functions
-            #region Inits
-
-            try
-            {
-                _dbHandler = new db_handler();
-                MeteorCode.WriteToConsole("The connection to the database was successful.", 3);
-                DatabaseUpdater updooter = new DatabaseUpdater();
-                if (updooter.UpdootDatabase())
-                {
-                    MeteorCode.WriteToConsole("The database update was succesfull.", 0);
-                }
-                else
-                {
-                    if(File.Exists(_appPath + "/command.txt"))
-                    {
-                        MeteorCode.WriteToConsole("There was an issue with the database update", 2);
-                    }
-                }
-            }
-            catch
-            {
-                MeteorCode.WriteToConsole(
-                "The connection to the database was unsuccessful. Please check that the Library is there.", 2);
-            }
-
-            Console.Text = "";
-            ActiveWorkspaceTextBox.Text = _dbHandler.GetWorkspaceName(int.Parse(_dbHandler.get_property("workspace")));
-
             SetupWorkers();
+
             UpdateBackgroundColor();
             InitializeMeteor();
-            MeteorCode.WriteToConsole("Welcome to Meteor !", 0);
+
+            LoadWorkspaces();
 
             var updater = new Updater(_appPath);
+
 
             var args = Environment.GetCommandLineArgs();
             if (args.Length != 2) return;
             MeteorCode.WriteToConsole(args[1], 0);
             DownloadWorker.Launch(args[1]);
 
-            #endregion
+            MeteorCode.ChangeStatus("Build Complete");
         }
 
         //Init procedures
@@ -146,11 +125,8 @@ namespace Meteor
 
         private void UpdateBackgroundColor()
         {
-            var color = _dbHandler.get_property("background");
-
-            if (color == "")
-                color = "FF4764EA";
-
+            var color = meteorDatabase.Configurations.First(c => c.property == "background").value;
+            
             var lgb = new LinearGradientBrush
             {
                 StartPoint = new Point(0.5, 0),
@@ -190,15 +166,15 @@ namespace Meteor
             switch (mode)
             {
                 case 0:
-                    statusbar.IsIndeterminate = true;
+                    StatusBar.IsIndeterminate = true;
                     break;
                 case 1:
-                    statusbar.IsIndeterminate = false;
-                    statusbar.Value = 0;
+                    StatusBar.IsIndeterminate = false;
+                    StatusBar.Value = 0;
                     break;
                 case 2:
-                    statusbar.IsIndeterminate = false;
-                    statusbar.Value = 100;
+                    StatusBar.IsIndeterminate = false;
+                    StatusBar.Value = 100;
                     break;
             }
 
@@ -206,94 +182,112 @@ namespace Meteor
 
         private void ChangeStatusValue(string text)
         {
-            app_status_text.Content = text;
+             StatusMessage.Text= text;
         }
 
         private void UpdateProgressBarValue(int val)
         {
-            statusbar.Value = val;
+            StatusBar.Value = val;
         }
 
         //First boot
         private void InitializeMeteor()
         {
             //Check for first boot
-            if (_dbHandler.get_property("initialized") == "0")
+            if (meteorDatabase.Configurations.First(c => c.property == "firstLaunch").value == "1")
             {
-                _dbHandler.SetWorkspaceDate(DateTime.Now.ToLongDateString(),int.Parse(_dbHandler.get_property("workspace")));
-                _dbHandler.set_property_value("1", "initialized");
+                
+                // _dbHandler.SetWorkspaceDate(DateTime.Now.ToLongDateString(),int.Parse(_dbHandler.get_property("workspace")));
+                //_dbHandler.set_property_value("1", "initialized");
             }
         }
 
-
         //Section actions
-        private void ChangeSection(object sender, SelectionChangedEventArgs e)
+        private void ChangeSection(object sender, RoutedEventArgs e)
         {
-            var li = (ListBoxItem)SectionList.SelectedItem;
-            var val = li.Content.ToString();
-
+            Button butt = (Button)sender;
+            var val = butt.Name;
             switch (val)
             {
-                case "Skins":
+                case "SkinsSectionButton":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[0];
                     MeteorCode.WriteToConsole("Section changed to Skins", 3);
-                    Skins skinsPage = (Skins)SkinsFrame.Content;
-                    skinsPage.LoadSkinList(skinsPage.SelectedCharacterName);
-                    skinsPage.SkinsListBox.SelectedIndex = skinsPage.SelectedSlot-1;
+                    SkinsSection skinsSectionPage = (SkinsSection)SkinsFrame.Content;
+                    skinsSectionPage.LoadLists();
+                    skinsSectionPage.SkinsListBox.SelectedIndex = skinsSectionPage.SelectedSlot - 1;
+                    activeSection = 0;
                     break;
-                case "Stages":
+                case "StagesSectionButton":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[1];
-                                MeteorCode.WriteToConsole("Section changed to Stages", 3);
+                    MeteorCode.WriteToConsole("Section changed to Stages", 3);
+                    activeSection = 1;
                     break;
-                case "Interface":
+                case "InterfaceSectionButton":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[2];
-                                MeteorCode.WriteToConsole("Section changed to Interface", 3);
+                    MeteorCode.WriteToConsole("Section changed to Interface", 3);
+                    activeSection = 2;
                     break;
-                case "FileBank":
+                case "FileBankSectionButton":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[3];
-                                MeteorCode.WriteToConsole("Section changed to Filebank", 3);
-                    Filebank FilebankPage = (Filebank) FilebankFrame.Content;
+                    MeteorCode.WriteToConsole("Section changed to Filebank", 3);
+                    FilebankSection FilebankSectionPage = (FilebankSection)FilebankFrame.Content;
 
                     FilebankNameplates FilebankNameplatesPage =
-                        (FilebankNameplates) FilebankPage.FilebankNameplateFrame.Content;
+                        (FilebankNameplates)FilebankSectionPage.FilebankNameplateFrame.Content;
                     FilebankNameplatesPage.ReloadNameplates();
 
                     FilebankSkins FilebankSkinsPage =
-                        (FilebankSkins) FilebankPage.FilebankSkinFrame.Content;
+                        (FilebankSkins)FilebankSectionPage.FilebankSkinFrame.Content;
                     FilebankSkinsPage.ReloadSkins();
 
                     FilebankPacker FilebankPackerPage =
-                        (FilebankPacker) FilebankPage.FilebankPackerFrame.Content;
+                        (FilebankPacker)FilebankSectionPage.FilebankPackerFrame.Content;
                     FilebankPackerPage.Reload();
+                    activeSection = 3;
                     break;
-                case "Workspace":
+                case "WorkspaceSectionButton":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[4];
-                                MeteorCode.WriteToConsole("Section changed to Workspace", 3);
-                    Workspace workspacePage = (Workspace) WorkspaceFrame.Content;
+                    MeteorCode.WriteToConsole("Section changed to Workspace", 3);
+                    WorkspaceSection workspacePage = (WorkspaceSection)WorkspaceFrame.Content;
                     workspacePage.LoadWorkspaceStats();
+                    activeSection = 4;
                     break;
-                case "Configuration":
+                case "ConfigurationSectionButton":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[5];
-                                MeteorCode.WriteToConsole("Section changed to Configuration", 3);
+                    MeteorCode.WriteToConsole("Section changed to Configuration", 3);
+                    activeSection = 5;
                     break;
-                case "About":
+                case "AboutSectionButton":
                     SectionsTabControl.SelectedItem = SectionsTabControl.Items[6];
-                                MeteorCode.WriteToConsole("Section changed to About", 3);
+                    MeteorCode.WriteToConsole("Section changed to About", 3);
+                    activeSection = 6;
                     break;
             }
+        }
+
+        private void ActivateWorkspace(int index)
+        {
+            Workspace workspace = meteorDatabase.Workspaces.First(w => w.slot == index + 1);
+
+            //Assigning values
+            meteorDatabase.Configurations.First(c => c.property == "activeWorkspace").value = workspace.Id.ToString();
+
+            //Checking S4E configuration
+            if (meteorDatabase.Configurations.First(c => c.property == "smashExplorerExe").value != "")
+            {
+                MeteorCode.SetS4EWorkspacePath(workspace.Id, meteorDatabase.Configurations.First(c => c.property == "SmashExplorerPath").value);
+            }
+            meteorDatabase.SaveChanges();
+
+            MeteorCode.Message("Workspace '"+ workspace.name+"' activated!");
         }
 
         //Workers
         private void SetupWorkers()
         {
             //Setting up Workers
-            AddWorkspaceWorker = new addWorkspaceWorker(_dbHandler);
-            CopyWorkspaceWorker = new copyWorkspaceWorker(_dbHandler);
-            MslWorkspaceWorker = new MslWorkspaceWorker(_dbHandler);
-            ClearWorkspaceWorker = new ClearWorkspaceWorker(_dbHandler);
-            BuildWorker = new BuildWorker(_dbHandler);
-            DownloadWorker = new DownloadWorker(_dbHandler);
-            ContentInstallerWorker = new ContentInstallerWorker(_dbHandler);
+            BuildWorker = new BuildWorker(meteorDatabase);
+            DownloadWorker = new DownloadWorker(meteorDatabase);
 
             //Setting up BackgroundWorkers
             _urlWorker.DoWork += UrlWorkerDoWork;
@@ -313,7 +307,7 @@ namespace Meteor
         private Worker CheckWorkerStatus()
         {
 
-            List<Worker> workers = new List<Worker> { AddWorkspaceWorker, CopyWorkspaceWorker, MslWorkspaceWorker, ClearWorkspaceWorker, BuildWorker, DownloadWorker, ContentInstallerWorker };
+            List<Worker> workers = new List<Worker> { BuildWorker, DownloadWorker };
 
             foreach (var worker in workers)
             {
@@ -372,36 +366,60 @@ namespace Meteor
 
         private void PostWork(Worker worker)
         {
-            Workspace workspace = (Workspace)WorkspaceFrame.Content;
-            Skins skins = (Skins) SkinsFrame.Content;
+            WorkspaceSection workspace = (WorkspaceSection)WorkspaceFrame.Content;
+            SkinsSection skinsSection = (SkinsSection) SkinsFrame.Content;
             switch (worker?.Name)
             {
-                case "addWorkspaceWorker":
-                    workspace.ReloadWorkspacesList();
-                    workspace.LoadWorkspaceStats();
-                    MeteorCode.WriteToConsole("Workspace was successfully added", 0);
-                    break;
-
-                case "ClearWorkspaceWorker":
-                    workspace.LoadWorkspaceStats();
-                    MeteorCode.WriteToConsole("Workspace was successfully cleared", 0);
-                    break;
-                case "copyWorkspaceWorker":
-                    workspace.LoadWorkspaceStats();
-                    MeteorCode.WriteToConsole("Workspace was successfully synced from the active workspace", 0);
-                    break;
                 case "BuildWorker":
-                    _dbHandler.UpBuildCount(int.Parse(_dbHandler.get_property("workspace")));
+                    int id = int.Parse(meteorDatabase.Configurations.First(c => c.property == "activeWorkspace").value);
+                    Workspace workspaceitem = meteorDatabase.Workspaces.First(
+                        w => w.Id == id
+                        );
+                    workspaceitem.buildcount++;
+                    meteorDatabase.SaveChanges();
                     workspace.LoadWorkspaceStats();
                     MeteorCode.WriteToConsole("Workspace built!",0);
                     break;
+
                 case "DownloadWorker":
-                    ContentInstallerWorker.Launch();
-                    MeteorCode.WriteToConsole("Download successful", 0);
-                    break;
-                case "ContentInstallerWorker":
-                    skins.LoadSkinList(skins.SelectedCharacterName);
-                    MeteorCode.WriteToConsole("Content added!", 0);
+                    MeteorCode.WriteToConsole("Installation successful", 0);
+                    switch (activeSection)
+                    {
+                        case 0:
+                            SectionsTabControl.SelectedItem = SectionsTabControl.Items[0];
+                            SkinsSection skinsSectionPage = (SkinsSection)SkinsFrame.Content;
+                            skinsSectionPage.LoadLists();
+                            skinsSectionPage.SkinsListBox.SelectedIndex = skinsSectionPage.SelectedSlot - 1;
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            SectionsTabControl.SelectedItem = SectionsTabControl.Items[3];
+                            FilebankSection FilebankSectionPage = (FilebankSection)FilebankFrame.Content;
+
+                            FilebankNameplates FilebankNameplatesPage =
+                                (FilebankNameplates)FilebankSectionPage.FilebankNameplateFrame.Content;
+                            FilebankNameplatesPage.ReloadNameplates();
+
+                            FilebankSkins FilebankSkinsPage =
+                                (FilebankSkins)FilebankSectionPage.FilebankSkinFrame.Content;
+                            FilebankSkinsPage.ReloadSkins();
+
+                            FilebankPacker FilebankPackerPage =
+                                (FilebankPacker)FilebankSectionPage.FilebankPackerFrame.Content;
+                            FilebankPackerPage.Reload();
+                            break;
+                        case 4:
+                            WorkspaceSection workspacePage = (WorkspaceSection)WorkspaceFrame.Content;
+                            workspacePage.ReloadWorkspaceScreen();
+                            break;
+                        case 5:
+                            break;
+                        case 6:
+                            break;
+                    }
                     break;
 
             }
@@ -439,7 +457,7 @@ namespace Meteor
             var workerFinished = false;
             while (!workerFinished)
             {
-                Thread.Sleep(75);
+                Thread.Sleep(15);
 
                 var current = CheckWorkerStatus();
                 _currentWorker = current;
@@ -456,9 +474,8 @@ namespace Meteor
             {
                 case 1:
                     LockFrames();
-                    
-                    ChangeStatusValue(_controllerMessage);
 
+                    ChangeStatusValue(_controllerMessage);
                     if (_controllerStyle == 0)
                     {
                         ChangeProgressBarStyle(0);
@@ -470,7 +487,15 @@ namespace Meteor
                     break;
 
                 case 2:
-                    UpdateProgressBarValue(_controllerPercent);
+                    if (_controllerStyle == 0)
+                    {
+                        ChangeProgressBarStyle(0);
+                    }
+                    if (_controllerStyle == 1)
+                    {
+                        ChangeProgressBarStyle(1);
+                        UpdateProgressBarValue(_controllerPercent);
+                    }
                     ChangeStatusValue(_controllerMessage);
                     break;
 
@@ -489,9 +514,113 @@ namespace Meteor
             _controllerWorker.RunWorkerAsync();
         }
 
-        private void ClearConsoleButton_Click(object sender, RoutedEventArgs e)
+        private void ClearCountUp(object sender, MouseButtonEventArgs e)
         {
-            Console.Text = "";
+            if (clearCount == 4)
+            {
+                var result = MessageBox.Show("Reset Everything?", "Segtendo WARNING",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    meteorDatabase.ResetEverything();
+                    Directory.Delete(MeteorCode.AppPath + "/workspaces/",true);
+                    Directory.Delete(MeteorCode.AppPath + "/filebank/", true);
+                    Directory.Delete(MeteorCode.AppPath + "/downloads/", true);
+                    Directory.CreateDirectory(MeteorCode.AppPath + "/workspaces/");
+                    Directory.CreateDirectory(MeteorCode.AppPath + "/filebank/");
+                    Directory.CreateDirectory(MeteorCode.AppPath + "/downloads/");
+                    Application.Current.Shutdown();
+                }
+                clearCount = 0;
+            }
+            else
+            {
+                clearCount++;
+            }
+        }
+
+
+        //Loads the workspaces in the top TabControl
+        public void LoadWorkspaces()
+        {
+            meteorDatabase = new MeteorDatabase();
+            _loading = true;
+            var itemList = new List<TabItem>();
+
+            TabControl WorkspaceTab = ((MainWindow)Application.Current.MainWindow).WorkspaceTabControl;
+            int workspaceId = int.Parse(meteorDatabase.Configurations
+                .First(c => c.property == "activeWorkspace").value);
+            int index = meteorDatabase.Workspaces.First(w => w.Id == workspaceId).slot -1;
+            var selected = WorkspaceTab.SelectedIndex;
+
+            foreach (Workspace workspace in meteorDatabase.Workspaces.Where(w => w.slot > 0))
+            {
+                var TabItem = new TabItem()
+                {
+                    Header = workspace.name
+                };
+                itemList.Add(TabItem);
+            }
+
+            WorkspaceTab.ItemsSource = itemList;
+
+            if (index + 1 <= itemList.Count)
+            {
+                WorkspaceTab.SelectedIndex = index;
+            }
+            else
+            {
+                WorkspaceTab.SelectedIndex = WorkspaceTab.Items.Count - 1;
+            }
+                
+
+            _loading = false;
+        }
+
+        private void WorkspaceSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!_loading)
+            {
+                ActivateWorkspace(WorkspaceTabControl.SelectedIndex);
+                
+                switch (activeSection)
+                {
+                    case 0:
+                        SectionsTabControl.SelectedItem = SectionsTabControl.Items[0];
+                        SkinsSection skinsSectionPage = (SkinsSection)SkinsFrame.Content;
+                        skinsSectionPage.LoadLists();
+                        skinsSectionPage.SkinsListBox.SelectedIndex = skinsSectionPage.SelectedSlot - 1;
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        SectionsTabControl.SelectedItem = SectionsTabControl.Items[3];
+                        FilebankSection FilebankSectionPage = (FilebankSection)FilebankFrame.Content;
+
+                        FilebankNameplates FilebankNameplatesPage =
+                            (FilebankNameplates)FilebankSectionPage.FilebankNameplateFrame.Content;
+                        FilebankNameplatesPage.ReloadNameplates();
+
+                        FilebankSkins FilebankSkinsPage =
+                            (FilebankSkins)FilebankSectionPage.FilebankSkinFrame.Content;
+                        FilebankSkinsPage.ReloadSkins();
+
+                        FilebankPacker FilebankPackerPage =
+                            (FilebankPacker)FilebankSectionPage.FilebankPackerFrame.Content;
+                        FilebankPackerPage.Reload();
+                        break;
+                    case 4:
+                        WorkspaceSection workspacePage = (WorkspaceSection)WorkspaceFrame.Content;
+                        workspacePage.ReloadWorkspaceScreen();
+                        break;
+                    case 5:
+                        break;
+                    case 6:
+                        break;
+                }
+            }
         }
     }
 }

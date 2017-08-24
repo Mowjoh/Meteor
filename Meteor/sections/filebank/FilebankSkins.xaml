@@ -79,9 +79,7 @@
         <GroupBox x:Name="ActionGroupBox" Header="Actions"
             Margin="5" Grid.Row="2" Grid.Column="1" Foreground="White">
             <Grid>
-                <Button x:Name="filebank_insert_skin" Content="Insert into current workspace" Margin="10,10,10,0" VerticalAlignment="Top" Click="InsertSkin"
-                    ToolTip="Insert this skin in the active workspace" />
-                <Button x:Name="filebank_delete_skin" Content="Delete skin permanently" Margin="10,124,10,0" VerticalAlignment="Top" Click="DeleteSkin"
+                <Button x:Name="filebank_delete_skin" Content="Delete skin permanently" Margin="10,124,10,0" VerticalAlignment="Top" Click="DeletePressed"
                     ToolTip="Delete this skin from Meteor" />
                 <Button x:Name="filebank_preview_skin" Content="Preview in Forge" Margin="10,95,10,0" VerticalAlignment="Top" Click="PreviewForge"
                     ToolTip="Open the model in Forge, see how it looks!" />

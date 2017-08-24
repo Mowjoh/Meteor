@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="ca6a960bda0b496e8ba5732ca9e3f008" Name="Diagram1">
+        <EntityTypeShape EntityType="MeteorDatabaseModel.Character" Width="1.5" PointX="5.25" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="MeteorDatabaseModel.Configuration" Width="1.5" PointX="2.875" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MeteorDatabaseModel.Nameplate" Width="1.5" PointX="3" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MeteorDatabaseModel.Packer" Width="1.5" PointX="5" PointY="4.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MeteorDatabaseModel.SkinLibrary" Width="1.5" PointX="0.75" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MeteorDatabaseModel.Skin" Width="1.5" PointX="3" PointY="10.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MeteorDatabaseModel.Workspace" Width="1.5" PointX="0.875" PointY="11.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MeteorDatabaseModel.CharacterItem" Width="1.5" PointX="7.625" PointY="7.5" />
+        <AssociationConnector Association="MeteorDatabaseModel.CharacterCharacterItem" />
+        <AssociationConnector Association="MeteorDatabaseModel.CharacterNameplate" />
+        <AssociationConnector Association="MeteorDatabaseModel.CharacterSkin" />
+        <AssociationConnector Association="MeteorDatabaseModel.SkinLibraryCharacter" />
+        <AssociationConnector Association="MeteorDatabaseModel.SkinSkinLibrary" />
+        <AssociationConnector Association="MeteorDatabaseModel.WorkspaceSkinLibrary" />
+        <AssociationConnector Association="MeteorDatabaseModel.NameplateSkinLibrary" />
+        <EntityTypeShape EntityType="MeteorDatabaseModel.ConfigurationFile" Width="1.5" PointX="7.25" PointY="4.875" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

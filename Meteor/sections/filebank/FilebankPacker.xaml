@@ -18,7 +18,7 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Label x:Name="HeaderLabel" Content="This is all the content you've selected to pack" HorizontalAlignment="Center" Margin="190,4,180,5" VerticalAlignment="Center" Foreground="White" Width="280" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Height="26"/>
-        <DataGrid x:Name="PackerDataGrid" Margin="5,0,5,5" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Grid.Row="1" Grid.ColumnSpan="2">
+        <DataGrid x:Name="PackerDataGrid" Margin="5,0,5,5" Background="#FF8F6E6E" BorderBrush="{x:Null}" Foreground="White" Grid.Row="1" Grid.ColumnSpan="2" HorizontalContentAlignment="Stretch">
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="Foreground" Value="White" />

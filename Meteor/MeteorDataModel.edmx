@@ -1,0 +1,548 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="MeteorDatabaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CharacterItems">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="character_id" Type="int" Nullable="false" />
+          <Property Name="item" Type="varchar(max)" Nullable="false" />
+          <Property Name="character_wide" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Characters">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar(max)" Nullable="false" />
+          <Property Name="msl_name" Type="varchar(max)" Nullable="false" />
+          <Property Name="dlc" Type="bit" Nullable="false" />
+          <Property Name="model_folder" Type="varchar(max)" Nullable="false" />
+          <Property Name="csp_folder" Type="varchar(max)" Nullable="false" />
+          <Property Name="ui_character_db_id" Type="int" Nullable="false" />
+          <Property Name="nameplate_count" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Configuration">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="property" Type="varchar(max)" Nullable="false" />
+          <Property Name="value" Type="varchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ConfigurationFile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar(max)" Nullable="false" />
+          <Property Name="folder" Type="varchar(max)" />
+          <Property Name="present" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Nameplates">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="character_id" Type="int" Nullable="false" />
+          <Property Name="name" Type="varchar(max)" Nullable="false" />
+          <Property Name="hash" Type="varchar(max)" />
+          <Property Name="author" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="Packer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="content_type" Type="int" Nullable="false" />
+          <Property Name="content_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SkinLibrary">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="slot" Type="int" Nullable="false" />
+          <Property Name="workspace_id" Type="int" Nullable="false" />
+          <Property Name="character_id" Type="int" Nullable="false" />
+          <Property Name="skin_id" Type="int" Nullable="false" />
+          <Property Name="nameplate_id" Type="int" Nullable="false" />
+          <Property Name="library_lock" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Skins">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="character_id" Type="int" Nullable="false" />
+          <Property Name="name" Type="varchar(max)" Nullable="false" />
+          <Property Name="author" Type="varchar(max)" />
+          <Property Name="skin_models" Type="varchar(max)" Nullable="false" />
+          <Property Name="skin_csps" Type="varchar(max)" Nullable="false" />
+          <Property Name="gb_uid" Type="int" />
+          <Property Name="model_hash_1" Type="varchar(max)" />
+          <Property Name="model_hash_2" Type="varchar(max)" />
+          <Property Name="csp_hash_1" Type="varchar(max)" />
+          <Property Name="csp_hash_2" Type="varchar(max)" />
+          <Property Name="csp_hash_3" Type="varchar(max)" />
+          <Property Name="csp_hash_4" Type="varchar(max)" />
+          <Property Name="skinLock" Type="bit" />
+        </EntityType>
+        <EntityType Name="Workspaces">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="slot" Type="int" Nullable="false" />
+          <Property Name="name" Type="varchar(max)" Nullable="false" />
+          <Property Name="locked" Type="bit" Nullable="false" />
+          <Property Name="date" Type="varchar(max)" />
+          <Property Name="buildcount" Type="int" Nullable="false" />
+        </EntityType>
+        <Function Name="AddWorkspace" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="date" Type="text" Mode="In" />
+          <Parameter Name="slot" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ClearWorkspace" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="workspace_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="CopyWorkspace" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SourceId" Type="int" Mode="In" />
+          <Parameter Name="DestinationId" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ResetCharacters" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="ResetConfiguration" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="ResetEverything" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="ResetNameplates" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="ResetPacker" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="ResetSkinLibrary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="ResetSkins" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="ResetWorkspaces" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <EntityContainer Name="MeteorDatabaseModelStoreContainer">
+          <EntitySet Name="CharacterItems" EntityType="Self.CharacterItems" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Characters" EntityType="Self.Characters" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Configuration" EntityType="Self.Configuration" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ConfigurationFile" EntityType="Self.ConfigurationFile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Nameplates" EntityType="Self.Nameplates" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Packer" EntityType="Self.Packer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SkinLibrary" EntityType="Self.SkinLibrary" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Skins" EntityType="Self.Skins" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Workspaces" EntityType="Self.Workspaces" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MeteorDatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Character">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="msl_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="dlc" Type="Boolean" Nullable="false" />
+          <Property Name="model_folder" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="csp_folder" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ui_character_db_id" Type="Int32" Nullable="false" />
+          <Property Name="nameplate_count" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="CharacterItems" Relationship="MeteorDatabaseModel.CharacterCharacterItem" FromRole="Character" ToRole="CharacterItem" />
+          <NavigationProperty Name="Nameplates" Relationship="MeteorDatabaseModel.CharacterNameplate" FromRole="Character" ToRole="Nameplate" />
+          <NavigationProperty Name="Skins" Relationship="MeteorDatabaseModel.CharacterSkin" FromRole="Character" ToRole="Skin" />
+          <NavigationProperty Name="SkinLibraries" Relationship="MeteorDatabaseModel.SkinLibraryCharacter" FromRole="Character" ToRole="SkinLibrary" />
+        </EntityType>
+        <EntityType Name="Configuration">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="property" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Nameplate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="character_id" Type="Int32" Nullable="false" />
+          <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="hash" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="author" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Character" Relationship="MeteorDatabaseModel.CharacterNameplate" FromRole="Nameplate" ToRole="Character" />
+          <NavigationProperty Name="SkinLibraries" Relationship="MeteorDatabaseModel.NameplateSkinLibrary" FromRole="Nameplate" ToRole="SkinLibrary" />
+        </EntityType>
+        <EntityType Name="Packer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="content_type" Type="Int32" Nullable="false" />
+          <Property Name="content_id" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SkinLibrary">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="slot" Type="Int32" Nullable="false" />
+          <Property Name="workspace_id" Type="Int32" Nullable="false" />
+          <Property Name="character_id" Type="Int32" Nullable="false" />
+          <Property Name="skin_id" Type="Int32" Nullable="false" />
+          <Property Name="nameplate_id" Type="Int32" Nullable="false" />
+          <Property Name="library_lock" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Character" Relationship="MeteorDatabaseModel.SkinLibraryCharacter" FromRole="SkinLibrary" ToRole="Character" />
+          <NavigationProperty Name="Skin" Relationship="MeteorDatabaseModel.SkinSkinLibrary" FromRole="SkinLibrary" ToRole="Skin" />
+          <NavigationProperty Name="Workspace" Relationship="MeteorDatabaseModel.WorkspaceSkinLibrary" FromRole="SkinLibrary" ToRole="Workspace" />
+          <NavigationProperty Name="Nameplate" Relationship="MeteorDatabaseModel.NameplateSkinLibrary" FromRole="SkinLibrary" ToRole="Nameplate" />
+        </EntityType>
+        <EntityType Name="Skin">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="character_id" Type="Int32" Nullable="false" />
+          <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="author" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="skin_models" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="skin_csps" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="gb_uid" Type="Int32" />
+          <Property Name="model_hash_1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="model_hash_2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="csp_hash_1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="csp_hash_2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="csp_hash_3" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="csp_hash_4" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="skinLock" Type="Boolean" />
+          <NavigationProperty Name="Character" Relationship="MeteorDatabaseModel.CharacterSkin" FromRole="Skin" ToRole="Character" />
+          <NavigationProperty Name="SkinLibraries" Relationship="MeteorDatabaseModel.SkinSkinLibrary" FromRole="Skin" ToRole="SkinLibrary" />
+        </EntityType>
+        <EntityType Name="Workspace">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="slot" Type="Int32" Nullable="false" />
+          <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="locked" Type="Boolean" Nullable="false" />
+          <Property Name="date" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="buildcount" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="SkinLibraries" Relationship="MeteorDatabaseModel.WorkspaceSkinLibrary" FromRole="Workspace" ToRole="SkinLibrary" />
+        </EntityType>
+        <EntityContainer Name="MeteorDatabase" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Characters" EntityType="Self.Character" />
+          <EntitySet Name="Configurations" EntityType="Self.Configuration" />
+          <EntitySet Name="Nameplates" EntityType="Self.Nameplate" />
+          <EntitySet Name="Packers" EntityType="Self.Packer" />
+          <EntitySet Name="SkinLibraries" EntityType="Self.SkinLibrary" />
+          <EntitySet Name="Skins" EntityType="Self.Skin" />
+          <EntitySet Name="Workspaces" EntityType="Self.Workspace" />
+          <FunctionImport Name="ClearWorkspace">
+          <Parameter Name="workspace_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="CopyWorkspace">
+            <Parameter Name="SourceId" Mode="In" Type="Int32" />
+            <Parameter Name="DestinationId" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="ResetCharacters" />
+          <FunctionImport Name="ResetConfiguration" />
+          <FunctionImport Name="ResetEverything" />
+          <FunctionImport Name="ResetNameplates" />
+          <FunctionImport Name="ResetPacker" />
+          <FunctionImport Name="ResetSkinLibrary" />
+          <FunctionImport Name="ResetSkins" />
+          <FunctionImport Name="ResetWorkspaces" />
+          <FunctionImport Name="Procedure">
+            <Parameter Name="date" Mode="In" Type="String" />
+            <Parameter Name="slot" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="AddWorkspace">
+            <Parameter Name="date" Mode="In" Type="String" />
+            <Parameter Name="slot" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="CharacterItems" EntityType="MeteorDatabaseModel.CharacterItem" />
+          <AssociationSet Name="CharacterCharacterItem" Association="MeteorDatabaseModel.CharacterCharacterItem">
+            <End Role="Character" EntitySet="Characters" />
+            <End Role="CharacterItem" EntitySet="CharacterItems" />
+          </AssociationSet>
+          <AssociationSet Name="CharacterNameplate" Association="MeteorDatabaseModel.CharacterNameplate">
+            <End Role="Character" EntitySet="Characters" />
+            <End Role="Nameplate" EntitySet="Nameplates" />
+          </AssociationSet>
+          <AssociationSet Name="CharacterSkin" Association="MeteorDatabaseModel.CharacterSkin">
+            <End Role="Character" EntitySet="Characters" />
+            <End Role="Skin" EntitySet="Skins" />
+          </AssociationSet>
+          <AssociationSet Name="CharacterSkinLibrary" Association="MeteorDatabaseModel.SkinLibraryCharacter">
+            <End Role="SkinLibrary" EntitySet="SkinLibraries" />
+            <End Role="Character" EntitySet="Characters" />
+          </AssociationSet>
+          <AssociationSet Name="SkinSkinLibrary" Association="MeteorDatabaseModel.SkinSkinLibrary">
+            <End Role="Skin" EntitySet="Skins" />
+            <End Role="SkinLibrary" EntitySet="SkinLibraries" />
+          </AssociationSet>
+          <AssociationSet Name="WorkspaceSkinLibrary" Association="MeteorDatabaseModel.WorkspaceSkinLibrary">
+            <End Role="Workspace" EntitySet="Workspaces" />
+            <End Role="SkinLibrary" EntitySet="SkinLibraries" />
+          </AssociationSet>
+          <AssociationSet Name="NameplateSkinLibrary" Association="MeteorDatabaseModel.NameplateSkinLibrary">
+            <End Role="Nameplate" EntitySet="Nameplates" />
+            <End Role="SkinLibrary" EntitySet="SkinLibraries" />
+          </AssociationSet>
+          <EntitySet Name="ConfigurationFiles" EntityType="MeteorDatabaseModel.ConfigurationFile" />
+        </EntityContainer>
+        <EntityType Name="CharacterItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="character_id" Type="Int32" Nullable="false" />
+          <Property Name="item" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="character_wide" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Character" Relationship="MeteorDatabaseModel.CharacterCharacterItem" FromRole="CharacterItem" ToRole="Character" />
+        </EntityType>
+        <Association Name="CharacterCharacterItem">
+          <End Type="MeteorDatabaseModel.Character" Role="Character" Multiplicity="1" />
+          <End Type="MeteorDatabaseModel.CharacterItem" Role="CharacterItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Character">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CharacterItem">
+              <PropertyRef Name="character_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="CharacterNameplate">
+          <End Type="MeteorDatabaseModel.Character" Role="Character" Multiplicity="1" />
+          <End Type="MeteorDatabaseModel.Nameplate" Role="Nameplate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Character">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Nameplate">
+              <PropertyRef Name="character_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="CharacterSkin">
+          <End Type="MeteorDatabaseModel.Character" Role="Character" Multiplicity="1" />
+          <End Type="MeteorDatabaseModel.Skin" Role="Skin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Character">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Skin">
+              <PropertyRef Name="character_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SkinLibraryCharacter">
+          <End Type="MeteorDatabaseModel.SkinLibrary" Role="SkinLibrary" Multiplicity="*" />
+          <End Type="MeteorDatabaseModel.Character" Role="Character" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="Character">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SkinLibrary">
+              <PropertyRef Name="character_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SkinSkinLibrary">
+          <End Type="MeteorDatabaseModel.Skin" Role="Skin" Multiplicity="1" />
+          <End Type="MeteorDatabaseModel.SkinLibrary" Role="SkinLibrary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Skin">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SkinLibrary">
+              <PropertyRef Name="skin_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="WorkspaceSkinLibrary">
+          <End Type="MeteorDatabaseModel.Workspace" Role="Workspace" Multiplicity="1" />
+          <End Type="MeteorDatabaseModel.SkinLibrary" Role="SkinLibrary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Workspace">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SkinLibrary">
+              <PropertyRef Name="workspace_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="NameplateSkinLibrary">
+          <End Type="MeteorDatabaseModel.Nameplate" Role="Nameplate" Multiplicity="1" />
+          <End Type="MeteorDatabaseModel.SkinLibrary" Role="SkinLibrary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Nameplate">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SkinLibrary">
+              <PropertyRef Name="nameplate_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ConfigurationFile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="present" Type="Boolean" Nullable="false" />
+          <Property Name="folder" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MeteorDatabaseModelStoreContainer" CdmEntityContainer="MeteorDatabase">
+          <EntitySetMapping Name="Characters">
+            <EntityTypeMapping TypeName="MeteorDatabaseModel.Character">
+              <MappingFragment StoreEntitySet="Characters">
+                <ScalarProperty Name="nameplate_count" ColumnName="nameplate_count" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="msl_name" ColumnName="msl_name" />
+                <ScalarProperty Name="dlc" ColumnName="dlc" />
+                <ScalarProperty Name="model_folder" ColumnName="model_folder" />
+                <ScalarProperty Name="csp_folder" ColumnName="csp_folder" />
+                <ScalarProperty Name="ui_character_db_id" ColumnName="ui_character_db_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Configurations">
+            <EntityTypeMapping TypeName="MeteorDatabaseModel.Configuration">
+              <MappingFragment StoreEntitySet="Configuration">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="property" ColumnName="property" />
+                <ScalarProperty Name="value" ColumnName="value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Nameplates">
+            <EntityTypeMapping TypeName="MeteorDatabaseModel.Nameplate">
+              <MappingFragment StoreEntitySet="Nameplates">
+                <ScalarProperty Name="author" ColumnName="author" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="character_id" ColumnName="character_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="hash" ColumnName="hash" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Packers">
+            <EntityTypeMapping TypeName="MeteorDatabaseModel.Packer">
+              <MappingFragment StoreEntitySet="Packer">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="content_type" ColumnName="content_type" />
+                <ScalarProperty Name="content_id" ColumnName="content_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SkinLibraries">
+            <EntityTypeMapping TypeName="MeteorDatabaseModel.SkinLibrary">
+              <MappingFragment StoreEntitySet="SkinLibrary">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="slot" ColumnName="slot" />
+                <ScalarProperty Name="workspace_id" ColumnName="workspace_id" />
+                <ScalarProperty Name="character_id" ColumnName="character_id" />
+                <ScalarProperty Name="skin_id" ColumnName="skin_id" />
+                <ScalarProperty Name="nameplate_id" ColumnName="nameplate_id" />
+                <ScalarProperty Name="library_lock" ColumnName="library_lock" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Skins">
+            <EntityTypeMapping TypeName="MeteorDatabaseModel.Skin">
+              <MappingFragment StoreEntitySet="Skins">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="character_id" ColumnName="character_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="author" ColumnName="author" />
+                <ScalarProperty Name="skin_models" ColumnName="skin_models" />
+                <ScalarProperty Name="skin_csps" ColumnName="skin_csps" />
+                <ScalarProperty Name="gb_uid" ColumnName="gb_uid" />
+                <ScalarProperty Name="model_hash_1" ColumnName="model_hash_1" />
+                <ScalarProperty Name="model_hash_2" ColumnName="model_hash_2" />
+                <ScalarProperty Name="csp_hash_1" ColumnName="csp_hash_1" />
+                <ScalarProperty Name="csp_hash_2" ColumnName="csp_hash_2" />
+                <ScalarProperty Name="csp_hash_3" ColumnName="csp_hash_3" />
+                <ScalarProperty Name="csp_hash_4" ColumnName="csp_hash_4" />
+                <ScalarProperty Name="skinLock" ColumnName="skinLock" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Workspaces">
+            <EntityTypeMapping TypeName="MeteorDatabaseModel.Workspace">
+              <MappingFragment StoreEntitySet="Workspaces">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="slot" ColumnName="slot" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="locked" ColumnName="locked" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="buildcount" ColumnName="buildcount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="ClearWorkspace" FunctionName="MeteorDatabaseModel.Store.ClearWorkspace" />
+          <FunctionImportMapping FunctionImportName="CopyWorkspace" FunctionName="MeteorDatabaseModel.Store.CopyWorkspace" />
+          <FunctionImportMapping FunctionImportName="ResetCharacters" FunctionName="MeteorDatabaseModel.Store.ResetCharacters" />
+          <FunctionImportMapping FunctionImportName="ResetConfiguration" FunctionName="MeteorDatabaseModel.Store.ResetConfiguration" />
+          <FunctionImportMapping FunctionImportName="ResetEverything" FunctionName="MeteorDatabaseModel.Store.ResetEverything" />
+          <FunctionImportMapping FunctionImportName="ResetNameplates" FunctionName="MeteorDatabaseModel.Store.ResetNameplates" />
+          <FunctionImportMapping FunctionImportName="ResetPacker" FunctionName="MeteorDatabaseModel.Store.ResetPacker" />
+          <FunctionImportMapping FunctionImportName="ResetSkinLibrary" FunctionName="MeteorDatabaseModel.Store.ResetSkinLibrary" />
+          <FunctionImportMapping FunctionImportName="ResetSkins" FunctionName="MeteorDatabaseModel.Store.ResetSkins" />
+          <FunctionImportMapping FunctionImportName="ResetWorkspaces" FunctionName="MeteorDatabaseModel.Store.ResetWorkspaces" />
+          <FunctionImportMapping FunctionImportName="AddWorkspace" FunctionName="MeteorDatabaseModel.Store.AddWorkspace" />
+          <EntitySetMapping Name="CharacterItems">
+            <EntityTypeMapping TypeName="MeteorDatabaseModel.CharacterItem">
+              <MappingFragment StoreEntitySet="CharacterItems">
+                <ScalarProperty Name="character_wide" ColumnName="character_wide" />
+                <ScalarProperty Name="item" ColumnName="item" />
+                <ScalarProperty Name="character_id" ColumnName="character_id" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ConfigurationFiles">
+            <EntityTypeMapping TypeName="MeteorDatabaseModel.ConfigurationFile">
+              <MappingFragment StoreEntitySet="ConfigurationFile">
+                <ScalarProperty Name="folder" ColumnName="folder" />
+                <ScalarProperty Name="present" ColumnName="present" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

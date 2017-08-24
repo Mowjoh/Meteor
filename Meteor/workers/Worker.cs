@@ -14,7 +14,7 @@ namespace Meteor.workers
         //Class variables
         protected readonly BackgroundWorker _worker = new BackgroundWorker();
 
-        protected readonly db_handler DbHandler;
+        protected MeteorDatabase meteorDatabase;
         protected int _completion;
         protected String _message;
         private int _progressStyle = 0;
@@ -25,9 +25,9 @@ namespace Meteor.workers
         protected int _status;
 
         //Constructor
-        protected Worker(db_handler databaseHandler)
+        protected Worker(MeteorDatabase meteorDatabase)
         {
-            this.DbHandler = databaseHandler;
+            this.meteorDatabase = meteorDatabase;
 
             _worker.DoWork += WorkerDowork;
             _worker.RunWorkerCompleted += WorkerCompleted;

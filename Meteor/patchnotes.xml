@@ -1,17 +1,5 @@
-<package version="0.9.5.6">
-  <patchnote version="0.9.5.6">
-    <patch>Bugfixes</patch>
-  </patchnote>
-  <patchnote version="0.9.5.5">
-    <patch>Fixed downloads</patch>
-  </patchnote>
-  <patchnote version="0.9.5.2">
-    <patch>Fixed some bugs</patch>
-  </patchnote>
-  <patchnote version="0.9.5.1">
-    <patch>Changed config aspect ratio</patch>
-  </patchnote>
-  <patchnote version="0.9.5.0">
-    <patch>Changed some stuff</patch>
+<package version="0.9.9.0">
+  <patchnote version="0.9.9.0">
+    <patch>Internal Patch</patch>
   </patchnote>
 </package>

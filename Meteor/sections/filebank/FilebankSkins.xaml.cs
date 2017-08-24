@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
@@ -16,29 +17,28 @@ namespace Meteor.sections.filebank
     public partial class FilebankSkins : Page
     {
         private string AppPath { get; } = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory?.FullName;
-        private readonly db_handler _dbHandler;
+        private MeteorDatabase meteorDatabase;
 
-        private ArrayList Skins { get; set; }
+        private Skin selectedSkin;
 
         public FilebankSkins()
         {
             InitializeComponent();
 
-            _dbHandler = new db_handler();
+            meteorDatabase = ((MainWindow) Application.Current.MainWindow).meteorDatabase;
             LoadCharacters();
         }
 
         private void LoadCharacters()
         {
             CharacterListBox.Items.Clear();
-            var characters = _dbHandler.get_characters(int.Parse(_dbHandler.get_property("sort_order")));
 
-            var allCharactersItem = new ListBoxItem {Content = "All Characters"};
+            var allCharactersItem = new CharacterItem() {Content = "All Characters", Id = 0};
             CharacterListBox.Items.Add(allCharactersItem);
 
-            foreach (string[] s in characters)
+            foreach (Character character in meteorDatabase.Characters)
             {
-                var item = new ComboBoxItem {Content = s[1]};
+                var item = new CharacterItem() {Content = character.name, Id = character.Id};
                 CharacterListBox.Items.Add(item);
             }
 
@@ -56,54 +56,85 @@ namespace Meteor.sections.filebank
         {
             if (SkinsListBox.SelectedIndex != -1)
             {
-                var infos = _dbHandler.get_skin_info((int)Skins[SkinsListBox.SelectedIndex]);
-                AuthorValueLabel.Content = infos[1];
-                CspsValueLabel.Content = infos[3];
-                ModelsValueLabel.Content = infos[2];
-                CharacterValueLabel.Content = infos[4];
-                SkinIdValueLabel.Content = (int)Skins[SkinsListBox.SelectedIndex];
+                SkinItem item = (SkinItem) SkinsListBox.SelectedItem;
+                selectedSkin = meteorDatabase.Skins.First(s => s.Id == item.Id);
+                AuthorValueLabel.Content = selectedSkin.author;
+                CspsValueLabel.Content = selectedSkin.skin_csps;
+                ModelsValueLabel.Content = selectedSkin.skin_models;
+                CharacterValueLabel.Content = selectedSkin.Character.name;
+                SkinIdValueLabel.Content = selectedSkin.Id;
             }
         }
 
         //Deletes a skin permanently
-        private void DeleteSkin(object sender, RoutedEventArgs e)
+        private void DeletePressed(object sender, RoutedEventArgs e)
         {
-            var id = (int)Skins[SkinsListBox.SelectedIndex];
-            var index = SkinsListBox.SelectedIndex;
-            if (!_dbHandler.check_skin_in_library(id))
-            {
-                var skinpath = AppPath + "/filebank/skins/" + id + "/";
-                if (Directory.Exists(skinpath))
-                    Directory.Delete(skinpath, true);
-                _dbHandler.delete_skin(id);
+            DeleteSkin();
+        }
 
-                ReloadSkins();
-                if (index > SkinsListBox.Items.Count - 1)
-                {
-                    SkinsListBox.SelectedIndex = SkinsListBox.Items.Count - 1;
-                }
-                else
-                {
-                    SkinsListBox.SelectedIndex = index;
-                }
+        private void FilebankDeleteKey(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                DeleteSkin();
+            }
+        }
+
+        private void DeleteSkin()
+        {
+            //Getting index
+            int index = SkinsListBox.SelectedIndex;
+
+            //Setting folder path
+            var skinpath = AppPath + "/filebank/skins/" + selectedSkin.Id + "/";
+
+            //Deleting files
+            if (Directory.Exists(skinpath))
+                Directory.Delete(skinpath, true);
+
+            //Removing SkinLibrary entries and Skin
+            foreach (SkinLibrary entry in meteorDatabase.SkinLibraries.Where(sl => sl.skin_id == selectedSkin.Id))
+            {
+                meteorDatabase.SkinLibraries.Remove(entry);
+            }
+            meteorDatabase.Skins.Remove(selectedSkin);
+            meteorDatabase.SaveChanges();
+
+            //Reordering slots after deletion
+            ReorderCharacterSkins(selectedSkin.character_id);
+
+            //Reloading interface after delete
+
+            ReloadSkins();
+
+            if (index > SkinsListBox.Items.Count - 1)
+            {
+                SkinsListBox.SelectedIndex = SkinsListBox.Items.Count - 1;
             }
             else
             {
-                            MeteorCode.WriteToConsole("You have to remove it from the workspaces first", 1);
+                SkinsListBox.SelectedIndex = index;
             }
         }
 
         private void pack_skin(object sender, RoutedEventArgs e)
         {
-            var id = (int)Skins[SkinsListBox.SelectedIndex];
-            _dbHandler.add_packer_item(0, id);
-                        MeteorCode.WriteToConsole("Skin added to packer", 0);
+            Packer packItem = new Packer()
+            {
+                content_id = selectedSkin.Id,
+                content_type = 0
+            };
+
+            meteorDatabase.Packers.Add(packItem);
+            meteorDatabase.SaveChanges();
+
+            MeteorCode.WriteToConsole("Skin added to packer", 0);
         }
 
         //Launches forge
         private void PreviewForge(object sender, RoutedEventArgs e)
         {
-            var id = (int)Skins[SkinsListBox.SelectedIndex];
+            var id = selectedSkin.Id;
             var modelpath = AppPath + "/filebank/skins/" + id + "/models/body/cxx/model.nud";
 
             if (File.Exists(modelpath))
@@ -123,97 +154,65 @@ namespace Meteor.sections.filebank
                 }
                 else
                 {
-                                MeteorCode.WriteToConsole("Smash Forge was not found in /forge", 1);
+                    MeteorCode.WriteToConsole("Smash Forge was not found in /forge", 1);
                 }
             else
-                            MeteorCode.WriteToConsole("There is no body/cXX to open in Smash Forge", 1);
-        }
-
-        //Inserts the skin in the active workspace
-        private void InsertSkin(object sender, RoutedEventArgs e)
-        {
-            var id = (int)Skins[SkinsListBox.SelectedIndex];
-            var workspace = int.Parse(_dbHandler.get_property("workspace"));
-            int character_id = _dbHandler.get_character_id(id);
-            var character = _dbHandler.get_character_name(id);
-
-            var slot = _dbHandler.get_character_skins(character, workspace.ToString()).Count + 1;
-                        MeteorCode.WriteToConsole("Trying to insert skin #" + id + " into slot #" + slot + " for character '" + character + "' into workspace #" + workspace, 3);
-            _dbHandler.insert_skin(id, workspace, character_id, slot);
-                        MeteorCode.WriteToConsole("The skin was inserted in the workspace", 0);
-        }
-
-        private void FilebankDeleteKey(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Delete)
-            {
-                if (SkinsListBox.Items.Count > 0)
-                {
-                    var id = (int)Skins[SkinsListBox.SelectedIndex];
-                    var index = SkinsListBox.SelectedIndex;
-
-                    if (!_dbHandler.check_skin_in_library(id))
-                    {
-                        var skinpath = AppPath + "/filebank/skins/" + id + "/";
-                        if (Directory.Exists(skinpath))
-                            Directory.Delete(skinpath, true);
-                        _dbHandler.delete_skin(id);
-
-                        ReloadSkins();
-                        if (SkinsListBox.Items.Count > 0)
-                        {
-                            if (index > SkinsListBox.Items.Count - 1)
-                            {
-                                SkinsListBox.SelectedIndex = SkinsListBox.Items.Count - 1;
-                            }
-                            else
-                            {
-                                SkinsListBox.SelectedIndex = index;
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                                    MeteorCode.WriteToConsole("You have to remove it from the workspaces first", 1);
-                    }
-                }
-
-            }
+                MeteorCode.WriteToConsole("There is no body/cXX to open in Smash Forge", 1);
         }
 
         //Reloads
         public void ReloadSkins()
         {
+            meteorDatabase = new MeteorDatabase();
+
             if (CharacterListBox.SelectedIndex == -1) return;
 
-            var character = (ListBoxItem)CharacterListBox.Items[CharacterListBox.SelectedIndex];
+            CharacterItem character = (CharacterItem) CharacterListBox.Items[CharacterListBox.SelectedIndex];
             var characterName = character.Content.ToString();
-            ArrayList skins;
             if (characterName == "All Characters")
             {
-                skins = _dbHandler.GetCustomSkins();
-                Skins =
-                    _dbHandler.get_custom_skins_id();
                 SkinsListBox.Items.Clear();
+                foreach (Skin skin in meteorDatabase.Skins.Where(s => s.skinLock == false))
+                {
+                    var lbi = new SkinItem {Content = skin.name, Id = skin.Id};
+                    SkinsListBox.Items.Add(lbi);
+                }
             }
             else
             {
-                skins = _dbHandler.get_character_custom_skins(characterName, _dbHandler.get_property("workspace"));
-                Skins =
-                    _dbHandler.get_character_custom_skins_id(character.Content.ToString(), _dbHandler.get_property("workspace"));
                 SkinsListBox.Items.Clear();
-            }
-
-
-
-
-            foreach (string s in skins)
-            {
-                var lbi = new ListBoxItem {Content = s};
-                SkinsListBox.Items.Add(lbi);
+                foreach (Skin skin in meteorDatabase.Skins.Where(
+                    s => s.character_id == character.Id && s.skinLock == false))
+                {
+                    var lbi = new SkinItem {Content = skin.name, Id = skin.Id};
+                    SkinsListBox.Items.Add(lbi);
+                }
             }
         }
 
+        public void ReorderCharacterSkins(int CharacterId)
+        {
+            foreach (Workspace workspace in meteorDatabase.Workspaces.Where(w => w.slot > 0))
+            {
+                int count = 1;
+                foreach (SkinLibrary entry in meteorDatabase.SkinLibraries.Where(
+                    sl => sl.workspace_id == workspace.Id && sl.character_id == CharacterId))
+                {
+                    entry.slot = count;
+                    count++;
+                }
+            }
+            meteorDatabase.SaveChanges();
+        }
+    }
+
+    public class SkinItem : ListBoxItem
+    {
+        public int Id { get; set; }
+    }
+
+    public class CharacterItem : ComboBoxItem
+    {
+        public int Id { get; set; }
     }
 }

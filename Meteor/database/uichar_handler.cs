@@ -89,7 +89,7 @@ namespace Meteor.database
 
         public uichar_handler()
         {
-            filepath = app_path + "/filebank/configuration/uichar/ui_character_db.bin";
+            filepath = app_path + "/filebank/configuration/ui_character_db/ui_character_db.bin";
 
             #endregion
         }

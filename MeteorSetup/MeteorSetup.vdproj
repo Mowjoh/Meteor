@@ -27,24 +27,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_0B2A9723613AEA7D22DC158329719DB2"
-        "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0B2A9723613AEA7D22DC158329719DB2"
-        "OwnerKey" = "8:_F16322AF18DBCF2A6375AD91E0F29171"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0B2A9723613AEA7D22DC158329719DB2"
-        "OwnerKey" = "8:_BB724F416E02000C4C5FB0C6BDF0DBE9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_0D7218F0CD944AE183B8E0E877CBEF5C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -63,24 +45,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1F425638269A7D8E8432B5F4337D9494"
-        "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1F425638269A7D8E8432B5F4337D9494"
-        "OwnerKey" = "8:_BD1D17E08678C774BD2982C73382A8D2"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1F425638269A7D8E8432B5F4337D9494"
-        "OwnerKey" = "8:_F16322AF18DBCF2A6375AD91E0F29171"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_2551BDE5632B4EA68A5AE298E41F3429"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -93,8 +57,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2624EFA0C1A3E5624605DDC96B7DE58F"
-        "OwnerKey" = "8:_E92F5EA7A73655717ECAEB9F6F1BD46C"
+        "MsmKey" = "8:_25BC689B6DB241039AA83E9AB8CC6EFF"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -112,6 +76,12 @@
         "Entry"
         {
         "MsmKey" = "8:_27E2B26B2A3F4A01BC052E76DFEF6E66"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2A557DE5F442477FBACF3798EB08D909"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -136,12 +106,6 @@
         "Entry"
         {
         "MsmKey" = "8:_2F994DEC840F48798E108F39ABC3E370"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_305D4E831CD14017BA172A6F5D0CC527"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -189,6 +153,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_466963635FE44A8987A47D3D9EA10F86"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4802EC5C59BA4A7083FAB2CD931427EF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_49EDBA11E3F14ECCB2A2F9547E794E47"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4A268148938A43AC801B31358F33EB9B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -208,6 +190,18 @@
         "Entry"
         {
         "MsmKey" = "8:_5CCEA11F494D47CA92065F6566B1C3F1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5D2DB24376BA4D82B444620FFE4AF284"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5F96490EF1D5404F898BCFF9E04AC0BB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -261,6 +255,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_6CAF6C02E1C327A68C67159729C467C0"
+        "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_70DD9F8A49224D75B6AD673C71C031B2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -291,6 +291,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7A97288C56E53C9A448F8A75E0442F1B"
+        "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_7B14F1E6072CAD396609BC0E54D1A9C3"
         "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
         "MsmSig" = "8:_UNDEFINED"
@@ -303,8 +309,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_820C8EB759BA6E6DAFC4318481BBB70C"
-        "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
+        "MsmKey" = "8:_817D02082B504E2CB0E328677A2EBCBC"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -387,6 +393,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_AE80A85BBA814BF885C8ACC5793D7273"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_AFD01CC3E131419CA93CEF2CB457EB7E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -423,32 +435,38 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B953CEAF153D215A5A7C1F99B3931C15"
+        "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B953CEAF153D215A5A7C1F99B3931C15"
+        "OwnerKey" = "8:_C1DA5FEF3A1C5BD0824A762FA9F9C858"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_BA1D2EB9B60D41919E2F0A2679FD6103"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_BB02E9470DA343DDB6037566A7B794A4"
+        "MsmKey" = "8:_C0143B942965431C9BEC1F5B0D873226"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_BB724F416E02000C4C5FB0C6BDF0DBE9"
-        "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_BD1D17E08678C774BD2982C73382A8D2"
-        "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_C17A4C4D4A194969B5E874DA41847A36"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C1DA5FEF3A1C5BD0824A762FA9F9C858"
+        "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -507,8 +525,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_E92F5EA7A73655717ECAEB9F6F1BD46C"
-        "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
+        "MsmKey" = "8:_EDC69515EF06465D81CC90616D134B76"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -521,12 +539,6 @@
         {
         "MsmKey" = "8:_F09BA0ABD40E4CF29E1BD058F6F20AD3"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F16322AF18DBCF2A6375AD91E0F29171"
-        "OwnerKey" = "8:_F63C91EDA6F148089365A506BD269424"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -573,8 +585,20 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_FC3E1A2BDDC340B8BB1A94924D7587E2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_FF24BEB7EE684C79A936435110C3F1B9"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_4269412511B24139AF63A611338A00C1"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -586,19 +610,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BD1D17E08678C774BD2982C73382A8D2"
+        "OwnerKey" = "8:_2624EFA0C1A3E5624605DDC96B7DE58F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F16322AF18DBCF2A6375AD91E0F29171"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1F425638269A7D8E8432B5F4337D9494"
+        "OwnerKey" = "8:_6CAF6C02E1C327A68C67159729C467C0"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -610,7 +628,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_820C8EB759BA6E6DAFC4318481BBB70C"
+        "OwnerKey" = "8:_7A97288C56E53C9A448F8A75E0442F1B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -652,31 +670,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BB724F416E02000C4C5FB0C6BDF0DBE9"
+        "OwnerKey" = "8:_C1DA5FEF3A1C5BD0824A762FA9F9C858"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0B2A9723613AEA7D22DC158329719DB2"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E92F5EA7A73655717ECAEB9F6F1BD46C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2624EFA0C1A3E5624605DDC96B7DE58F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4269412511B24139AF63A611338A00C1"
+        "OwnerKey" = "8:_B953CEAF153D215A5A7C1F99B3931C15"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -852,37 +852,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_0B2A9723613AEA7D22DC158329719DB2"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_0B2A9723613AEA7D22DC158329719DB2"
-                    {
-                    "Name" = "8:EntityFramework.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:EntityFramework.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_5AE2E4E7F9304D6A964A51901FB52C47"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0D7218F0CD944AE183B8E0E877CBEF5C"
             {
             "SourcePath" = "8:..\\..\\Meteor Assets\\images\\CharacterIcon\\Meta Knight.png"
@@ -943,37 +912,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1F425638269A7D8E8432B5F4337D9494"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Data.SQLite, Version=1.0.104.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_1F425638269A7D8E8432B5F4337D9494"
-                    {
-                    "Name" = "8:System.Data.SQLite.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:System.Data.SQLite.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_5AE2E4E7F9304D6A964A51901FB52C47"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2551BDE5632B4EA68A5AE298E41F3429"
             {
             "SourcePath" = "8:..\\..\\Meteor Assets\\images\\CharacterIcon\\Pac-man.png"
@@ -1000,6 +938,26 @@
             "TargetName" = "8:Zelda.png"
             "Tag" = "8:"
             "Folder" = "8:_A2BD2ED2CB144F18AAAEC7C2495FBFA5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_25BC689B6DB241039AA83E9AB8CC6EFF"
+            {
+            "SourcePath" = "8:..\\Meteor\\bin\\Debug\\images\\Interface\\forge2.ico"
+            "TargetName" = "8:forge2.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_DD1F281919F9474C926157908114C002"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1071,6 +1029,26 @@
             "TargetName" = "8:Shulk.png"
             "Tag" = "8:"
             "Folder" = "8:_A2BD2ED2CB144F18AAAEC7C2495FBFA5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2A557DE5F442477FBACF3798EB08D909"
+            {
+            "SourcePath" = "8:..\\Meteor\\bin\\Debug\\images\\Interface\\stages.png"
+            "TargetName" = "8:stages.png"
+            "Tag" = "8:"
+            "Folder" = "8:_DD1F281919F9474C926157908114C002"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1162,26 +1140,6 @@
             "TargetName" = "8:Charizard.png"
             "Tag" = "8:"
             "Folder" = "8:_A2BD2ED2CB144F18AAAEC7C2495FBFA5"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_305D4E831CD14017BA172A6F5D0CC527"
-            {
-            "SourcePath" = "8:..\\..\\Meteor Assets\\Library.sqlite"
-            "TargetName" = "8:Library.sqlite"
-            "Tag" = "8:"
-            "Folder" = "8:_5AE2E4E7F9304D6A964A51901FB52C47"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1318,6 +1276,66 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_466963635FE44A8987A47D3D9EA10F86"
+            {
+            "SourcePath" = "8:..\\Meteor\\bin\\Debug\\images\\Interface\\skins.png"
+            "TargetName" = "8:skins.png"
+            "Tag" = "8:"
+            "Folder" = "8:_DD1F281919F9474C926157908114C002"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4802EC5C59BA4A7083FAB2CD931427EF"
+            {
+            "SourcePath" = "8:..\\Meteor\\bin\\Debug\\images\\Interface\\workspaces.png"
+            "TargetName" = "8:workspaces.png"
+            "Tag" = "8:"
+            "Folder" = "8:_DD1F281919F9474C926157908114C002"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_49EDBA11E3F14ECCB2A2F9547E794E47"
+            {
+            "SourcePath" = "8:..\\Meteor\\MeteorDatabase.mdf"
+            "TargetName" = "8:MeteorDatabase.mdf"
+            "Tag" = "8:"
+            "Folder" = "8:_5AE2E4E7F9304D6A964A51901FB52C47"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4A268148938A43AC801B31358F33EB9B"
             {
             "SourcePath" = "8:..\\..\\Meteor Assets\\images\\CharacterIcon\\Ganondorf.png"
@@ -1395,6 +1413,46 @@
             "TargetName" = "8:Duck Hunt.png"
             "Tag" = "8:"
             "Folder" = "8:_A2BD2ED2CB144F18AAAEC7C2495FBFA5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5D2DB24376BA4D82B444620FFE4AF284"
+            {
+            "SourcePath" = "8:..\\Meteor\\bin\\Debug\\images\\Interface\\filebank.png"
+            "TargetName" = "8:filebank.png"
+            "Tag" = "8:"
+            "Folder" = "8:_DD1F281919F9474C926157908114C002"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5F96490EF1D5404F898BCFF9E04AC0BB"
+            {
+            "SourcePath" = "8:..\\Meteor\\bin\\Debug\\images\\Interface\\settings.png"
+            "TargetName" = "8:settings.png"
+            "Tag" = "8:"
+            "Folder" = "8:_DD1F281919F9474C926157908114C002"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1520,6 +1578,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_6CAF6C02E1C327A68C67159729C467C0"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:SharpCompress, Version=0.18.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_6CAF6C02E1C327A68C67159729C467C0"
+                    {
+                    "Name" = "8:SharpCompress.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:SharpCompress.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_5AE2E4E7F9304D6A964A51901FB52C47"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_70DD9F8A49224D75B6AD673C71C031B2"
             {
             "SourcePath" = "8:..\\..\\Meteor Assets\\images\\CharacterIcon\\Bowser.png"
@@ -1620,6 +1709,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7A97288C56E53C9A448F8A75E0442F1B"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:GongSolutions.WPF.DragDrop, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_7A97288C56E53C9A448F8A75E0442F1B"
+                    {
+                    "Name" = "8:GongSolutions.Wpf.DragDrop.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:GongSolutions.Wpf.DragDrop.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_5AE2E4E7F9304D6A964A51901FB52C47"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7B14F1E6072CAD396609BC0E54D1A9C3"
             {
             "AssemblyRegister" = "3:1"
@@ -1671,23 +1791,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_820C8EB759BA6E6DAFC4318481BBB70C"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_817D02082B504E2CB0E328677A2EBCBC"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SharpCompress, Version=0.10.3.0, Culture=neutral, PublicKeyToken=64eb6448c87dfed9, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_820C8EB759BA6E6DAFC4318481BBB70C"
-                    {
-                    "Name" = "8:SharpCompress.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:SharpCompress.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\Meteor\\bin\\Debug\\images\\Interface\\ui.png"
+            "TargetName" = "8:ui.png"
             "Tag" = "8:"
-            "Folder" = "8:_5AE2E4E7F9304D6A964A51901FB52C47"
+            "Folder" = "8:_DD1F281919F9474C926157908114C002"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1699,7 +1808,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_826E5B7311A748FD964B6A9A55907584"
@@ -1964,6 +2073,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AE80A85BBA814BF885C8ACC5793D7273"
+            {
+            "SourcePath" = "8:..\\Meteor\\bin\\Debug\\images\\Interface\\about.png"
+            "TargetName" = "8:about.png"
+            "Tag" = "8:"
+            "Folder" = "8:_DD1F281919F9474C926157908114C002"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AFD01CC3E131419CA93CEF2CB457EB7E"
             {
             "SourcePath" = "8:..\\Meteor\\bin\\Debug\\x86\\SQLite.Interop.dll"
@@ -2084,6 +2213,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B953CEAF153D215A5A7C1F99B3931C15"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_B953CEAF153D215A5A7C1F99B3931C15"
+                    {
+                    "Name" = "8:EntityFramework.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:EntityFramework.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_5AE2E4E7F9304D6A964A51901FB52C47"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BA1D2EB9B60D41919E2F0A2679FD6103"
             {
             "SourcePath" = "8:..\\..\\Meteor Assets\\images\\CharacterIcon\\Dark Pit.png"
@@ -2104,7 +2264,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BB02E9470DA343DDB6037566A7B794A4"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C0143B942965431C9BEC1F5B0D873226"
             {
             "SourcePath" = "8:..\\Meteor\\patchnotes.xml"
             "TargetName" = "8:patchnotes.xml"
@@ -2124,14 +2284,34 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BB724F416E02000C4C5FB0C6BDF0DBE9"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C17A4C4D4A194969B5E874DA41847A36"
+            {
+            "SourcePath" = "8:..\\..\\Meteor Assets\\images\\CharacterIcon\\Donkey Kong.png"
+            "TargetName" = "8:Donkey Kong.png"
+            "Tag" = "8:"
+            "Folder" = "8:_A2BD2ED2CB144F18AAAEC7C2495FBFA5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C1DA5FEF3A1C5BD0824A762FA9F9C858"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_BB724F416E02000C4C5FB0C6BDF0DBE9"
+                    "_C1DA5FEF3A1C5BD0824A762FA9F9C858"
                     {
                     "Name" = "8:EntityFramework.SqlServer.dll"
                     "Attributes" = "3:512"
@@ -2153,57 +2333,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BD1D17E08678C774BD2982C73382A8D2"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Data.SQLite.Linq, Version=1.0.104.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_BD1D17E08678C774BD2982C73382A8D2"
-                    {
-                    "Name" = "8:System.Data.SQLite.Linq.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:System.Data.SQLite.Linq.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_5AE2E4E7F9304D6A964A51901FB52C47"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C17A4C4D4A194969B5E874DA41847A36"
-            {
-            "SourcePath" = "8:..\\..\\Meteor Assets\\images\\CharacterIcon\\Donkey Kong.png"
-            "TargetName" = "8:Donkey Kong.png"
-            "Tag" = "8:"
-            "Folder" = "8:_A2BD2ED2CB144F18AAAEC7C2495FBFA5"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C4691C48215B4005B0ACCF8C21AF0CA6"
@@ -2386,23 +2515,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E92F5EA7A73655717ECAEB9F6F1BD46C"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EDC69515EF06465D81CC90616D134B76"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ColorPickerWPF, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_E92F5EA7A73655717ECAEB9F6F1BD46C"
-                    {
-                    "Name" = "8:ColorPickerWPF.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:ColorPickerWPF.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\Meteor\\bin\\Debug\\images\\Interface\\skins_sg.png"
+            "TargetName" = "8:skins_sg.png"
             "Tag" = "8:"
-            "Folder" = "8:_5AE2E4E7F9304D6A964A51901FB52C47"
+            "Folder" = "8:_DD1F281919F9474C926157908114C002"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2414,7 +2532,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EE6310AA565542BEA890E876B7D608C3"
@@ -2455,37 +2573,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F16322AF18DBCF2A6375AD91E0F29171"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Data.SQLite.EF6, Version=1.0.104.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_F16322AF18DBCF2A6375AD91E0F29171"
-                    {
-                    "Name" = "8:System.Data.SQLite.EF6.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:System.Data.SQLite.EF6.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_5AE2E4E7F9304D6A964A51901FB52C47"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F1F5E6A5AA524D3EAEB413EF6294C96B"
@@ -2608,6 +2695,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FC3E1A2BDDC340B8BB1A94924D7587E2"
+            {
+            "SourcePath" = "8:..\\Meteor\\bin\\Debug\\images\\Interface\\workspace.png"
+            "TargetName" = "8:workspace.png"
+            "Tag" = "8:"
+            "Folder" = "8:_DD1F281919F9474C926157908114C002"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FF24BEB7EE684C79A936435110C3F1B9"
             {
             "SourcePath" = "8:..\\..\\Meteor Assets\\images\\CharacterIcon\\Diddy Kong.png"
@@ -2697,6 +2804,17 @@
                                 {
                                 }
                             }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_DD1F281919F9474C926157908114C002"
+                            {
+                            "Name" = "8:Interface"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_B321A705FB6B4555B0C0DB9E99A3F930"
+                                "Folders"
+                                {
+                                }
+                            }
                         }
                     }
                 }
@@ -2729,7 +2847,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Meteor"
         "ProductCode" = "8:{9437D0B2-7DAD-486D-8EA3-9A439FB19E17}"
-        "PackageCode" = "8:{9A72E4A1-AFE6-4135-AD65-9E832D4F0EC8}"
+        "PackageCode" = "8:{9E34DBF0-80CD-47FA-B8C2-A9797090A725}"
         "UpgradeCode" = "8:{691A7386-2709-44A5-9D51-E39D6A4EC3FD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

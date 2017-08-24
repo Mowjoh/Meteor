@@ -27,6 +27,61 @@
                 <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
             </Style.Resources>
         </Style>
+        <Style TargetType="{x:Type TabItem}" x:Key="WorkspaceStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Grid>
+                            <Border Name="Border" Margin="0,0,0,0" Background="Transparent" BorderBrush="Black" BorderThickness="1,1,1,1" CornerRadius="5">
+                                <ContentPresenter x:Name="ContentSite" VerticalAlignment="Center"
+                              HorizontalAlignment="Center"
+                              ContentSource="Header" Margin="12,2,12,2"
+                              RecognizesAccessKey="True">
+                                </ContentPresenter>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Panel.ZIndex" Value="100" />
+                                <Setter TargetName="Border" Property="Background" Value="#FF666666" />
+                                <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#FF202021" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style TargetType="{x:Type Button}" x:Key="SectionButtonStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border>
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="BorderThickness" Value="1"></Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#7F000000"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Grid Background="Transparent">
+                                <ContentPresenter></ContentPresenter>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Image Source="images/Interface/forge2.ico" x:Key="ForgeIcon"></Image>
     </Application.Resources>
     
 </Application>

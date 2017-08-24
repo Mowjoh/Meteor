@@ -1,0 +1,50 @@
+﻿<Page x:Class="Meteor.sections.AboutSection"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Meteor.sections"
+      mc:Ignorable="d"
+      Title="About" MinWidth="799.8" MinHeight="450" ClipToBounds="True">
+
+    <Grid x:Name="AboutGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="184*"/>
+            <RowDefinition Height="41*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <GroupBox x:Name="AppInfoGroupBox" Header="Application Information" Margin="10,0,10,10" Foreground="White"
+        >
+            <Grid x:Name="AppInfoGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="95*"/>
+                    <ColumnDefinition Width="89*"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="MakerLabel" Content="Maker : Mowjoh"
+                    Margin="10,10,10,0" VerticalAlignment="Top" Foreground="White" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" />
+                <Label x:Name="AppVersionLabel" Content="Application version : 0.5" Margin="10,52,10,0" VerticalAlignment="Top"
+                    Foreground="White" HorizontalContentAlignment="Center" />
+                <Label x:Name="UpdaterVersionLabel" Content="Updater version : 0.0"
+                    Margin="10,52,10,0" VerticalAlignment="Top" Foreground="White" Grid.Column="1" HorizontalContentAlignment="Center" />
+                <TextBlock x:Name="AppInfoTextBox" Margin="10,83,10,10"
+                    TextWrapping="Wrap" Grid.ColumnSpan="2"><Run Text="Special Thanks"/><LineBreak/><Run Text="- Kerouz"/><LineBreak/><Run Text="- Segtendo"/><LineBreak/><Run Text="- The Smash 4 Modding server"/><LineBreak/><Run/><LineBreak/><Run/><LineBreak/><Run Text="Thank you for using Meteor. I hope it will make your"/><LineBreak/><Run Text="Sm4sh modding journey easier."/><LineBreak/><Run/><LineBreak/><Run Text="Quick important tip : read the tooltips. (when your "/><LineBreak/><Run Text="mouse is over an item, a description will appear"/><LineBreak/><Run Text="to help you use Meteor)"/><LineBreak/><Run/><LineBreak/><Run Text="Have fun modding !"/><LineBreak/><Run/><LineBreak/><Run Text="                                                Mowjoh"/></TextBlock>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="FunFactsGroupBox" Header="Fun Facts&#xA;"
+            Margin="10,0,10,10" Foreground="White" Grid.Column="1"
+        >
+            <Grid x:Name="FunFactsGrid">
+                <TextBlock x:Name="FunFactsTextBlock"
+                    TextWrapping="Wrap"><Run Text="- I'm Mowjoh !"/><LineBreak/><Run/><LineBreak/><Run Text="- This software exists because I was"/><LineBreak/><Run Text="  too lazy to rename 6 skins."/><LineBreak/><Run/><LineBreak/><Run Text="- This was way longer to make than"/><LineBreak/><Run Text="  expected."/><LineBreak/><Run/><LineBreak/><Run Text="- Kerouz made the logo. He's the best"/><LineBreak/><Run/><LineBreak/><Run Text="- I got all 900 korok seeds. "/><LineBreak/><Run Text=" "/></TextBlock>
+            </Grid>
+        </GroupBox>
+        <Button x:Name="ThanksButton" Content="Say Thanks !" Margin="0"
+            Click="thanks_button" ToolTip="Say thanks to Meteor" Height="25" Grid.Column="1" Grid.Row="1" Width="170" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <Button x:Name="WikiButton" Content="Need help? Here's the Wiki" Margin="0"
+            ToolTip="This will open your browser to Meteor's wiki" Click="goto_wiki" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="170" Height="25" />
+
+    </Grid>
+</Page>

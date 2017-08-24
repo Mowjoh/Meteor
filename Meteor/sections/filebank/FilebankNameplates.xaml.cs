@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,23 +12,21 @@ namespace Meteor.sections.filebank
 {
     public partial class FilebankNameplates
     {
-        private readonly db_handler _dbHandler;
+        private MeteorDatabase meteorDatabase;
 
         private int SelectedId { get; set; }
         private int ActiveWorkspace { get; set; }
-        private ArrayList Nameplates { get; set; }
 
         public FilebankNameplates()
         {
             InitializeComponent();
 
-            _dbHandler = new db_handler();
-            ActiveWorkspace = int.Parse(_dbHandler.get_property("workspace"));
+            meteorDatabase = new MeteorDatabase();
+            ActiveWorkspace = int.Parse(meteorDatabase.Configurations.First(c => c.property == "activeWorkspace")
+                .value);
 
             LoadCharacters();
-            ReloadNameplates();
-
-            
+            //ReloadNameplates();
         }
 
         //Character Select
@@ -41,14 +40,15 @@ namespace Meteor.sections.filebank
         {
             if (NameplateListBox.SelectedIndex != -1)
             {
-                var infos = _dbHandler.get_nameplate_info((int)Nameplates[NameplateListBox.SelectedIndex]);
-                AuthorValueTextBox.Text = infos[1];
-                ListBoxItem lbi = (ListBoxItem)NameplateListBox.Items[NameplateListBox.SelectedIndex];
-                NameValueTextBox.Text = lbi.Content.ToString();
-                IdValueLabel.Content = (int)Nameplates[NameplateListBox.SelectedIndex];
-                CharacterValueLabel.Content = infos[2];
+                NameplateListItem lbi = (NameplateListItem) NameplateListBox.Items[NameplateListBox.SelectedIndex];
+                Nameplate nameplate = meteorDatabase.Nameplates.First(n => n.Id == lbi.Id);
 
-                SelectedId = (int)Nameplates[NameplateListBox.SelectedIndex];
+                AuthorValueTextBox.Text = nameplate.author;
+                NameValueTextBox.Text = lbi.Content.ToString();
+                IdValueLabel.Content = nameplate.Id;
+                CharacterValueLabel.Content = nameplate.Character.name;
+
+                SelectedId = nameplate.Id;
             }
         }
 
@@ -57,34 +57,37 @@ namespace Meteor.sections.filebank
         {
             if (e.Key != Key.Enter) return;
 
-            var newName = NameValueTextBox.Text;
-            _dbHandler.set_nameplate_name(newName, SelectedId);
+            Nameplate nameplate = meteorDatabase.Nameplates.First(n => n.Id == SelectedId);
+            nameplate.name = NameValueTextBox.Text;
+            meteorDatabase.SaveChanges();
 
-                        MeteorCode.WriteToConsole("Nameplate name saved", 0);
+            MeteorCode.WriteToConsole("Nameplate name saved", 0);
 
-            var lbi = (ListBoxItem)NameplateListBox.SelectedItem;
-            lbi.Content = newName;
+            var lbi = (ListBoxItem) NameplateListBox.SelectedItem;
+            lbi.Content = nameplate.name;
         }
 
         private void SaveAuthor(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
+            Nameplate nameplate = meteorDatabase.Nameplates.First(n => n.Id == SelectedId);
+            nameplate.author = AuthorValueTextBox.Text;
+            meteorDatabase.SaveChanges();
 
-            var newName = AuthorValueTextBox.Text;
-            _dbHandler.set_nameplate_author(newName, SelectedId);
-
-                        MeteorCode.WriteToConsole("Nameplate author saved", 0);
+            MeteorCode.WriteToConsole("Nameplate author saved", 0);
         }
 
         //Actions
         private void DeleteNameplate(object sender, RoutedEventArgs e)
         {
-            Nameplate n = new Nameplate(SelectedId, _dbHandler.get_character_id_nameplate(SelectedId), ActiveWorkspace, _dbHandler);
-            if (File.Exists(n.full_path))
+            Nameplate nameplate = meteorDatabase.Nameplates.First(n => n.Id == SelectedId);
+            NameplateObject no = new NameplateObject(SelectedId, nameplate.Character.Id, ActiveWorkspace);
+            if (File.Exists(no.full_path))
             {
-                File.Delete(n.full_path);
+                File.Delete(no.full_path);
             }
-            _dbHandler.delete_nameplate(SelectedId);
+            meteorDatabase.Nameplates.Remove(nameplate);
+            meteorDatabase.SaveChanges();
             ReloadNameplates();
         }
 
@@ -92,19 +95,24 @@ namespace Meteor.sections.filebank
         {
             if (NameplateListBox.SelectedIndex != -1)
             {
-                var id = (int)Nameplates[NameplateListBox.SelectedIndex];
-                _dbHandler.get_custom_nameplates_id();
-                _dbHandler.add_packer_item(1, id);
+                Nameplate nameplate = meteorDatabase.Nameplates.First(n => n.Id == SelectedId);
+                Packer packItem = new Packer()
+                {
+                    content_id = nameplate.Id,
+                    content_type = 1
+                };
+                meteorDatabase.Packers.Add(packItem);
+                meteorDatabase.SaveChanges();
+
                 MeteorCode.WriteToConsole("Nameplate added to packer", 0);
             }
-            
         }
 
-        
+
         //Drop Zone
         private void NameplateDrop(object sender, DragEventArgs e)
         {
-            var folderlist = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            var folderlist = (string[]) e.Data.GetData(DataFormats.FileDrop, false);
 
             if (folderlist == null) return;
 
@@ -114,34 +122,26 @@ namespace Meteor.sections.filebank
             //detect whether its a directory or file
             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                            MeteorCode.WriteToConsole("Please drop a chrn_11 file", 2);
+                MeteorCode.Message("Please drop a chrn_11 file");
             }
 
             else
             {
-
                 foreach (var s in folderlist)
                 {
                     String filename = new FileInfo(s).Name;
-                    try
-                    {
+                    
                         String type = filename.Split('_')[0];
                         String number = filename.Split('_')[1];
-                        String character = filename.Split('_')[2];
+                        String charactername = filename.Split('_')[2];
                         if (type == "chrn" && number == "11")
                         {
-                            int charId = _dbHandler.get_character_id_cspfoldername(character);
-                            var nameplate = new Nameplate(s, charId, ActiveWorkspace, _dbHandler);
+                            Character character = meteorDatabase.Characters.First(c => c.msl_name == charactername);
+                            var nameplate = new NameplateObject(s, character.Id, ActiveWorkspace);
                             ReloadNameplates();
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                                    MeteorCode.WriteToConsole("Error " + ex.Message, 2);
-                    }
-
+                    
                 }
-
             }
         }
 
@@ -153,52 +153,67 @@ namespace Meteor.sections.filebank
         //Reloads
         public void ReloadNameplates()
         {
-            if (CharacterComboBox.SelectedIndex == -1) return;
 
-            var character = (ListBoxItem)CharacterComboBox.Items[CharacterComboBox.SelectedIndex];
-            var characterName = character.Content.ToString();
-            ArrayList nameplates;
-            if (characterName == "All Characters")
+            meteorDatabase = new MeteorDatabase();
+
+            if (CharacterComboBox.SelectedIndex == -1) return;
+            NameplateListBox.Items.Clear();
+            
+            var characterItem = (CharacterCombo) CharacterComboBox.Items[CharacterComboBox.SelectedIndex];
+
+            if (characterItem.Id == 0)
             {
-                nameplates = _dbHandler.GetCustomNameplates();
-                Nameplates = _dbHandler.get_custom_nameplates_id();
-                NameplateListBox.Items.Clear();
+                foreach (Nameplate nameplate in meteorDatabase.Nameplates)
+                {
+                    var lbi = new NameplateListItem
+                    {
+                        Content = nameplate.name,
+                        Id = nameplate.Id
+                    };
+
+                    NameplateListBox.Items.Add(lbi);
+                }
             }
             else
             {
-                nameplates = _dbHandler.get_character_custom_nameplates(characterName, _dbHandler.get_property("workspace"));
-                Nameplates =
-                    _dbHandler.get_character_custom_nameplates_id(character.Content.ToString(), _dbHandler.get_property("workspace"));
-                NameplateListBox.Items.Clear();
-            }
+                
+                foreach (Nameplate nameplate in meteorDatabase.Nameplates.Where(n => n.character_id == characterItem.Id))
+                {
+                    var lbi = new NameplateListItem
+                    {
+                        Content = nameplate.name,
+                        Id = nameplate.Id
+                    };
 
-
-
-
-            foreach (string n in nameplates)
-            {
-                var lbi = new ListBoxItem();
-                lbi.Content = n;
-
-                NameplateListBox.Items.Add(lbi);
+                    NameplateListBox.Items.Add(lbi);
+                }
             }
         }
 
         private void LoadCharacters()
         {
             CharacterComboBox.Items.Clear();
-            var characters = _dbHandler.get_characters(int.Parse(_dbHandler.get_property("sort_order")));
 
-            var allCharactersItem = new ListBoxItem { Content = "All Characters" };
+            CharacterCombo allCharactersItem = new CharacterCombo() {Content = "All Characters", Id = 0};
             CharacterComboBox.Items.Add(allCharactersItem);
 
-            foreach (string[] s in characters)
+            foreach (Character character in meteorDatabase.Characters)
             {
-                var item = new ComboBoxItem { Content = s[1] };
+                var item = new CharacterCombo {Content = character.name, Id = character.Id};
                 CharacterComboBox.Items.Add(item);
             }
 
             CharacterComboBox.SelectedIndex = 0;
         }
+    }
+
+    public class CharacterCombo : ComboBoxItem
+    {
+        public int Id { get; set; }
+    }
+
+    public class NameplateListItem : ListBoxItem
+    {
+        public int Id { get; set; }
     }
 }

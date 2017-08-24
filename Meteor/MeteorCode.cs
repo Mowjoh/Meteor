@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using Meteor.database;
 using Meteor.workers;
+using System.Windows.Controls;
+using System.Xml;
 
 namespace Meteor
 {
@@ -19,8 +21,8 @@ namespace Meteor
         public static string AppPath { get; } = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory?.FullName;
 
         //Private variables
-        private static readonly db_handler DbHandler = new db_handler();
         private static readonly Pastebin.Pastebin Pastebin = new Pastebin.Pastebin("f165a49418f0ed6c5f61e9e233889d91");
+
 
         //Writes to the console with a status 
         public static void WriteToConsole(string s, int type)
@@ -46,19 +48,19 @@ namespace Meteor
 
             if (type != 3)
             {
-                ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
+                //((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
             }
             else
             {
-                if (DbHandler.get_property("dev_logs") == "1")
-                    ((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
+                //if (DbHandler.get_property("dev_logs") == "1")
+                    //((MainWindow)Application.Current.MainWindow).Console.Text = date + " | " + typeText + " | " + s + "\n" + ((MainWindow)Application.Current.MainWindow).Console.Text;
             }
         }
 
         //Generates a pastebin and opens a webpage if user confirms
         public static void Paste(string message, string stack)
         {
-            if (DbHandler.get_property("pastebin") == "1")
+            /*if (DbHandler.get_property("pastebin") == "1")
             {
                 var result = MessageBox.Show("An error happened with Meteor. Open the pastebin?", "Segtendo WARNING",
                     MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
@@ -73,8 +75,48 @@ namespace Meteor
                 {
                     MeteorCode.WriteToConsole("Pastebin error : " + ee.Message, 2);
                 }
-            }
+            }*/
         }
 
+        public static void ChangeStatus(string message)
+        {
+            ((MainWindow) Application.Current.MainWindow).Title = message + " - Meteor";
+        }
+
+        public static void Message(string message)
+        {
+            ((MainWindow) Application.Current.MainWindow).StatusMessage.Text = message;
+        }
+
+        public static void SetS4EWorkspacePath(int workspaceId, string s4Epath)
+        {
+            //Loading local manifest
+            var xml = new XmlDocument();
+            var workspacePath = AppPath + "/workspaces/workspace_" + workspaceId + "/";
+            if (!Directory.Exists(workspacePath + "/content/patch/"))
+                Directory.CreateDirectory(workspacePath + "/content/patch/");
+            if (File.Exists(s4Epath + "/sm4shmod.xml"))
+            {
+                xml.Load(s4Epath + "/sm4shmod.xml");
+                var node = xml.SelectSingleNode("/Sm4shMod/ProjectWorkplaceFolder");
+                if (node == null)
+                {
+                    var newnode = xml.CreateElement("ProjectWorkplaceFolder");
+                    newnode.InnerText = workspacePath;
+                    var root = xml.SelectSingleNode("/Sm4shMod");
+                    root?.AppendChild(newnode);
+                }
+                else
+                {
+                    node.InnerText = workspacePath;
+                }
+
+                xml.Save(s4Epath + "/sm4shmod.xml");
+            }
+            else
+            {
+                MeteorCode.WriteToConsole("Could not assign Sm4sh Explorer's workspace", 1);
+            }
+        }
     }
 }

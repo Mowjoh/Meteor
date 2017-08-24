@@ -61,9 +61,9 @@ namespace Meteor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;package version=&quot;0.9.0.0&quot;&gt;
-        ///  &lt;patchnote version=&quot;0.9.0.0&quot;&gt;
-        ///    &lt;patch&gt;Some bugfixes&lt;/patch&gt;
+        ///   Looks up a localized string similar to &lt;package version=&quot;0.9.8.5&quot;&gt;
+        ///  &lt;patchnote version=&quot;0.9.8.5&quot;&gt;
+        ///    &lt;patch&gt;Internal Patch&lt;/patch&gt;
         ///  &lt;/patchnote&gt;
         ///&lt;/package&gt;.
         /// </summary>
@@ -75,7 +75,7 @@ namespace Meteor.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;package&gt;
-        ///  &lt;file version=&quot;0_9_0_0&quot;&gt;Meteor.exe&lt;/file&gt;
+        ///  &lt;file version=&quot;0_9_8_5&quot;&gt;Meteor.exe&lt;/file&gt;
         ///&lt;/package&gt;.
         /// </summary>
         internal static string updatefiles {

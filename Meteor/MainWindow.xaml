@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="Meteor.MainWindow"
     mc:Ignorable="d"
-    Title="Meteor" Height="457" Width="596.5" WindowStartupLocation="CenterScreen"
+    Title="Meteor" Height="505" Width="733" WindowStartupLocation="CenterScreen"
     Foreground="#FF4B4A4A" Icon="MIcon.ico" MinWidth="1024" MinHeight="700" BorderThickness="0,0,0,1" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
     <Window.Resources>
 
@@ -43,97 +43,89 @@
 
     <Grid x:Name="MainGrid" ClipToBounds="True">
         <Grid.RowDefinitions>
-            <RowDefinition Height="428*"/>
-            <RowDefinition Height="75"/>
-            <RowDefinition Height="119*"/>
-            <RowDefinition Height="64"/>
+            <RowDefinition Height="66"/>
+            <RowDefinition Height="23"/>
+            <RowDefinition/>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="176"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+        <UniformGrid Rows="0" Columns="7" Margin="0,0,0,15">
+            <Button x:Name="SkinsSectionButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="52" Margin="0" Click="ChangeSection" Background="{x:Null}" BorderBrush="#7F000000" Style="{DynamicResource SectionButtonStyle}">
 
-        <ListBox x:Name="SectionList"
-            Background="{x:Null}" BorderBrush="White" SelectionChanged="ChangeSection" BorderThickness="0,0,1,0" Margin="5,15,0,0" Padding="0,0,10,0">
-
-            <ListBox.Resources>
-                <Style x:Key="ListStyle" TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="BorderBrush" Value="Transparent"></Setter>
-                    <Setter Property="BorderThickness" Value="1"></Setter>
-                    <Setter Property="Foreground" Value="White"></Setter>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="White"></Setter>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True">
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListBox.Resources>
-
-            <ListBoxItem Content="Skins" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White" Height="35" UseLayoutRounding="True" Style="{DynamicResource mowjohListStyle}" />
-            <ListBoxItem Content="Stages" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White" Margin="0" Height="35" UseLayoutRounding="True" Style="{DynamicResource mowjohListStyle}" />
-            <ListBoxItem Content="Interface" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White"
-                Margin="0" Height="35" UseLayoutRounding="True" Style="{DynamicResource mowjohListStyle}" />
-            <ListBoxItem Content="FileBank" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White"
-                Margin="0" Height="35" UseLayoutRounding="True"  Style="{DynamicResource mowjohListStyle}"/>
-            <ListBoxItem Content="Workspace" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White"
-                Margin="0" Height="35" UseLayoutRounding="True"  Style="{DynamicResource mowjohListStyle}"/>
-            <ListBoxItem Content="Configuration" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White"
-                Margin="0" Height="35" UseLayoutRounding="True" Style="{DynamicResource mowjohListStyle}" />
-            <ListBoxItem Content="About" FontFamily="Segoe UI Semibold" FontSize="20" Foreground="White"
-                Margin="0" Height="35" UseLayoutRounding="True" Style="{DynamicResource mowjohListStyle}" />
-
-        </ListBox>
-        <TextBlock x:Name="Console" TextWrapping="Wrap" Background="#7F000000" Foreground="White" x:FieldModifier="public" Grid.ColumnSpan="2" Grid.Row="2"/>
-        <Button x:Name="ClearConsoleButton" Content="X" Width="20" HorizontalAlignment="Right" VerticalContentAlignment="Top" Margin="0,0,0,95" Grid.Column="1" Grid.Row="2" Click="ClearConsoleButton_Click"/>
-        <Grid x:Name="StatusGrid" Grid.Row="3" Grid.ColumnSpan="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="95"/>
-                <ColumnDefinition Width="210"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Label x:Name="label" Content="Status :" Background="{x:Null}" Foreground="White" FontSize="15" Height="30" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="10,22,10,0" RenderTransformOrigin="0.516,1.456" />
-            <Label x:Name="app_status_text" Content="" Background="{x:Null}" Foreground="White" FontSize="15" HorizontalAlignment="Left" Width="190" Height="30" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="10,22,0,18" Grid.Column="1" />
-            <ProgressBar x:Name="statusbar" Height="30" MinHeight="20" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" VerticalAlignment="Center" Margin="10,22,10,18" Grid.Column="2" />
-        </Grid>
-        <TabControl x:Name="SectionsTabControl" Foreground="White" BorderBrush="{x:Null}" Background="{x:Null}" Grid.Column="1" Margin="5" Grid.RowSpan="2">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="images/Interface/skins_sg.png" Width="50" Height="50" HorizontalAlignment="Left"/>
+                    <TextBlock Text="Skins" VerticalAlignment="Center" FontSize="14" Foreground="White" />
+                </StackPanel>
+            </Button>
+            <Button x:Name="StagesSectionButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="52" Margin="0" Click="ChangeSection" Background="{x:Null}" BorderBrush="#7F000000" Style="{DynamicResource SectionButtonStyle}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="images/Interface/stages.png" Width="50" Height="50"/>
+                    <TextBlock Text="Stages" VerticalAlignment="Center" FontSize="14" Foreground="White" />
+                </StackPanel>
+            </Button>
+            <Button x:Name="InterfaceSectionButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="52" Margin="0" Click="ChangeSection" Background="{x:Null}" BorderBrush="#7F000000" Style="{DynamicResource SectionButtonStyle}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="images/Interface/ui.png" Width="50" Height="50"/>
+                    <TextBlock Text="Interface" VerticalAlignment="Center" FontSize="14" Foreground="White" />
+                </StackPanel>
+            </Button>
+            <Button x:Name="FileBankSectionButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="52" Margin="0" Click="ChangeSection" Background="{x:Null}" BorderBrush="#7F000000" Style="{DynamicResource SectionButtonStyle}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="images/Interface/filebank.png" Width="50" Height="50"/>
+                    <TextBlock Text="FileBank" VerticalAlignment="Center" FontSize="14" Foreground="White" />
+                </StackPanel>
+            </Button>
+            <Button x:Name="WorkspaceSectionButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="52" Margin="0" Click="ChangeSection" Background="{x:Null}" BorderBrush="#7F000000" Style="{DynamicResource SectionButtonStyle}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="images/Interface/workspaces.png" Width="50" Height="50"/>
+                    <TextBlock Text="Workspace" VerticalAlignment="Center" FontSize="14" Foreground="White" />
+                </StackPanel>
+            </Button>
+            <Button x:Name="ConfigurationSectionButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="52" Margin="0" Click="ChangeSection" Background="{x:Null}" BorderBrush="#7F000000" Style="{DynamicResource SectionButtonStyle}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="images/Interface/settings.png" Width="50" Height="50" Margin="0,0,5,0" Stretch="UniformToFill" MouseRightButtonUp="ClearCountUp"/>
+                    <TextBlock Text="Configuration" VerticalAlignment="Center" FontSize="14" Foreground="White" />
+                </StackPanel>
+            </Button>
+            <Button x:Name="AboutSectionButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="52" Margin="0" Click="ChangeSection" Background="{x:Null}" BorderBrush="#7F000000" Style="{DynamicResource SectionButtonStyle}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="images/Interface/about.png" Width="50" Height="50"/>
+                    <TextBlock Text="About" VerticalAlignment="Center" FontSize="14" Foreground="White" />
+                </StackPanel>
+            </Button>
+        </UniformGrid>
+        <ProgressBar x:Name="StatusBar" MinHeight="5" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="3" Margin="0,10,0,0" Value="100" />
+        <TabControl x:Name="WorkspaceTabControl" ItemContainerStyle="{DynamicResource WorkspaceStyle}" Grid.Row="1" SelectionChanged="WorkspaceSelectionChanged"/>
+        <TabControl x:Name="SectionsTabControl" Foreground="White" BorderBrush="{x:Null}" Background="{x:Null}" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Grid.Row="2">
             <TabItem x:Name="Skins" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Margin="-2,-2,-2,0"
                 Visibility="Collapsed">
-                <Frame x:Name="SkinsFrame" Content="Frame" Source="/Meteor;component/sections/Skins.xaml"/>
+                <Frame x:Name="SkinsFrame" Content="(/Meteor;component/sections/SkinsSection.xaml)" Source="/Meteor;component/sections/SkinsSection.xaml"/>
             </TabItem>
             <TabItem x:Name="Stages" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}" Margin="-2,-2,-2,0"
                 Visibility="Collapsed">
-                <Frame x:Name="StagesFrame" Content="Frame" Source="/Meteor;component/sections/Stages.xaml"/>
+                <Frame x:Name="StagesFrame" Content="Frame" Source="/Meteor;component/sections/StagesSection.xaml"/>
             </TabItem>
             <TabItem x:Name="Interface" Background="{x:Null}" BorderBrush="{x:Null}"
                 Margin="-2,-2,-2,0" Visibility="Collapsed">
-                <Frame x:Name="InterfaceFrame" Content="Frame" Source="/Meteor;component/sections/Interface.xaml"/>
+                <Frame x:Name="InterfaceFrame" Content="Frame" Source="/Meteor;component/sections/InterfaceSection.xaml"/>
             </TabItem>
             <TabItem x:Name="FileBank" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}"
                 Margin="-2,-2,-2,0" Visibility="Collapsed">
-                <Frame x:Name="FilebankFrame" Content="Frame" Source="/Meteor;component/sections/Filebank.xaml"/>
+                <Frame x:Name="FilebankFrame" Content="Frame" Source="/Meteor;component/sections/FilebankSection.xaml"/>
             </TabItem>
             <TabItem x:Name="Workspace" Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}"
                 Margin="0,0,-4,-2" Visibility="Collapsed">
-                <Frame x:Name="WorkspaceFrame" Content="Frame" Source="/Meteor;component/sections/Workspace.xaml"/>
+                <Frame x:Name="WorkspaceFrame" Content="Frame" Source="/Meteor;component/sections/WorkspaceSection.xaml"/>
             </TabItem>
             <TabItem x:Name="Configuration" Background="{x:Null}" BorderBrush="{x:Null}" Visibility="Collapsed">
-                <Frame x:Name="ConfigurationFrame" Content="Frame" Source="/Meteor;component/sections/Configuration.xaml"/>
+                <Frame x:Name="ConfigurationFrame" Content="Frame" Source="/Meteor;component/sections/ConfigurationSection.xaml"/>
             </TabItem>
             <TabItem x:Name="About" Background="{x:Null}" BorderBrush="{x:Null}" Visibility="Collapsed">
-                <Frame x:Name="AboutFrame" Content="Frame" Source="/Meteor;component/sections/About.xaml" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
+                <Frame x:Name="AboutFrame" Content="Frame" Source="/Meteor;component/sections/AboutSection.xaml" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
             </TabItem>
         </TabControl>
-        <Grid x:Name="WorkspaceGrid" Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="2*"/>
-            </Grid.RowDefinitions>
-            <Label x:Name="ActiveWorkspaceLabel" Content="Active Workspace : " Background="{x:Null}" Foreground="White" HorizontalContentAlignment="Center" Margin="0,0,1,0" />
-            <TextBlock x:Name="ActiveWorkspaceTextBox"
-                TextWrapping="Wrap"
-                Foreground="White" FontSize="13" x:FieldModifier="public" FontFamily="Leelawadee" Margin="5,5,6,5" Grid.Row="1" ><Run Text="Text on two"/><LineBreak/><Run Text="Lines"/></TextBlock>
+        <Grid x:Name="StatusMessageGrid" Grid.Row="4" Background="#B3000000">
+            <TextBlock x:Name="StatusMessage" TextWrapping="Wrap" Text="Workspace successfully built" Foreground="White" FontFamily="Consolas" Margin="10,6,10,2"/>
         </Grid>
     </Grid>
 
